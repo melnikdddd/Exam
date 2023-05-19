@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 
 const PostSchema = new mongoose.Schema(
     {
-        name: {
-            type: String,
-            required: true,
-        },
-
         title: {
             type: String,
             required: true,
@@ -32,7 +27,7 @@ const PostSchema = new mongoose.Schema(
             default: "New",
         },
         characteristics:{
-            type: String,
+            type: Object,
             required: false,
         },
         city: {
