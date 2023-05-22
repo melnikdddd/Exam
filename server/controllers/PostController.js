@@ -1,11 +1,30 @@
 import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
 import PostModel from "../models/PostModel.js";
+import {
+    _createFiles,
+    _createSubFolder,
+    _deepRemoveDir,
+    _getUserDirPATH,
+    _updateFiles
+} from "../utils/myFileSytstemUtil.js";
 
 class PostController {
     createPost = async (req,res) =>{
         try {
             const body = req.body;
             const doc = new PostModel({...body});
+
+            const postId = doc._id;
+            const ownerId = doc.owner._id
+            const path = _getUserDirPATH(ownerId) + '/' + postId;
+            _createSubFolder(path);
+
+            if(req.files){
+                const files = req.files;
+                _createFiles(files, path);
+            }
+
+
             const post = await doc.save();
             res.json(post);
 
@@ -23,7 +42,6 @@ class PostController {
             const doc = await PostModel.findOneAndUpdate({ _id: postId,},
                 {$inc: {viewsCount: 1}},
                 {returnDocument: 'after'}).populate('Comments');
-
             res.json(doc);
         } catch (e) {
             console.log(e)
@@ -34,7 +52,9 @@ class PostController {
     }
     removePost = async (req,res) =>{
         const postId = req.params.id;
-        if(await _findAndDelete(PostModel, postId)){
+        if(await _findAndDelete(PostModel, postId, (post)=>{
+          _deepRemoveDir(_getUserDirPATH(post.owner._id) + '/' + postId)
+        })){
             return res.json({success: true})
         }
         return res.json({success: false})
@@ -42,7 +62,13 @@ class PostController {
     editPost = async (req,res) =>{
         const postId = req.params.id;
         const body = req.body;
-       if (await _findAndUpdate(postId, body)){
+       if (await _findAndUpdate(PostModel, postId, body, (post)=>{
+            if(req.files){
+                const photos = req.files;
+                const path =  _getUserDirPATH(post.owner._id) + '/' + postId;
+                _updateFiles(photos, path);
+            }
+       })){
            return res.json({success: true})
        }
         return res.json({success: false})
@@ -57,12 +83,11 @@ class PostController {
             return res.status(500).json({message: 'Something goes wrong with DB'})
         }
     }
-
 }
 
-export const getAllOfUserPosts = async (userId) =>{
+export const getAllOfUserPosts = async (ownerId) =>{
     try{
-        return await PostModel.find({userId}).populate('User').exec();
+        return await PostModel.find({ownerId}).populate('User').exec();
     }catch (e){
         return false;
     }

@@ -2,6 +2,10 @@ import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import {_createFile, _createUserFolder, _getUserDirPATH, __dirname, _copyFile} from "../utils/myFileSytstemUtil.js";
+
+
 
 class AuthController {
      registration = async (req, res)=>{
@@ -18,9 +22,23 @@ class AuthController {
             const {password, ...userData} = body;
 
             const doc = new UserModel(...userData, hashPassword);
+            const userId = doc._id;
             const user = await doc.save();
 
             const token = this.createToken(user._id);
+
+            _createUserFolder(userId);
+
+            const userDirPath =_getUserDirPATH(userId);
+
+            if(req.file){
+                const avatar = req.file;
+                    _createFile(avatar, userDirPath + "user-avatar" + avatar.extname)
+            } else {
+                const defaultAvatarPath = __dirname + '/user-avatar.png';
+                _copyFile(defaultAvatarPath, userDirPath + '/user-avatar.png');
+            }
+
 
             res.json({...userData, token});
 

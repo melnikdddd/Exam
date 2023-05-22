@@ -1,16 +1,18 @@
 
-export const _findAndDelete = async (modelType, id) =>{
+export const _findAndDelete = async (modelType, id, cb) =>{
     try{
-        await modelType.findOneAndDelete({id});
+        const model = await modelType.findOneAndDelete({id});
+        cb(model)
         return true;
     }catch (e){
         return false;
     }
 }
 
-export const _findAndUpdate = async (modelType, id, body) =>{
+export const _findAndUpdate = async (modelType, id, body, cb) =>{
     try{
-        await modelType.findOneAndUpdate({id},{...body});
+        const model = await modelType.findOneAndUpdate({id},{...body});
+        cb(model);
         return true;
     }catch (e){
         return false;
