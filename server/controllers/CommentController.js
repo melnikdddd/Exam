@@ -1,7 +1,7 @@
 import CommentModel from "../models/CommentModel.js";
 import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
 import {
-    _createFiles,
+    _saveArrayFilesFromFront,
     _createSubFolder,
     _deepRemoveDir,
     _getUserDirPATH,
@@ -11,7 +11,6 @@ import {
 class CommentController {
     getAll = async (req, res) =>{
         try{
-
             const {model, id} = req.params;
             const comments = await CommentModel.find({[model]: id}).exec();
 
@@ -23,26 +22,29 @@ class CommentController {
     }
     removeComment = async (req, res) =>{
           const commentId = req.params.id;
-
-          if(await _findAndDelete(CommentModel, commentId, (comment) =>{
-              _deepRemoveDir(_getUserDirPATH(comment.owner._id) + '/' + commentId)
-          })){
+          if(await _findAndDelete(CommentModel, commentId,
+              (comment) =>{
+              _deepRemoveDir(_getUserDirPATH(comment.owner._id) + '/comments/' + commentId)
+          }))
+          {
               return res.return({success: true})
           }
 
           res.status(500).json({success: false})
     }
     editComment = async (req, res) =>{
-        const id = req.params.id;
+        const commentId = req.params.id;
         const body = req.body;
 
-       if (await _findAndUpdate(id,body, (comment)=>{
+       if (await _findAndUpdate(commentId, body,
+           (comment)=> {
            if(req.files){
                const photos = req.files;
-               const path =  _getUserDirPATH(comment.owner._id) + '/' + comment;
+               const path =  _getUserDirPATH(comment.owner._id) + '/comments/' + commentId;
                _updateFiles(photos, path);
            }
-       })){
+       }))
+       {
            return res.json({message: true})
        }
         return res.json({message: false})
@@ -58,12 +60,12 @@ class CommentController {
             const commentId = doc._id;
             const userId = doc.owner._id;
 
-            const path = _getUserDirPATH(userId) + '/' + commentId;
+            const path = _getUserDirPATH(userId) + '/comments/' + commentId;
             _createSubFolder(path);
 
             if(req.files){
                 const files = req.files;
-                _createFiles(files, path);
+                _saveArrayFilesFromFront(files, path);
             }
 
             await doc.save();

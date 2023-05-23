@@ -18,6 +18,7 @@ const PostSchema = new mongoose.Schema(
         tags: {
             type: Array,
             default: [],
+            required: false,
         },
         price: {
             type: String,
@@ -47,7 +48,7 @@ const PostSchema = new mongoose.Schema(
         imageDirPath: {
             type: String,
             default: function (){
-                return _getUserDirPATH(this.user._id) + '/' + this._id;
+                return _getUserDirPATH(this.owner._id) + '/' + this._id;
             },
             immutable: true
         }

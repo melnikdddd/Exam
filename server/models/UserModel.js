@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
 
 const UserSchema = new mongoose.Schema(
     {
@@ -30,7 +31,13 @@ const UserSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        avatarUrl: String,
+        avatarUrl: {
+            type: String,
+            default: function (){
+                return _getUserDirPATH(this._id) + '/user-avatar.png';
+            },
+            immutable: true,
+        },
         aboutUser: {
             type: String,
             required: false,

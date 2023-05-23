@@ -1,6 +1,7 @@
 import UserModel from "../models/UserModel.js";
 import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
-import {getAllOfUserPosts} from "./PostController.js";
+import {getUserPosts} from "./PostController.js";
+import {_deepRemoveDir, _getUserDirPATH, _saveFileFromFront, _updateFiles} from "../utils/myFileSytstemUtil.js";
 
 class UserController{
     getMe = async(req,res) => {
@@ -10,7 +11,8 @@ class UserController{
             if(!user){
                 return res.status(404).json({message: 'User can`t find'});
             }
-            const posts = await getAllOfUserPosts(user._id);
+
+            const posts = await getUserPosts(user._id);
 
             res.json({...user,... posts});
 
@@ -20,7 +22,13 @@ class UserController{
     }
     removeUser = async (req,res) =>{
         const userId = req.params.id;
-        if(await _findAndDelete(UserModel, userId)){
+        if(await _findAndDelete(UserModel, userId,
+            (user)=>{
+            const path = _getUserDirPATH(userId)
+            _deepRemoveDir(path);
+        }
+        ))
+        {
            return res.json({success: true})
         }
         return res.json({success: false})
@@ -29,7 +37,15 @@ class UserController{
         const userId = req.params.id;
         const body = req.body;
 
-        if (await _findAndUpdate({userId},{body})){
+        if (await _findAndUpdate(UserModel,{userId},{body},
+            (user)=>{
+            if (req.files){
+                const path = _getUserDirPATH(userId);
+                _updateFiles(req.files, path);
+            }
+        }
+        ))
+        {
             return res.json({success: true});
         }
         return res.json({success: false});
@@ -43,7 +59,7 @@ class UserController{
                 return res.status(404).json({message: 'User can`t find'});
             }
 
-            const posts = await getAllOfUserPosts(user._id);
+            const posts = await getUserPosts(user._id);
 
             const userData = {email,passwordHash,...user};
 

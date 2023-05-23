@@ -7,27 +7,36 @@ import {fileURLToPath} from "url"
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = (__filename)
 
-export const _createFile = (file, PATH) =>{
+
+//req.body -> dir/
+export const _saveFileFromFront = (file, PATH) =>{
     const filePath = path.join(PATH, file.originalname);
     fs.renameSync(file.path, filePath);
+
 }
 
-export const _copyFile = (startPath, PATH) =>{
-    fs.renameSync(startPath, PATH);
-}
-export const _createFiles = (files, PATH) =>{
+//req.body = {some.jpg, any.png} -> {1.jpg, 2.png}
+export const _saveArrayFilesFromFront = (files, PATH) =>{
     for (const [index = 1, file] of files){
         fs.renameSync(file.path, PATH + index + file.extname);
     }
 }
+
+//file -> file
+export const _copyFile = (startPath, PATH) =>{
+    fs.renameSync(startPath, PATH);
+}
+
 export const _getUserDirPATH = (userId) =>{
     return  __dirname + 'db/' + userId;
 }
+
+//userId/comments + userId/posts
 export const _createUserFolder = (userId) =>{
     const PATH = _getUserDirPATH(userId);
     if (checkExist(PATH)){
         fs.mkdirSync(PATH);
-        if (!createSubFolder(PATH + '/comments') || !createSubFolder(PATH + '/posts')){
+        if (!_createSubFolder(PATH + '/comments') || !_createSubFolder(PATH + '/posts')){
             return false;
         }
         return PATH;
@@ -58,19 +67,20 @@ export const _createSubFolder = (PATH) =>{
     return false;
 }
 
+//удаляем старые файлы и создаем новые
 export const _updateFiles = (files, PATH) =>{
     files.forEach(file =>{
         const filePath = PATH + file.originalname;
         if(fs.existsSync(filePath)){
             fs.unlinkSync(filePath);
         }
-        _createFile(file, filePath);
+        _saveFileFromFront(file, filePath);
     })
 
 }
 
-function checkExist(...PATHS){
-    const checkingPath = path.join(...PATHS);
+function checkExist(...PATH){
+    const checkingPath = path.join(...PATH);
     if(!fs.existsSync(checkingPath)){
         return checkingPath;
     }

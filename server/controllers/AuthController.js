@@ -3,17 +3,25 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import {_createFile, _createUserFolder, _getUserDirPATH, __dirname, _copyFile} from "../utils/myFileSytstemUtil.js";
-
+import {
+    _saveFileFromFront,
+    _createUserFolder,
+    _getUserDirPATH,
+    __dirname,
+    _copyFile
+} from "../utils/myFileSytstemUtil.js";
 
 
 class AuthController {
-     registration = async (req, res)=>{
+    constructor() {
+
+    }
+    registration = async (req, res) => {
         try {
             const body = req.body;
 
             const errors = validationResult(req);
-            if(!errors.isEmpty()){
+            if (!errors.isEmpty()) {
                 return res.status(400).json(errors.array());
             }
 
@@ -25,15 +33,15 @@ class AuthController {
             const userId = doc._id;
             const user = await doc.save();
 
-            const token = this.createToken(user._id);
+            const token = this.#createToken(user._id);
 
             _createUserFolder(userId);
 
-            const userDirPath =_getUserDirPATH(userId);
+            const userDirPath = _getUserDirPATH(userId);
 
-            if(req.file){
+            if (req.file) {
                 const avatar = req.file;
-                    _createFile(avatar, userDirPath + "user-avatar" + avatar.extname)
+                _saveFileFromFront(avatar, userDirPath + "user-avatar" + avatar.extname)
             } else {
                 const defaultAvatarPath = __dirname + '/user-avatar.png';
                 _copyFile(defaultAvatarPath, userDirPath + '/user-avatar.png');
@@ -43,29 +51,29 @@ class AuthController {
             res.json({...userData, token});
 
 
-        }catch(error){
+        } catch (error) {
             res.status(500).json(error);
         }
     }
-     login = async (req, res) =>{
-        try{
+    login = async (req, res) => {
+        try {
             const {email, password} = req.body;
             const user = await UserModel.findOne({email});
 
-            if(!user){
+            if (!user) {
                 return req.status(404).json({
                     message: 'Wrong data'
                 })
             }
 
-            const isValidPass = await bcrypt.compare(password,  user.passwordHash);
-            if(!isValidPass){
+            const isValidPass = await bcrypt.compare(password, user.passwordHash);
+            if (!isValidPass) {
                 return res.status(404).json({
                     message: 'Invalid login or password'
                 })
             }
             const id = user._id;
-            const token = this.createToken(id);
+            const token = this.#createToken(id);
 
             const userData = {
                 firstname: user.firstname,
@@ -78,12 +86,12 @@ class AuthController {
 
             res.json({...userData, token})
 
-        }catch (error){
+        } catch (error) {
             res.status(404).json('Wrong data');
         }
     }
 
-    createToken(_id){
+    #createToken(_id) {
         return jwt.sign(
             {
                 _id: _id,

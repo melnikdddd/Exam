@@ -1,16 +1,18 @@
 import express from "express";
 import checkAuth from "../utils/checkAuth.js";
 import CommentController from "../controllers/CommentController.js";
-import multer from "multer";
+import {upload} from "../index.js";
+import commentValidator from "../validations/commentsValidator.js";
+
 
 const CommentsRouter = express.Router();
-const upload = multer();
+
 CommentsRouter.use(checkAuth);
 
-CommentsRouter.post('/new',upload.array('photos'), CommentController.createComment);
+CommentsRouter.post('/new',commentValidator, upload.array('photos'), CommentController.createComment);
 
 CommentsRouter.use('/:id')
-    .update(upload.array('photos'),CommentController.editComment)
+    .update(commentValidator, upload.array('photos'), CommentController.editComment)
     .delete(CommentController.removeComment());
 
 CommentsRouter.get('/:model/:id', CommentController.getAll);
