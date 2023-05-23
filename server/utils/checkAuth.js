@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const checkAuth = (req, res, next) =>{
+const _checkAuth = (req, res, next) =>{
 
     //get token form header and split him
     const token = req.headers.authorization.split(' ')[1];
@@ -23,4 +23,4 @@ const checkAuth = (req, res, next) =>{
     }
 }
 
-export default checkAuth();
+export default _checkAuth;

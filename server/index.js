@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import MainRouter from "./routes/MainRouter.js";
-import multer from "multer";
 
 
 mongoose
@@ -12,10 +11,8 @@ mongoose
 const app = express();
 const PORT = 3000;
 
-export const upload = multer();
 
-
-app.use(app.json());
+app.use(express.json());
 
 app.use(MainRouter);
 

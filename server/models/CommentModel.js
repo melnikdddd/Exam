@@ -1,8 +1,9 @@
-import mongoose, {Mongoose} from "mongoose";
+import mongoose from "mongoose";
 import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
 
 
-const CommentSchema = new Mongoose.Schema({
+const CommentSchema = new mongoose.Schema(
+    {
     title: {
         type:String,
         required: false,

@@ -1,17 +1,19 @@
 import express from "express";
-import checkAuth from "../utils/checkAuth.js";
+import _checkAuth from "../utils/checkAuth.js";
 import UserController from "../controllers/UserController.js";
-import {upload} from "../index.js";
+import multer from "multer";
 
+
+const upload = multer()
 const UserRouter = express.Router();
 
 
-UserRouter.use(checkAuth);
+UserRouter.use(_checkAuth);
 
-UserRouter.get('/', UserController.getMe());
+UserRouter.get('/', UserController.getMe);
 
-UserRouter.use('/edit')
-    .update(upload.single('avatar'), UserController.editUser)
-    .delete(UserRouter.removeUser);
+UserRouter.route('/edit')
+    .patch(upload.single('avatar'), UserController.editUser)
+    .delete(UserController.removeUser);
 
 export default UserRouter;

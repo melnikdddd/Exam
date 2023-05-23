@@ -1,17 +1,17 @@
 import express from "express";
-import checkAuth from "../utils/checkAuth.js";
+import _checkAuth from "../utils/checkAuth.js";
 import PostController from "../controllers/PostController.js";
-import {upload} from "../index.js";
 import postValidator from "../validations/postValidator.js";
+import multer from "multer";
 
 const PostRouter = express.Router();
+const upload = multer();
 
-
-PostRouter.post('/new',checkAuth, postValidator, upload.array('photos'), PostController.createPost);
+PostRouter.post('/new', _checkAuth, postValidator, upload.array('photos'), PostController.createPost);
 PostRouter.get('/:id',PostController.getPost);
 
-PostRouter.use('/:id/edit', checkAuth)
-    .update(postValidator, upload.array('photos'), PostController.editPost)
+PostRouter.route('/:id/edit', _checkAuth)
+    .patch(postValidator, upload.array('photos'), PostController.editPost)
     .delete(PostController.removePost);
 
 PostRouter.get('/',PostController.getThirty);
