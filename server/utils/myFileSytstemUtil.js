@@ -5,8 +5,8 @@ import * as fs from "fs";
 import {fileURLToPath} from "url"
 
 const __filename = fileURLToPath(import.meta.url);
-export const __dirname = (__filename)
-
+const currentDir = path.dirname(__filename);
+export const __dirname = path.join(currentDir, '..');
 
 //req.body -> dir/
 export const _saveFileFromFront = (file, PATH) =>{
@@ -23,12 +23,12 @@ export const _saveArrayFilesFromFront = (files, PATH) =>{
 }
 
 //file -> file
-export const _copyFile = (startPath, PATH) =>{
-    fs.renameSync(startPath, PATH);
+export const _copyFile = (filePath, PATH) =>{
+    fs.copyFileSync(filePath, PATH);
 }
 
 export const _getUserDirPATH = (userId) =>{
-    return  __dirname + 'db/' + userId;
+    return  __dirname + '/db/' + userId;
 }
 
 //userId/comments + userId/posts

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
+import uniqueValidator from "mongoose-unique-validator";
 
 const UserSchema = new mongoose.Schema(
     {
@@ -13,17 +14,26 @@ const UserSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            unique: true,
+            sparse: true,
+            default: "",
+            required: function () {
+                return this.phoneNumber === '';
+            },
         },
         phoneNumber: {
             type: String,
-            unique: true,
+            sparse: true,
+            default: "",
+            required: function () {
+                return this.email === '';
+            },
+
         },
         city: {
             type: String,
             required: false,
         },
-        passwordHash: {
+        hashPassword: {
             type: String,
             required: true
         },
@@ -46,9 +56,10 @@ const UserSchema = new mongoose.Schema(
 
     },
     {
-        //при создании любого пользователя создает дату создания или обновления
         timestamps: true,
     }
 );
 
-export default mongoose.model('User', UserSchema)
+UserSchema.plugin(uniqueValidator);
+
+export default mongoose.model('User', UserSchema);

@@ -2,7 +2,6 @@ import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
-import multer from "multer";
 import {
     _saveFileFromFront,
     _createUserFolder,
@@ -10,26 +9,29 @@ import {
     __dirname,
     _copyFile
 } from "../utils/myFileSytstemUtil.js";
+import {_checkDuplicates} from "../utils/myModelsWorker.js";
+
 
 
 class AuthController {
-    constructor() {
-
-    }
     registration = async (req, res) => {
         try {
             const body = req.body;
+            console.log(req.file)
+
+
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json(errors.array());
             }
 
+
             const salt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(body.password, salt);
             const {password, ...userData} = body;
 
-            const doc = new UserModel(...userData, hashPassword);
+            const doc = new UserModel({...userData, hashPassword});
             const userId = doc._id;
             const user = await doc.save();
 
@@ -52,6 +54,7 @@ class AuthController {
 
 
         } catch (error) {
+            console.log(error)
             res.status(500).json(error);
         }
     }
@@ -66,7 +69,7 @@ class AuthController {
                 })
             }
 
-            const isValidPass = await bcrypt.compare(password, user.passwordHash);
+            const isValidPass = await bcrypt.compare(password, user.hashPassword);
             if (!isValidPass) {
                 return res.status(404).json({
                     message: 'Invalid login or password'
@@ -90,13 +93,13 @@ class AuthController {
             res.status(404).json('Wrong data');
         }
     }
-
     #createToken(_id) {
         return jwt.sign(
             {
                 _id: _id,
-            })
+            },"BenyaTheDog",{expiresIn: '30d'});
     }
+
 }
 
 export default new AuthController;
