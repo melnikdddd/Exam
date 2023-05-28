@@ -2,14 +2,9 @@ import {body, validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
-import {
-    _saveFileFromFront,
-    _createUserFolder,
-    _getUserDirPATH,
-    __dirname,
-    _copyFile
-} from "../utils/myFileSytstemUtil.js";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
+import dotenv from "dotenv"
+dotenv.config();
 
 
 
@@ -31,11 +26,10 @@ class AuthController {
                 return res.status(400).json(errors.array());
             }
 
+            const salt = await bcrypt.genSalt(10);
 
-
-            const salt = await bcrypt.genSalt(10)
-            const hashPassword = await bcrypt.hash(body.password, salt);
             const {password, ...userData} = body;
+            const hashPassword = await bcrypt.hash(password, salt);
 
             const doc = new UserModel({...userData, hashPassword});
             const userId = doc._id;
@@ -99,12 +93,6 @@ class AuthController {
             res.status(404).json('Wrong data');
         }
     }
-    #createToken(_id) {
-        return jwt.sign(
-            {
-                _id: _id,
-            },"BenyaTheDog",{expiresIn: '30d'});
-    }
     checkDuplicate = async (req, res) =>{
         const value = req.body.value;
        if (await _checkDuplicate({value})){
@@ -128,7 +116,12 @@ class AuthController {
 
 
     }
-
+    #createToken(_id) {
+        return jwt.sign(
+            {
+                _id: _id,
+            }, process.env.JWT_PRIVITE_KEY,{expiresIn: '30d'});
+    }
 }
 
 

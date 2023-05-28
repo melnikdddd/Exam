@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config()
 
 const _checkAuth = (req, res, next) =>{
 
@@ -11,7 +13,7 @@ const _checkAuth = (req, res, next) =>{
 
     try {
         //декодирование и отправка его дальше в работу
-        const decoded = jwt.verify(token, 'BenyaTheDog');
+        const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.userId = decoded._id;
         next();
 

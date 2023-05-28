@@ -1,25 +1,8 @@
 import UserModel from "../models/UserModel.js";
 import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
 import {getUserPosts} from "./PostController.js";
-import {_deepRemoveDir, _getUserDirPATH, _saveFileFromFront, _updateFiles} from "../utils/myFileSytstemUtil.js";
 
 class UserController{
-    getMe = async(req,res) => {
-        try {
-            const user = await UserModel.findById(req.userId).populate('Comments');
-
-            if(!user){
-                return res.status(404).json({message: 'User can`t find'});
-            }
-
-            const posts = await getUserPosts(user._id);
-
-            res.json({...user,... posts});
-
-        } catch (error){
-            res.status(500).send(error);
-        }
-    }
     removeUser = async (req,res) =>{
         const userId = req.params.id;
         if(await _findAndDelete(UserModel, userId,
@@ -53,6 +36,7 @@ class UserController{
     getUser = async (req,res) =>{
         try {
             const userId = req.params.id;
+
             const user = await UserModel.findById(userId).populate('Comments');
 
             if(!user){

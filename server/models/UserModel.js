@@ -34,12 +34,9 @@ const UserSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        avatarUrl: {
-            type: String,
-            default: function (){
-                return _getUserDirPATH(this._id) + '/user-avatar.png';
-            },
-            immutable: true,
+        userAvatar:{
+            data: Buffer,
+            contentType: String,
         },
         aboutUser: {
             type: String,

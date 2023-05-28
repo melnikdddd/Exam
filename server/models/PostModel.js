@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
 
 const PostSchema = new mongoose.Schema(
     {
@@ -45,12 +44,8 @@ const PostSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
         },
-        imageDirPath: {
-            type: String,
-            default: function (){
-                return _getUserDirPATH(this.owner + '/' + this._id);
-            },
-            immutable: true
+        images: {
+            type: Array()
         }
 
     },{

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
 
 
 const CommentSchema = new mongoose.Schema(
@@ -17,12 +16,8 @@ const CommentSchema = new mongoose.Schema(
         ref: 'User',
         required: true,
     },
-    imageDirPath: {
-        type: String,
-        default: function (){
-            return _getUserDirPATH(this.user.id + '/' + this._id);
-        },
-        immutable: true
+    images: {
+        type: Array,
     },
     post: {
         type: mongoose.Schema.Types.ObjectId,

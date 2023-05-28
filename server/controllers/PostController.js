@@ -25,7 +25,6 @@ class PostController {
                 _saveArrayFilesFromFront(files, path);
             }
 
-
             const post = await doc.save();
             res.json(post);
 
