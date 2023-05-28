@@ -6,7 +6,7 @@ import {
     _deepRemoveDir,
     _getUserDirPATH,
     _updateFiles, _getFiles
-} from "../utils/myFileSytstemUtil.js";
+} from "../utils/myFSWorker.js";
 
 class PostController {
     createPost = async (req, res) => {

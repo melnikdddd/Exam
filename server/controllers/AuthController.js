@@ -1,8 +1,9 @@
-import {body, validationResult} from "express-validator";
+import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
+import {_decodeImageToString} from "../utils/myFSWorker.js"
 import dotenv from "dotenv"
 dotenv.config();
 
@@ -27,31 +28,24 @@ class AuthController {
             }
 
             const salt = await bcrypt.genSalt(10);
-
             const {password, ...userData} = body;
             const hashPassword = await bcrypt.hash(password, salt);
 
-            const doc = new UserModel({...userData, hashPassword});
+
+            const avatar = req.file ? req.file : __dirname + '/user-avatar.png'
+            const imageString = _decodeImageToString(avatar)
+
+
+            const doc = new UserModel(
+                {...userData, hashPassword, userAvatar: imageString});
+
+
             const userId = doc._id;
-            const user = await doc.save();
+            const token = this.#createToken(userId);
 
-            const token = this.#createToken(user._id);
-
-            _createUserFolder(userId);
-
-            const userDirPath = _getUserDirPATH(userId);
-
-            if (req.file) {
-                const avatar = req.file;
-                _saveFileFromFront(avatar, userDirPath + "user-avatar" + avatar)
-            } else {
-                const defaultAvatarPath = __dirname + '/user-avatar.png';
-                _copyFile(defaultAvatarPath, userDirPath + '/user-avatar.png');
-            }
-
+            await doc.save();
 
             res.json({...userData, token});
-
 
         } catch (error) {
             console.log(error)
@@ -75,16 +69,16 @@ class AuthController {
                     message: 'Invalid login or password'
                 })
             }
-            const id = user._id;
-            const token = this.#createToken(id);
+            const userId = user._id;
+            const token = this.#createToken(userId);
 
             const userData = {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 email: user.email,
                 phoneNumber: user.phoneNumber,
-                avatarUrl: user.avatarUrl,
-                id: id,
+                userAvatar: user.userAvatar,
+                id: userId,
             }
 
             res.json({...userData, token})
@@ -109,6 +103,7 @@ class AuthController {
            return await this.#phoneNumberVerification(req, res)
         }
     }
+
     #emailVerification = async (req, res) =>{
 
     }

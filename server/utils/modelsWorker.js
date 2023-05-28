@@ -1,19 +1,17 @@
 import UserModel from "../models/UserModel.js";
 
-export const _findAndDelete = async (modelType, id, cb) =>{
+export const _findAndDelete = async (modelType, id) =>{
     try{
         const model = await modelType.findOneAndDelete({id});
-        cb(model)
         return true;
     }catch (e){
         return false;
     }
 }
 
-export const _findAndUpdate = async (modelType, id, body, cb) =>{
+export const _findAndUpdate = async (modelType, id, body) =>{
     try{
         const model = await modelType.findOneAndUpdate({id},{...body});
-        cb(model);
         return true;
     }catch (e){
         return false;

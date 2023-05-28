@@ -1,12 +1,7 @@
 import CommentModel from "../models/CommentModel.js";
+import {validationResult} from "express-validator";
 import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
-import {
-    _saveArrayFilesFromFront,
-    _createSubFolder,
-    _deepRemoveDir,
-    _getUserDirPATH,
-    _updateFiles
-} from "../utils/myFileSytstemUtil.js";
+import {_decodeImageToString} from "../utils/myFSWorker.js";
 
 class CommentController {
     getAll = async (req, res) =>{
@@ -22,14 +17,9 @@ class CommentController {
     }
     removeComment = async (req, res) =>{
           const commentId = req.params.id;
-          if(await _findAndDelete(CommentModel, commentId,
-              (comment) =>{
-              _deepRemoveDir(_getUserDirPATH(comment.owner._id) + '/comments/' + commentId)
-          }))
-          {
+          if(await _findAndDelete(CommentModel, commentId)){
               return res.return({success: true})
           }
-
           res.status(500).json({success: false})
     }
     editComment = async (req, res) =>{
@@ -51,25 +41,25 @@ class CommentController {
     }
     createComment = async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+
+            if (errors){
+                return res.status(400).json({message: 'Request body is missing',});
+            }
+
             const body = req.body;
 
-            const doc = new CommentModel({
-                ...body,
-            })
+            const doc = new CommentModel(...body)
 
             const commentId = doc._id;
             const userId = doc.owner._id;
 
-            const path = _getUserDirPATH(userId) + '/comments/' + commentId;
-            _createSubFolder(path);
-
             if(req.files){
                 const files = req.files;
-                _saveArrayFilesFromFront(files, path);
             }
 
             await doc.save();
-
             res.json({...doc});
         }catch (error){
             res.status(400).json({

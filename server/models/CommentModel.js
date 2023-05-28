@@ -16,9 +16,9 @@ const CommentSchema = new mongoose.Schema(
         ref: 'User',
         required: true,
     },
-    images: {
-        type: Array,
-    },
+    images: [{
+        type: String,
+    }],
     post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',

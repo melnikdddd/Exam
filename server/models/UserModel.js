@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {_getUserDirPATH} from "../utils/myFileSytstemUtil.js";
+import {_getUserDirPATH} from "../utils/myFSWorker.js";
 import uniqueValidator from "mongoose-unique-validator";
 
 const UserSchema = new mongoose.Schema(
