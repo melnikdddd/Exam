@@ -1,5 +1,5 @@
 import CommentModel from "../models/CommentModel.js";
-import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
+import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
 import {
     _saveArrayFilesFromFront,
     _createSubFolder,

@@ -1,4 +1,4 @@
-import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
+import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
 import PostModel from "../models/PostModel.js";
 import {
     _saveArrayFilesFromFront,

@@ -13,14 +13,14 @@ const CommentSchema = new mongoose.Schema(
         required: true,
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
+        type:  mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
     imageDirPath: {
         type: String,
         default: function (){
-            return _getUserDirPATH(this.user._id) + '/' + this._id;
+            return _getUserDirPATH(this.user.id + '/' + this._id);
         },
         immutable: true
     },
@@ -41,6 +41,7 @@ const CommentSchema = new mongoose.Schema(
 
 }, {timestamps: true});
 
-export default new mongoose.model('Comment', CommentSchema);
+
+export default  mongoose.model('Comment', CommentSchema);
 
 

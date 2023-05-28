@@ -1,4 +1,4 @@
-import {validationResult} from "express-validator";
+import {body, validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
@@ -9,7 +9,8 @@ import {
     __dirname,
     _copyFile
 } from "../utils/myFileSytstemUtil.js";
-import {_checkDuplicates} from "../utils/myModelsWorker.js";
+import {_checkDuplicate} from "../utils/modelsWorker.js";
+
 
 
 
@@ -17,14 +18,19 @@ class AuthController {
     registration = async (req, res) => {
         try {
             const body = req.body;
-            console.log(req.file)
 
-
+            if (!body){
+                return res.status(400).json({
+                    message: 'Request body is missing',
+                });
+            }
 
             const errors = validationResult(req);
+
             if (!errors.isEmpty()) {
                 return res.status(400).json(errors.array());
             }
+
 
 
             const salt = await bcrypt.genSalt(10)
@@ -43,7 +49,7 @@ class AuthController {
 
             if (req.file) {
                 const avatar = req.file;
-                _saveFileFromFront(avatar, userDirPath + "user-avatar" + avatar.extname)
+                _saveFileFromFront(avatar, userDirPath + "user-avatar" + avatar)
             } else {
                 const defaultAvatarPath = __dirname + '/user-avatar.png';
                 _copyFile(defaultAvatarPath, userDirPath + '/user-avatar.png');
@@ -99,8 +105,33 @@ class AuthController {
                 _id: _id,
             },"BenyaTheDog",{expiresIn: '30d'});
     }
+    checkDuplicate = async (req, res) =>{
+        const value = req.body.value;
+       if (await _checkDuplicate({value})){
+           return res.json({exists: true})
+       }
+        return res.json({exists: false})
+    }
+    verification = async (req, res) =>{
+        const {verificationType} = req.body;
+        if (verificationType === 'email'){
+           return await this.#emailVerification(req, res)
+        }
+        if (verificationType === 'phoneNumber'){
+           return await this.#phoneNumberVerification(req, res)
+        }
+    }
+    #emailVerification = async (req, res) =>{
+
+    }
+    #phoneNumberVerification = async (req, res) =>{
+
+
+    }
 
 }
+
+
 
 export default new AuthController;
 

@@ -48,7 +48,7 @@ const PostSchema = new mongoose.Schema(
         imageDirPath: {
             type: String,
             default: function (){
-                return _getUserDirPATH(this.owner._id) + '/' + this._id;
+                return _getUserDirPATH(this.owner + '/' + this._id);
             },
             immutable: true
         }
@@ -57,5 +57,7 @@ const PostSchema = new mongoose.Schema(
         timestamps: true,
     }
 )
+
+
 
 export default mongoose.model('Post', PostSchema)

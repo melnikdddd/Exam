@@ -1,5 +1,5 @@
 import UserModel from "../models/UserModel.js";
-import {_findAndDelete, _findAndUpdate} from "../utils/myModelsWorker.js";
+import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
 import {getUserPosts} from "./PostController.js";
 import {_deepRemoveDir, _getUserDirPATH, _saveFileFromFront, _updateFiles} from "../utils/myFileSytstemUtil.js";
 

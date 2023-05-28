@@ -14,19 +14,12 @@ const UserSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            sparse: true,
             default: "",
-            required: function () {
-                return this.phoneNumber === '';
-            },
         },
         phoneNumber: {
             type: String,
-            sparse: true,
             default: "",
-            required: function () {
-                return this.email === '';
-            },
+            required: true,
 
         },
         city: {
@@ -59,6 +52,8 @@ const UserSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+
 
 UserSchema.plugin(uniqueValidator);
 
