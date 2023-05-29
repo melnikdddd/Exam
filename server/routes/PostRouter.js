@@ -10,7 +10,7 @@ const upload = multer();
 PostRouter.post('/new', _checkAuth, postValidator, upload.array('photos'), PostController.createPost);
 PostRouter.get('/:id',PostController.getPost);
 
-PostRouter.route('/:id/edit', _checkAuth)
+PostRouter.route('/:id', _checkAuth)
     .patch(postValidator, upload.array('photos'), PostController.editPost)
     .delete(PostController.removePost);
 

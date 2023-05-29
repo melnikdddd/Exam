@@ -10,9 +10,9 @@ const UserRouter = express.Router();
 
 UserRouter.use(_checkAuth);
 
-UserRouter.get('/', UserController.getMe);
+UserRouter.get('/:id', UserController.getUser);
 
-UserRouter.route('/edit')
+UserRouter.route('/:id')
     .patch(upload.single('avatar'), UserController.editUser)
     .delete(UserController.removeUser);
 

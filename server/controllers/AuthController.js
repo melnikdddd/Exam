@@ -3,7 +3,9 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
-import {_decodeImageToString} from "../utils/myFSWorker.js"
+import {_decodeImageToString} from "../utils/fsWorker.js"
+
+
 import dotenv from "dotenv"
 dotenv.config();
 
@@ -99,18 +101,18 @@ class AuthController {
         if (verificationType === 'email'){
            return await this.#emailVerification(req, res)
         }
-        if (verificationType === 'phoneNumber'){
+        else if (verificationType === 'phoneNumber'){
            return await this.#phoneNumberVerification(req, res)
         }
-    }
 
+        return res.status(400).json({
+            message: "Bad request"
+        })
+    }
     #emailVerification = async (req, res) =>{
 
     }
-    #phoneNumberVerification = async (req, res) =>{
-
-
-    }
+    #phoneNumberVerification = async (req, res) =>{}
     #createToken(_id) {
         return jwt.sign(
             {

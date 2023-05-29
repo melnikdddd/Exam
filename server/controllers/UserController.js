@@ -1,39 +1,28 @@
 import UserModel from "../models/UserModel.js";
-import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
 import {getUserPosts} from "./PostController.js";
 
+import ModelsWorker from "../utils/modelsWorker.js";
+const modelWorker = new ModelsWorker(UserModel);
+
 class UserController{
-    removeUser = async (req,res) =>{
+    removeUser = async (req, res) =>{
         const userId = req.params.id;
-        if(await _findAndDelete(UserModel, userId,
-            (user)=>{
-            const path = _getUserDirPATH(userId)
-            _deepRemoveDir(path);
-        }
-        ))
-        {
+        if(await modelWorker.findAndDelete(userId,)) {
            return res.json({success: true})
         }
         return res.json({success: false})
+
     }
     editUser = async (req, res) =>{
         const userId = req.params.id;
         const body = req.body;
 
-        if (await _findAndUpdate(UserModel,{userId},{body},
-            (user)=>{
-            if (req.files){
-                const path = _getUserDirPATH(userId);
-                _updateFiles(req.files, path);
-            }
-        }
-        ))
-        {
+        if (await modelWorker.findAndUpdate(userId, ...body)) {
             return res.json({success: true});
         }
         return res.json({success: false});
     }
-    getUser = async (req,res) =>{
+    getUser = async (req, res) =>{
         try {
             const userId = req.params.id;
 
@@ -53,7 +42,6 @@ class UserController{
             res.status(500).send(error);
         }
     }
-
 }
 
 export default new UserController;

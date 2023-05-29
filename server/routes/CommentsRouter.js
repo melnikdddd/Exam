@@ -9,7 +9,7 @@ const CommentsRouter = express.Router();
 
 CommentsRouter.use(_checkAuth);
 
-CommentsRouter.post('/new',commentValidator, upload.array('photos'), CommentController.createComment);
+CommentsRouter.post('/:model',commentValidator, upload.array('photos'), CommentController.createComment);
 
 CommentsRouter.route('/:id')
     .patch(commentValidator, upload.array('photos'), CommentController.editComment)

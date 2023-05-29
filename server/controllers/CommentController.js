@@ -1,7 +1,9 @@
 import CommentModel from "../models/CommentModel.js";
 import {validationResult} from "express-validator";
-import {_findAndDelete, _findAndUpdate} from "../utils/modelsWorker.js";
-import {_decodeImageToString} from "../utils/myFSWorker.js";
+import ModelsWorker from "../utils/modelsWorker.js";
+import {_decodeImageToString} from "../utils/fsWorker.js";
+
+const modelWorker = new ModelsWorker(CommentModel);
 
 class CommentController {
     getAll = async (req, res) =>{
@@ -17,7 +19,7 @@ class CommentController {
     }
     removeComment = async (req, res) =>{
           const commentId = req.params.id;
-          if(await _findAndDelete(CommentModel, commentId)){
+          if(await modelWorker.findAndDelete(commentId)){
               return res.return({success: true})
           }
           res.status(500).json({success: false})
@@ -26,15 +28,7 @@ class CommentController {
         const commentId = req.params.id;
         const body = req.body;
 
-       if (await _findAndUpdate(commentId, body,
-           (comment)=> {
-           if(req.files){
-               const photos = req.files;
-               const path =  _getUserDirPATH(comment.owner._id) + '/comments/' + commentId;
-               _updateFiles(photos, path);
-           }
-       }))
-       {
+       if (await modelWorker.findAndUpdate(commentId, body)) {
            return res.json({message: true})
        }
         return res.json({message: false})
