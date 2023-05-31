@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
-import {_decodeImageToString} from "../utils/fsWorker.js"
+import {_decodingImageFromPath, _decodingImageToString} from "../utils/fsWorker.js"
 
 
 import dotenv from "dotenv"
@@ -15,27 +15,19 @@ dotenv.config();
 class AuthController {
     registration = async (req, res) => {
         try {
-            const body = req.body;
-
-            if (!body){
-                return res.status(400).json({
-                    message: 'Request body is missing',
-                });
-            }
-
             const errors = validationResult(req);
-
             if (!errors.isEmpty()) {
                 return res.status(400).json(errors.array());
             }
 
-            const salt = await bcrypt.genSalt(10);
+            const body = req.body;
+
+            const avatar = req.file ? req.file : await _decodingImageFromPath(__dirname + '/user-avatar.png')
+            const imageString = _decodingImageToString(avatar)
+
+
             const {password, ...userData} = body;
-            const hashPassword = await bcrypt.hash(password, salt);
-
-
-            const avatar = req.file ? req.file : __dirname + '/user-avatar.png'
-            const imageString = _decodeImageToString(avatar)
+            const hashPassword =  await this.#bcrypt.genPassword(password);
 
 
             const doc = new UserModel(
@@ -65,7 +57,8 @@ class AuthController {
                 })
             }
 
-            const isValidPass = await bcrypt.compare(password, user.hashPassword);
+            const isValidPass = this.#bcrypt.readHashPassword(password, user.hashPassword);
+
             if (!isValidPass) {
                 return res.status(404).json({
                     message: 'Invalid login or password'
@@ -118,6 +111,18 @@ class AuthController {
             {
                 _id: _id,
             }, process.env.JWT_PRIVITE_KEY,{expiresIn: '30d'});
+    }
+
+    #bcrypt ={
+        secretNumber: process.env.BCRYPT_NUMBER,
+
+        genPassword: async (password) => {
+            const salt = await bcrypt.genSalt(this.#bcrypt.secretNumber);
+            return await bcrypt.hash(password, salt);
+        },
+        readHashPassword: async (password, hashPassword)=>{
+           return await bcrypt.compare(password, hashPassword);
+        }
     }
 }
 

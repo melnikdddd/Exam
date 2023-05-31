@@ -3,7 +3,6 @@ import {getUserPosts} from "./PostController.js";
 
 import ModelsWorker from "../utils/modelsWorker.js";
 const modelWorker = new ModelsWorker(UserModel);
-
 class UserController{
     removeUser = async (req, res) =>{
         const userId = req.params.id;
@@ -14,10 +13,13 @@ class UserController{
 
     }
     editUser = async (req, res) =>{
-        const userId = req.params.id;
+        const {userId} = req.params.id;
         const body = req.body;
 
-        if (await modelWorker.findAndUpdate(userId, ...body)) {
+        const image = body.file || null;
+        const imagesOptions = {...body.imagesOptions, image, operationType: 'user'}
+
+        if (await modelWorker.findAndUpdate(userId, body, imagesOptions)) {
             return res.json({success: true});
         }
         return res.json({success: false});
@@ -25,15 +27,12 @@ class UserController{
     getUser = async (req, res) =>{
         try {
             const userId = req.params.id;
-
             const user = await UserModel.findById(userId).populate('Comments');
-
             if(!user){
                 return res.status(404).json({message: 'User can`t find'});
             }
 
             const posts = await getUserPosts(user._id);
-
             const userData = {email,passwordHash,...user};
 
             res.json({...userData, ...posts});
@@ -42,6 +41,7 @@ class UserController{
             res.status(500).send(error);
         }
     }
+
 }
 
 export default new UserController;

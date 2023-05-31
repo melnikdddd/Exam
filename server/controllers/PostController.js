@@ -1,5 +1,5 @@
 import PostModel from "../models/PostModel.js";
-import {_decodeImageToString, _decodingImageFromPath, _decodingImagesToString, __dirname} from "../utils/fsWorker.js";
+import { _decodingImageFromPath, __dirname, _decodingImagesFromArray} from "../utils/fsWorker.js";
 import ModelsWorker from "../utils/modelsWorker.js";
 
 
@@ -14,7 +14,7 @@ class PostController {
             const decodedImages = [];
             if (req.body.files){
                 const files = req.body.files;
-               decodedImages.push(..._decodingImagesToString(files))
+               decodedImages.push(..._decodingImagesFromArray(files))
             } else{
                 decodedImages.push(await _decodingImageFromPath(__dirname +'/none-file.png'));
             }
@@ -60,7 +60,10 @@ class PostController {
         const postId = req.params.id;
         const body = req.body;
 
-        if (await modelsWorker.findAndUpdate(postId, body)) {
+        const images = body.file || null;
+        const imagesOptions = {...body.imagesOptions, images, operationType: 'array'}
+
+        if (await modelsWorker.findAndUpdate(postId, body, imagesOptions)) {
             return res.json({success: true})
         }
         return res.json({success: false})
