@@ -1,7 +1,5 @@
-import {_decodeImageToString, _decodingImageFromPath, __dirname, _decodingImagesFromArray} from "./fsWorker.js";
+import {_decodingImageFromPath, __dirname, _decodingImagesFromArray} from "./fsWorker.js";
 import UserModel from "../models/UserModel.js";
-import {add} from "nodemon/lib/rules/index.js";
-
 
 class ModelsWorker {
     constructor(model) {
@@ -32,7 +30,7 @@ class ModelsWorker {
             const prevDocument = await this.model.findById(id);
 
             await this.model.findOneAndUpdate({id},{...body}, (err, document)=>{
-                if (imageOperation !== null || operationType !== null){
+                if (imageOperation !== null && operationType !== null){
                     if (this.#goImagesWorker(imageOperation, operationType, {...params, document})){
                         return true;
                     }
@@ -46,8 +44,8 @@ class ModelsWorker {
     }
 
     //метод запуска операции
-    #goImagesWorker(imageOperation, imagesType, params){
-        return this.#imagesWorker?.[imagesType]?.[imageOperation](params);
+    #goImagesWorker(imageOperation, operationType, params){
+        return this.#imagesWorker?.[operationType]?.[imageOperation](params);
     }
 
     #imagesWorker = {

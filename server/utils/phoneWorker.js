@@ -1,7 +1,6 @@
 import twilio from "twilio";
 import dotenv from "dotenv"
-
-
+dotenv.config();
 
 const DEFAULT_FROM = "iMarket";
 

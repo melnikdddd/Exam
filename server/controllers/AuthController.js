@@ -4,9 +4,12 @@ import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
 import {_decodingImageFromPath, _decodingImageToString} from "../utils/fsWorker.js"
+import EmailWorker from "../utils/emailWorker.js";
+import {emailStrings} from "../utils/strings.js";
 
 
 import dotenv from "dotenv"
+import {_genSixDigitCode} from "../utils/someFunctions.js";
 dotenv.config();
 
 
@@ -92,20 +95,35 @@ class AuthController {
     verification = async (req, res) =>{
         const {verificationType} = req.body;
         if (verificationType === 'email'){
-           return await this.#emailVerification(req, res)
+
         }
         else if (verificationType === 'phoneNumber'){
-           return await this.#phoneNumberVerification(req, res)
-        }
 
+        }
         return res.status(400).json({
             message: "Bad request"
         })
     }
-    #emailVerification = async (req, res) =>{
+
+    #verificationService = class {
+        verificationCode = '';
+        sendEmailCode = async (code, email) =>{
+            this.verificationCode = _genSixDigitCode();
+            const subject = '[' + this.verificationCode + ']';
+
+           return await EmailWorker.sendMail(email, subject, this.#messagesText.email)
+        }
+        sendPhoneCode = async (code, ...params) =>{
+            this.verificationCode = _genSixDigitCode();
+        }
+
+        #messagesText = {
+            email: emailStrings.verificationCode(this.verificationCode),
+        }
+
 
     }
-    #phoneNumberVerification = async (req, res) =>{}
+
     #createToken(_id) {
         return jwt.sign(
             {

@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import passport from "passport";
 import MainRouter from "./routes/MainRouter.js";
 import dotenv from "dotenv";
 
@@ -16,7 +17,6 @@ const app = express();
 const PORT = +process.env.PORT;
 
 app.use(express.json());
-
 app.use(MainRouter);
 
 
