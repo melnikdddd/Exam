@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
-import {_decodingImageFromPath, _decodingImageToString} from "../utils/fsWorker.js"
+import {_decodingImageFromPath, _decodingImageToString, __dirname} from "../utils/fsWorker.js"
 import EmailWorker from "../utils/emailWorker.js";
 import {emailStrings} from "../utils/strings.js";
 
@@ -25,16 +25,15 @@ class AuthController {
 
             const body = req.body;
 
-            const avatar = req.file ? req.file : await _decodingImageFromPath(__dirname + '/user-avatar.png')
-            const imageString = _decodingImageToString(avatar)
-
+            const {data, ext} = req.file ? _decodingImageToString(req.file) :
+                await _decodingImageFromPath(__dirname + '/user-avatar.png')
 
             const {password, ...userData} = body;
             const hashPassword =  await this.#bcrypt.genPassword(password);
 
 
             const doc = new UserModel(
-                {...userData, hashPassword, userAvatar: imageString});
+                {...userData, hashPassword, userAvatar: {data, contentType: `image/${ext}`}});
 
 
             const userId = doc._id;
@@ -52,10 +51,11 @@ class AuthController {
     login = async (req, res) => {
         try {
             const {email, password} = req.body;
+
             const user = await UserModel.findOne({email});
 
             if (!user) {
-                return req.status(404).json({
+                return res.status(404).json({
                     message: 'Wrong data'
                 })
             }
@@ -67,6 +67,7 @@ class AuthController {
                     message: 'Invalid login or password'
                 })
             }
+
             const userId = user._id;
             const token = this.#createToken(userId);
 
@@ -82,7 +83,8 @@ class AuthController {
             res.json({...userData, token})
 
         } catch (error) {
-            res.status(404).json('Wrong data');
+            console.log(error);
+            res.status(404).json({error});
         }
     }
     checkDuplicate = async (req, res) =>{
@@ -128,14 +130,14 @@ class AuthController {
         return jwt.sign(
             {
                 _id: _id,
-            }, process.env.JWT_PRIVITE_KEY,{expiresIn: '30d'});
+            }, process.env.JWT_PRIVATE_KEY,{expiresIn: '30d'});
     }
 
     #bcrypt ={
         secretNumber: process.env.BCRYPT_NUMBER,
 
         genPassword: async (password) => {
-            const salt = await bcrypt.genSalt(this.#bcrypt.secretNumber);
+            const salt = await bcrypt.genSalt(+this.#bcrypt.secretNumber);
             return await bcrypt.hash(password, salt);
         },
         readHashPassword: async (password, hashPassword)=>{

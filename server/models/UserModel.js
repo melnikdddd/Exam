@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {_getUserDirPATH} from "../utils/fsWorker.js";
 import uniqueValidator from "mongoose-unique-validator";
 
 const UserSchema = new mongoose.Schema(
@@ -19,8 +18,6 @@ const UserSchema = new mongoose.Schema(
         phoneNumber: {
             type: String,
             default: "",
-            required: true,
-
         },
         city: {
             type: String,

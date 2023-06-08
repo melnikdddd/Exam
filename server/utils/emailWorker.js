@@ -6,7 +6,10 @@ dotenv.config();
 
 
 const oAuth2 = google.auth.OAuth2;
-const oAuth2Client = new oAuth2(process.env.GOOGLE_OAUTH_CLIENT, process.env.GOOGLE_OAUTH_REFRESH_TOKEN);
+const oAuth2Client = new oAuth2(process.env.GOOGLE_OAUTH_CLIENT, process.env.GOOGLE_OAUTH_SECRET_KEY);
+
+oAuth2Client.setCredentials({refresh_token :  process.env.GOOGLE_OAUTH_REFRESH_TOKEN});
+
 const accessToken = oAuth2Client.getAccessToken();
 
 class EmailWorker {

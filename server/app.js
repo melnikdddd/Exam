@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import passport from "passport";
 import MainRouter from "./routes/MainRouter.js";
 import dotenv from "dotenv";
 

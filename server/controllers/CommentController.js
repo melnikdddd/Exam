@@ -1,7 +1,6 @@
 import CommentModel from "../models/CommentModel.js";
 import {validationResult} from "express-validator";
 import ModelsWorker from "../utils/modelsWorker.js";
-import {_decodeImageToString} from "../utils/fsWorker.js";
 
 const modelWorker = new ModelsWorker(CommentModel);
 

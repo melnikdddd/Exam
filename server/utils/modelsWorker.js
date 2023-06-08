@@ -80,7 +80,7 @@ class ModelsWorker {
                     return false;
                 }
                 const decodedImages = _decodingImagesFromArray(images);
-                this.#imagesWorker.array["#service"].replaceDecodedImages(document, decodedImages);
+                this.#imagesWorker.array["service"].replaceDecodedImages(document, decodedImages);
             },
             remove: (document, indexes) =>{
                 if (!indexes){
@@ -104,7 +104,7 @@ class ModelsWorker {
                 });
                 return true;
             },
-            #service: {
+            service: {
                 replaceDecodedImages : (document, {indexes, decodedImages}) => {
                      indexes.forEach((indexes, i)=>{
                         document.images.splice(indexes, 1, decodedImages[i])
