@@ -4,8 +4,15 @@ dotenv.config()
 
 const _checkAuth = (req, res, next) =>{
 
+
+    const authorizationToken = req.headers.authorization;
+
+    if (!authorizationToken){
+        return res.status(403).json({message: 'You are is not auth'});
+    }
+
     //get token form header and split him
-    const token = req.headers.authorization.split(' ')[1];
+    const token = authorizationToken.split(' ')[1];
 
     if(!token){
         return res.status(403).json({message: 'You are is not auth'});

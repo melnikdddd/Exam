@@ -20,8 +20,14 @@ const PostSchema = new mongoose.Schema(
             required: false,
         },
         price: {
-            type: String,
-            default: "Free",
+            numeric: {
+                type: Number,
+                default: 0
+            },
+            currency: {
+                type: String,
+                default: "UAH",
+            }
         },
         condition: {
             type: String,
@@ -36,20 +42,28 @@ const PostSchema = new mongoose.Schema(
             required: false,
         },
         rating: {
-            type: Number,
-            default: 0,
+            ratingNumber: {type: Number, default: 0},
+            votes: {type: Number, default: 0},
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true,
         },
-        images: [{
-            image: String
-        }]
+        images:{
+            type: Array,
+            default: [],
+        },
+        idOfUsersVotes: {
+            type: Array,
+            default : function (){
+                return [this.owner];
+            }
+        },
 
     },{
         timestamps: true,
+        strictPopulate: false,
     }
 )
 

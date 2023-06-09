@@ -1,6 +1,7 @@
 import PostModel from "../models/PostModel.js";
-import { _decodingImageFromPath, __dirname, _decodingImagesFromArray} from "../utils/fsWorker.js";
+import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
 import ModelsWorker from "../utils/modelsWorker.js";
+import * as constants from "constants";
 
 
 const modelsWorker = new ModelsWorker(PostModel);
@@ -11,6 +12,9 @@ class PostController {
         try {
             const body = req.body;
 
+            //userId берется из middleware функции checkAuth
+            const owner = req.userId;
+
             const decodedImages = [];
             if (req.body.files){
                 const files = req.body.files;
@@ -19,7 +23,8 @@ class PostController {
                 decodedImages.push(await _decodingImageFromPath(__dirname +'/none-file.png'));
             }
 
-            const doc = new PostModel({...body, images: decodedImages});
+
+            const doc = new PostModel({...body, images: decodedImages, owner});
 
             const post = await doc.save();
             res.json(post);
@@ -38,7 +43,7 @@ class PostController {
 
             const doc = await PostModel.findOneAndUpdate({_id: postId},
                 {$inc: {viewsCount: 1}},
-                {returnDocument: 'after'}).populate('Comments');
+                {returnDocument: 'after'}).populate('Comment');
             res.json(doc);
 
         } catch (e) {
@@ -50,25 +55,35 @@ class PostController {
     }
     removePost = async (req, res) => {
         const postId = req.params.id;
-        if (await modelsWorker.findAndDelete(postId)){
-            return res.json({success: true})
-        }
-        return res.json({success: false})
-    }
 
+        try {
+            await PostModel.findOneAndRemove({
+                _id: postId
+            })
+            res.json({success: 'true'})
+        } catch (e) {
+            res.json({success: 'false', message: e})
+        }
+    }
     editPost = async (req, res) => {
-        const postId = req.params.id;
-        const body = req.body;
+        try {
+            const postId = req.params.id;
+            const body = req.body;
 
-        const images = body.file || null;
-        const imagesOptions = {...body.imagesOptions, images, operationType: 'array'}
+            //достаю только те значения, которые можно поменять
+            const clearBody = this.#service.getBody(body);
 
-        if (await modelsWorker.findAndUpdate(postId, body, imagesOptions)) {
-            return res.json({success: true})
+            const imageOptions = this.#service.getImagesOptions(body)
+
+            const flag = await modelsWorker.findAndUpdate(postId, clearBody, imageOptions)
+
+            return res.status(200).json({success: flag});
         }
-        return res.json({success: false})
+        catch (e){
+            console.log(e);
+            return res.status(400).json({success: false, message: e})
+        }
     }
-
     getThirty = async (req, res) => {
         try {
             const startIndex = req.body.index;
@@ -79,6 +94,56 @@ class PostController {
             return res.status(500).json({message: 'Something goes wrong with DB'})
         }
     }
+    updateRating = async(req, res) =>{
+        try {
+            const userId = req.userId;
+            const {postId, rateNum} = req.body.postId;
+
+           const flag =  await PostModel.findOneAndUpdate({postId},(document)=>{
+                if(userId === document._id){
+                    return false;
+                }
+               const vote = document.idOfUsersVotes.includes(userId) ? 0 : 1;
+                document.rating = this.#service.calculateRating(document.rating, {rateNum, vote});
+                return true;
+            });
+
+            return res.status(200).json({success: flag});
+
+        } catch (Error){
+
+        }
+
+    }
+
+
+    #service = {
+        getBody: (body) =>{
+            return {
+                title: body?.title,
+                text: body?.text,
+                price: body?.price,
+                tags: body?.tags,
+                characteristics: body?.characteristics,
+                condition: body?.condition,
+                city: body?.city
+            }
+        },
+        calculateRating: (rating, {rateNum, vote}) => {
+            return {
+                votes: rating.votes + vote,
+                ratingNumber: rating.ratingNumber + rateNum
+            }
+        },
+        getImagesOptions(body){
+            return {
+                images: body.files || null,
+                imageOperation: body.imageOperation || null,
+                operationType:  "array"
+            }
+        }
+    }
+
 
 }
 

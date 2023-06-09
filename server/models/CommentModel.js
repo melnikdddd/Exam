@@ -18,6 +18,7 @@ const CommentSchema = new mongoose.Schema(
     },
     images: [{
         type: String,
+        default: [],
     }],
     post: {
         type: mongoose.Schema.Types.ObjectId,

@@ -1,4 +1,4 @@
-import {_decodingImageFromPath, __dirname, _decodingImagesFromArray} from "./fsWorker.js";
+import {_decodingImageFromPath, __dirname, _decodingImagesFromArray, _decodingImageToString} from "./fsWorker.js";
 import UserModel from "../models/UserModel.js";
 
 class ModelsWorker {
@@ -24,27 +24,37 @@ class ModelsWorker {
     //operationType - тип работы операции (массив или одно изображение)
     //params - параметры которые позже перейдут в операцию
 
-    findAndUpdate = async (id, body, {imageOperation, operationType, ...params} = null) =>{
-        try{
-            //сохраняю исходный документ, в случае ошибки сделать роллбэк
-            const prevDocument = await this.model.findById(id);
+    findAndUpdate = async (id, body, {imageOperation, operationType, ...params}) =>{
+        try {
 
-            await this.model.findOneAndUpdate({id},{...body}, (err, document)=>{
-                if (imageOperation !== null && operationType !== null){
-                    if (this.#goImagesWorker(imageOperation, operationType, {...params, document})){
-                        return true;
-                    }
-                    this.#rollback(id, prevDocument);
-                    return false;
+            const prevDocument = this.model.findById(id);
+            const document = await this.model.findOneAndUpdate({ id }, { ...body }, { new: true });
+
+            if (imageOperation != null) {
+                console.log('image exist');
+                if (this.#goImagesWorker(imageOperation, operationType, { ...params, document })) {
+                    return true;
                 }
-            });
-        }catch (e){
+                this.#rollback(id, prevDocument);
+                return false;
+            }
+
+            return true;
+        } catch (e) {
+            console.log(e);
             return false;
         }
     }
 
     //метод запуска операции
     #goImagesWorker(imageOperation, operationType, params){
+        const types = ["array", "user"];
+        const operations = ["replace", "remove", "add"];
+
+        if (!types.includes(operationType) || !operations.includes(imageOperation)){
+            return false;
+        }
+
         return this.#imagesWorker?.[operationType]?.[imageOperation](params);
     }
 
@@ -60,8 +70,8 @@ class ModelsWorker {
                 return true;
             },
             remove : async (document) =>{
-                const defaultDecodedImage =  await _decodingImageFromPath(__dirname + '/user-avatar.png');
-                this.#imagesWorker.user.replace(document, defaultDecodedImage);
+                const {data,ext} =  await _decodingImageFromPath(__dirname + '/user-avatar.png');
+                this.#imagesWorker.user.replace(document, {data, ext});
 
                 return true;
             },
@@ -69,8 +79,8 @@ class ModelsWorker {
                 if (!document || image){
                     return false;
                 }
-                const decodedImage = _decodeImageToString(image);
-                this.#imagesWorker.user.replace(document, decodedImage);
+                const {data, ext} = _decodingImageToString(image);
+                this.#imagesWorker.user.replace(document, {data, ext});
                 return true;
             },
         },
@@ -79,8 +89,8 @@ class ModelsWorker {
                 if (!indexes || !images){
                     return false;
                 }
-                const decodedImages = _decodingImagesFromArray(images);
-                this.#imagesWorker.array["service"].replaceDecodedImages(document, decodedImages);
+                const {data,ext} = _decodingImagesFromArray(images);
+                this.#imagesWorker.array["service"].replaceDecodedImages(document, {data,ext});
             },
             remove: (document, indexes) =>{
                 if (!indexes){
@@ -104,6 +114,7 @@ class ModelsWorker {
                 });
                 return true;
             },
+
             service: {
                 replaceDecodedImages : (document, {indexes, decodedImages}) => {
                      indexes.forEach((indexes, i)=>{
@@ -119,6 +130,12 @@ class ModelsWorker {
     }
 }
 
+class ModelsImagesWorker extends  ModelsWorker {
+    constructor(id, {modelImagesType, operation}, model) {
+        super(model);
+    }
+
+}
 
 export const  _checkDuplicate = async (value) =>{
     return !await UserModel.findOne({value});
