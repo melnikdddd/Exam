@@ -1,7 +1,7 @@
 import UserModel from "../models/UserModel.js";
 import {getUserPosts} from "./PostController.js";
 
-import ModelsWorker from "../utils/modelsWorker.js";
+import ModelsWorker from "../utils/db/modelsWorker.js";
 const modelWorker = new ModelsWorker(UserModel);
 class UserController{
     removeUser = async (req, res) =>{

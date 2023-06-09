@@ -2,7 +2,7 @@ import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
-import {_checkDuplicate} from "../utils/modelsWorker.js";
+import {_checkDuplicate} from "../utils/db/modelsWorker.js";
 import {_decodingImageFromPath, _decodingImageToString, __dirname} from "../utils/fsWorker.js"
 import EmailWorker from "../utils/emailWorker.js";
 import {emailStrings} from "../utils/strings.js";

@@ -2,7 +2,7 @@ import express from "express"
 import {registrationValidation, loginValidation} from "../validations/authValidatior.js";
 import AuthController from "../controllers/AuthController.js";
 import multer from "multer";
-import {_checkDuplicate} from "../utils/modelsWorker.js";
+import {_checkDuplicate} from "../utils/db/modelsWorker.js";
 const AuthRouter = express.Router();
 
 const upload = multer()

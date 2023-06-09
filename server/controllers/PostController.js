@@ -1,6 +1,6 @@
 import PostModel from "../models/PostModel.js";
 import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
-import ModelsWorker from "../utils/modelsWorker.js";
+import ModelsWorker from "../utils/db/modelsWorker.js";
 import * as constants from "constants";
 
 
@@ -91,7 +91,7 @@ class PostController {
             return res.json({...posts});
 
         } catch (error) {
-            return res.status(500).json({message: 'Something goes wrong with DB'})
+            return res.status(500).json({message: 'Something goes wrong with db'})
         }
     }
     updateRating = async(req, res) =>{
