@@ -9,13 +9,16 @@ const upload = multer();
 
 PostRouter.route('/')
     .post( _checkAuth, postValidator, upload.array('photos'), PostController.createPost)
-    .get(PostController.getThirty)
+    .get(PostController.getThirty);
+
+
+PostRouter.get('/:filters',PostController.getThirty);
 
 
 PostRouter.route('/:id')
-    .patch(_checkAuth,postValidator, upload.array('photos'), PostController.editPost)
-    .delete(_checkAuth ,PostController.removePost);
-PostRouter.get('/:id',PostController.getPost);
+    .patch(_checkAuth, postValidator, upload.array('photos'), PostController.editPost)
+    .delete(_checkAuth, PostController.removePost);
+PostRouter.get('/:id', PostController.getPost);
 
 
 

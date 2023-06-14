@@ -1,114 +1,52 @@
-import {__dirname, _decodingImageFromPath, _decodingImagesFromArray, _decodingImageToString} from "../fsWorker.js";
+import { _decodingImagesFromArray, _decodingImageToString} from "../fsWorker.js";
 import UserModel from "../../models/UserModel.js";
 
-// class ModelsWorker {
-//     constructor(model) {
-//         this.model = model;
-//     }
-//
-//     findAndDelete = async (id) =>{
-//         try{
-//             await this.model.findOneAndDelete({id});
-//             return true;
-//         }catch (e){
-//             return false;
-//         }
-//     }
-//
-//     findAndUpdate = async (id, body) => {
-//         try {
-//             const prevDocument = this.model.findById(id);
-//             await this.model.findOneAndUpdate({id}, {...body}, {new: true});
-//             return  true;
-//
-//         } catch (e) {
-//             console.log(e);
-//             return false;
-//         }
-//     }
-//
-//     //метод запуска операции
-//     #goImagesWorker(imageOperation, operationType, params){
-//         const types = ["array", "user"];
-//         const operations = ["replace", "remove", "add"];
-//
-//         if (!types.includes(operationType) || !operations.includes(imageOperation)){
-//             return false;
-//         }
-//
-//         return this.#imagesWorker?.[operationType]?.[imageOperation](params);
-//     }
-//
-//
-//     rollback = (id, prevDocument) => {
-//         this.model.findOneAndUpdate({id}, prevDocument);
-//     }
-// }
-//
-// class ModelsImagesWorker extends  ModelsWorker {
-//     constructor(id, document, imagesType, model) {
-//         super(model);
-//
-//         this.imagesType = imagesType;
-//         this.id = id;
-//         this.document = document;
-//     }
-//
-//     goWork = (operation, ...params) => {
-//         const operations = ["add", "remove", "replace"];
-//
-//         if (!operations.includes(operation)){
-//             return {success : false, message: "Error Operation"};
-//         }
-//
-//         if (this.imageType === "array"){
-//
-//         }
-//         else if (this.imagesType === "avatar"){
-//
-//         }
-//         return {success : false, message: "errorImageType"};
-//
-//     }
-//
-//     #array = {
-//         add : {
-//
-//         },
-//         replace: {
-//
-//         },
-//         remove: {
-//
-//         }
-//     }
-//     #user = {
-//
-//     }
-//
-//
-// }
 
 class ModelsWorker {
-    constructor(modelId, model) {
+    constructor(model) {
         this.model = model;
-        this.modelId = modelId;
+        this.imageWorker = null;
     }
     setImageWorkerOptions = (operation, imagesType) => {
-        this.#ImagesWorker.options = {operation, imagesType};
-    }
-
-    findAndUpdate = async (data, imagesParams) => {
-
-        if (this.#ImagesWorker.options.isCanWork) {
-
+        if(!operation){
+            return false;
         }
 
-        await this.model.findOneAndUpdate(this.modelId,{} )
+        this.imageWorker = new this.#ImagesWorker;
+        this.imageWorker.options = {operation, imagesType};
+        this.imageWorker.options.isCanWork = true;
+    }
+
+    findAndUpdate = async (id ,data, imagesParams) => {
+
+         const document = await this.model.findOne({_id: id});
+
+        if (!document){
+            return {success: false, message: "document cant find"}
+        }
+
+
+
+         if (this.imageWorker && this.imageWorker.options.isCanWork){
+             if (!this.imageWorker.goWork(document, imagesParams)){
+                return {success: false, message: "Images worker Error"};
+             }
+         }
+
+        for (const key in data){
+            document[key] = data[key];
+        }
+
+        document.save();
+        return {success: true, document}
 
     }
-    findAndRemove = async () =>{
 
+    findAndRemove = async (id) =>{
+        if (await this.model.findOneAndDelete({_id: id})){
+            return {success: false}
+        }
+        return {success: true}
     }
 
 
@@ -122,34 +60,45 @@ class ModelsWorker {
             imagesType: null,
         }
 
-        go = (...params) =>{
+        goWork = (document, ...params) =>{
             const {operation,imagesType} =  this.options;
-            const goOperation = imagesType === "array" ? this.arrayImageOperations[operation] :
-                this.avatarImageOperations[operation];
 
-            return goOperation(params)
+            const goOperation = imagesType === "array" ? this.arrayImageOperations[operation] :
+                this.singleImageOperations[operation];
+
+            const operationResult = goOperation(document[imagesType], ...params);
+
+            if (!operationResult){
+                return false;
+            }
+            document[imagesType] = operationResult;
+            return  true;
+
         }
 
-        avatarImageOperations = {
-            add : () => {
-
+        singleImageOperations = {
+            addOrReplace : (image) => {
+               return _decodingImageToString(image)
             },
+
             remove : () => {
-                // document.avatar
+                return {data: '', contentType: ''}
             },
-            replace : () =>{
-
-            }
         }
         arrayImageOperations = {
-            add: () =>{
+            add: (array, images) =>{
+                const decodedImages = _decodingImagesFromArray(images);
 
+               return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
             },
-            remove : () => {
-
+            remove : (array, indexes) => {
+                return array.filter(index=> !indexes.includes(index));
             },
-            replace : () =>{
-
+            replace : (array, images, indexes) =>{
+                const newArray = [...array];
+                return indexes.forEach((index, imagesIndex) =>{
+                    newArray[index] = images[imagesIndex]
+                })
             }
         }
     }

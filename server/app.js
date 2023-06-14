@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import MainRouter from "./routes/MainRouter.js";
 import dotenv from "dotenv";
+import limiter from "./utils/limitter.js";
+import bodyParser from "body-parser"
+
 
 dotenv.config();
 
@@ -17,6 +20,8 @@ const PORT = +process.env.PORT;
 
 app.use(express.json());
 app.use(MainRouter);
+app.use(limiter);
+app.use(bodyParser.json({limiter: '5mb'}))
 
 
 app.listen(PORT, () => {

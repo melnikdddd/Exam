@@ -1,10 +1,10 @@
 import PostModel from "../models/PostModel.js";
 import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
 import ModelsWorker from "../utils/db/modelsWorker.js";
-import * as constants from "constants";
-
-
 const modelsWorker = new ModelsWorker(PostModel);
+
+
+
 
 
 class PostController {
@@ -68,16 +68,19 @@ class PostController {
     editPost = async (req, res) => {
         try {
             const postId = req.params.id;
-            const body = req.body;
 
-            //достаю только те значения, которые можно поменять
-            const clearBody = this.#service.getBody(body);
+            const {imageOptions, ...body} = req.body;
+            const imageData = this.#service.getImagesOptions(req.files, imageOptions);
 
-            const imageOptions = this.#service.getImagesOptions(body)
 
-            const flag = await modelsWorker.findAndUpdate(postId, clearBody, imageOptions)
 
-            return res.status(200).json({success: flag});
+            //задаю только те значение, которые можно поменять
+
+            modelsWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
+
+           const result = await modelsWorker.findAndUpdate(postId, body, imageData.imagesParams);
+
+            return res.status(200).json(result);
         }
         catch (e){
             console.log(e);
@@ -86,14 +89,25 @@ class PostController {
     }
     getThirty = async (req, res) => {
         try {
-            const startIndex = req.body.index;
-            const posts = await PostModel.find().skip(startIndex).limit(30).exec();
+            const startIndex = req.body.startIndex;
+            const queryParams = req.params
+            const query = PostModel.find();
+            if (queryParams.filters){
+               const parsedFilters = this.#service.parseQueryParams(queryParams.filters)
+                console.log(parsedFilters)
+                query.where(parsedFilters);
+            }
+
+            const posts = await query.skip(startIndex).limit(30).exec();
             return res.json({...posts});
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({message: 'Something goes wrong with db'})
         }
     }
+
+    //дописать когда буду работать с фронтом
     updateRating = async(req, res) =>{
         try {
             const userId = req.userId;
@@ -118,29 +132,39 @@ class PostController {
 
 
     #service = {
-        getBody: (body) =>{
-            return {
-                title: body?.title,
-                text: body?.text,
-                price: body?.price,
-                tags: body?.tags,
-                characteristics: body?.characteristics,
-                condition: body?.condition,
-                city: body?.city
-            }
-        },
         calculateRating: (rating, {rateNum, vote}) => {
             return {
                 votes: rating.votes + vote,
                 ratingNumber: rating.ratingNumber + rateNum
             }
         },
-        getImagesOptions(body){
+        getImagesOptions(files, bodyImageOptions){
             return {
-                images: body.files || null,
-                imageOperation: body.imageOperation || null,
-                operationType:  "array"
+                imagesParams: {
+                    images: files || null,
+                    indexes: bodyImageOptions.indexes || null,
+                },
+                options: {
+                    operation: bodyImageOptions.operation|| null,
+                    operationType:  "array"
+                },
             }
+        },
+        parseQueryParams(filters){
+            const filterParams = filters.split('&');
+
+            // Создаем объект для хранения параметров фильтра
+            const filterObj = {};
+
+            // Обрабатываем каждый параметр фильтра
+            filterParams.forEach(param => {
+                const [key, value] = param.split('=');
+                // Удаляем лишние кавычки из значения
+                const processedValue = value.replace(/"/g, '');
+                filterObj[key] = processedValue;
+            });
+
+            return filterObj;
         }
     }
 

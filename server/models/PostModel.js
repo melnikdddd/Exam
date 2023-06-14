@@ -19,26 +19,27 @@ const PostSchema = new mongoose.Schema(
             default: [],
             required: false,
         },
+
         price: {
-            numeric: {
-                type: Number,
-                default: 0
-            },
-            currency: {
-                type: String,
-                default: "UAH",
-            }
+            type: Number,
+            default: 0
+        },
+        currency: {
+            type: String,
+            default: "UAH",
         },
         condition: {
             type: String,
-            default: "New",
+            default: "",
         },
         characteristics:{
             type: Object,
+            default: {"":""},
             required: false,
         },
         city: {
             type: String,
+            default: "",
             required: false,
         },
         rating: {
