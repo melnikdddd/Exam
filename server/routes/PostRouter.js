@@ -1,5 +1,5 @@
 import express from "express";
-import _checkAuth from "../utils/checkAuth.js";
+import _checkAuth from "../utils/auth/checkAuth.js";
 import PostController from "../controllers/PostController.js";
 import postValidator from "../validations/postValidator.js";
 import multer from "multer";

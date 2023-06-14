@@ -52,3 +52,6 @@ export const emailStrings = {
     </html>`
     }
 }
+
+
+export const userString = "firstname lastname phoneNumber aboutUser createdAt updatedAt rating "

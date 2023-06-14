@@ -5,10 +5,12 @@ const PostSchema = new mongoose.Schema(
         title: {
             type: String,
             required: true,
+            default: "",
         },
         text: {
             type: String,
             required: true,
+            default: "",
         },
         viewsCount: {
             type: Number,

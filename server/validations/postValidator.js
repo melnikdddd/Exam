@@ -16,10 +16,11 @@ const checkObjPropertyLength = (obj) =>{
 }
 
 const postValidator = [
-    body('title','Title must been form 6 to 15 letters.').isLength({min: 6, max: 20}),
-    body('text', 'Min length is 3 letters.').isLength({min: 8, max: 382}),
+    body('title','Title must been form 6 to 15 letters.').isLength({min: 6, max: 20}).optional(),
+    body('text', 'Min length is 3 letters.').isLength({min: 8, max: 382}).optional(),
     body('city','This must be city').isString().optional(),
     body('imageOptions',"ImageData error").isObject(),
+    body('rating').not().exists(),
     body('price','Invalid price number').isNumeric().custom(price =>{
         if (price.numeric > 1000000 || price.numeric < 0){
             throw new Error('Invalid price number')

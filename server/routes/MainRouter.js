@@ -9,7 +9,7 @@ const MainRouter = express.Router();
 
 MainRouter.use('/auth', AuthRouter);
 MainRouter.use('/posts', PostRouter);
-MainRouter.use('/me', UserRouter);
+MainRouter.use('/users', UserRouter);
 MainRouter.use('/comments', CommentsRouter);
 MainRouter.use(EachRouter);
 

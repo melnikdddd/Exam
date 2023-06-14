@@ -1,5 +1,7 @@
-import { _decodingImagesFromArray, _decodingImageToString} from "../fsWorker.js";
-import UserModel from "../../models/UserModel.js";
+import { _decodingImagesFromArray, _decodingImageToString} from "./fsWorker.js";
+import UserModel from "../models/UserModel.js";
+import CommentModel from "../models/CommentModel.js";
+import PostModel from "../models/PostModel.js";
 
 
 class ModelsWorker {
@@ -43,12 +45,17 @@ class ModelsWorker {
     }
 
     findAndRemove = async (id) =>{
-        if (await this.model.findOneAndDelete({_id: id})){
-            return {success: false}
+        const modelName = this.model.modelName + "Model";
+        if (modelName !== "CommentModel"){
+            if (!await this.#clearDependency[modelName](id)){
+                throw new Error("DEPENDENCY ERROR")
+            }
         }
-        return {success: true}
+        if (await this.model.findOneAndDelete({_id : id})){
+            return true;
+        }
+        return false;
     }
-
 
     #ImagesWorker = class extends ModelsWorker {
         constructor(modelId, model) {
@@ -103,10 +110,22 @@ class ModelsWorker {
         }
     }
 
+    #clearDependency = {
+        UserModel : async (userId) =>{
+            return !(!await PostModel.deleteMany({owner: userId})
+                && !await CommentModel.deleteMany({owner: userId})
+                && !await CommentModel.deleteMany({user: userId}))
+        },
+        PostModel : async (postId) => {
+            return !await CommentModel.deleteMany({post: postId})
+        }
+    }
 }
 
-export const  _checkDuplicate = async (value) =>{
-    return !await UserModel.findOne({value});
+export const  _checkDuplicate = async (valueType,value) =>{
+    // true - dont exists
+    //false - exists
+    return !await UserModel.findOne({[valueType]:value})
 }
 
 

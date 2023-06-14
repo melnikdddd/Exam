@@ -1,5 +1,5 @@
 import express from "express";
-import _checkAuth from "../utils/checkAuth.js";
+import _checkAuth from "../utils/auth/checkAuth.js";
 import CommentController from "../controllers/CommentController.js";
 import commentValidator from "../validations/commentsValidator.js";
 import multer from "multer";

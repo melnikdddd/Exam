@@ -2,9 +2,9 @@ import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
-import {_checkDuplicate} from "../utils/db/modelsWorker.js";
+import {_checkDuplicate} from "../utils/modelsWorker.js";
 import {_decodingImageFromPath, _decodingImageToString, __dirname} from "../utils/fsWorker.js"
-import EmailWorker from "../utils/emailWorker.js";
+import EmailWorker from "../utils/contacts/emailWorker.js";
 import {emailStrings} from "../utils/strings.js";
 
 
@@ -23,7 +23,20 @@ class AuthController {
                 return res.status(400).json(errors.array());
             }
 
+
             const body = req.body;
+
+            if (body.email){
+                if (!await _checkDuplicate("email",body.email)){
+                    return res.status(400).json({message: "This email is already exists"})
+                }
+            }
+            if (body.phoneNumber){
+                if (!await _checkDuplicate("phoneNumber",body.phoneNumber)){
+                    return res.status(400).json({message: "This phone number is already exists"})
+                }
+            }
+
 
             const {data, ext} = req.file ? _decodingImageToString(req.file) :
                 await _decodingImageFromPath(__dirname + '/user-avatar.png')
@@ -89,10 +102,8 @@ class AuthController {
     }
     checkDuplicate = async (req, res) =>{
         const value = req.body.value;
-       if (await _checkDuplicate({value})){
-           return res.json({exists: true})
-       }
-        return res.json({exists: false})
+       return !await _checkDuplicate({value});
+
     }
     verification = async (req, res) =>{
         const {verificationType} = req.body;
@@ -132,6 +143,8 @@ class AuthController {
                 _id: _id,
             }, process.env.JWT_PRIVATE_KEY,{expiresIn: '30d'});
     }
+
+
 
     #bcrypt ={
         secretNumber: process.env.BCRYPT_NUMBER,

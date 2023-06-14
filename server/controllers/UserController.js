@@ -1,47 +1,70 @@
 import UserModel from "../models/UserModel.js";
 import {getUserPosts} from "./PostController.js";
-
-import ModelsWorker from "../utils/db/modelsWorker.js";
+import {userString} from "../utils/strings.js";
+import ModelsWorker from "../utils/modelsWorker.js";
 const modelWorker = new ModelsWorker(UserModel);
+
+
+
 class UserController{
     removeUser = async (req, res) =>{
         const userId = req.params.id;
-        if(await modelWorker.findAndDelete(userId,)) {
-           return res.json({success: true})
+        if (userId !== req.userId){
+            return res.status(450).json({message:"You cant do it"})
+        }
+        if(await modelWorker.findAndRemove(userId)) {
+           return res.json({success: true,})
         }
         return res.json({success: false})
 
     }
     editUser = async (req, res) =>{
-        const {userId} = req.params.id;
-        const body = req.body;
+        const userId = req.params.id;
 
-        const image = body.file || null;
-        const imagesOptions = {...body.imagesOptions, image, operationType: 'user'}
-
-        if (await modelWorker.findAndUpdate(userId, body, imagesOptions)) {
-            return res.json({success: true});
+        if (userId !== req.userId){
+            return res.status(450).json({message:"You cant do it"})
         }
-        return res.json({success: false});
+
+        const {imageOptions, rating,...body} = req.body;
+        const imageData = this.#service.getImagesOptions(req.file, imageOptions);
+
+        modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
+
+        const result = await modelWorker.findAndUpdate(userId, body, imageData.imagesParams);
+
+        return res.json({result});
     }
     getUser = async (req, res) =>{
         try {
             const userId = req.params.id;
-            const user = await UserModel.findById(userId).populate('Comments');
+            const user = await UserModel.findById(userId).select(userString);
             if(!user){
                 return res.status(404).json({message: 'User can`t find'});
             }
 
-            const posts = await getUserPosts(user._id);
-            const userData = {email,passwordHash,...user};
+            const posts = await getUserPosts(userId);
 
-            res.json({...userData, ...posts});
+
+            res.status(200).json({user: user,posts: posts});
 
         } catch (error){
-            res.status(500).send(error);
+            console.log(error);
+            res.status(500).send("Try later");
         }
     }
-
+    #service = {
+        getImagesOptions(file, bodyImageOptions){
+            return {
+                imagesParams: {
+                    image: file || null,
+                },
+                options: {
+                    operation: bodyImageOptions?.operation,
+                    operationType:  "user"
+                },
+            }
+        },
+    }
 }
 
 export default new UserController;

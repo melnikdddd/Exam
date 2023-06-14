@@ -1,6 +1,6 @@
 import CommentModel from "../models/CommentModel.js";
 import {validationResult} from "express-validator";
-import ModelsWorker from "../utils/db/modelsWorker.js";
+import ModelsWorker from "../utils/modelsWorker.js";
 
 const modelWorker = new ModelsWorker(CommentModel);
 
@@ -25,7 +25,7 @@ class CommentController {
     }
     editComment = async (req, res) =>{
         const commentId = req.params.id;
-        const body = req.body;
+        const {rating, ...body} = req.body;
 
         const images = body.file || null;
         const imagesOptions = {...body.imagesOptions, images, operationType: "array"}
@@ -42,7 +42,7 @@ class CommentController {
                 return res.status(400).json({message: 'Request body is missing',});
             }
 
-            const body = req.body;
+            const {rating, ...body} = req.body;
 
             const doc = new CommentModel(...body)
             await doc.save();

@@ -13,10 +13,12 @@ const UserSchema = new mongoose.Schema(
         },
         email: {
             type: String,
+            unique: false,
             default: "",
         },
         phoneNumber: {
             type: String,
+            unique: false,
             default: "",
         },
         city: {
@@ -27,9 +29,9 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        rating:{
-            type: Number,
-            default: 0,
+        rating: {
+            ratingNumber: {type: Number, default: 0},
+            votes: {type: Number, default: 0},
         },
         userAvatar:{
             data: Buffer,
@@ -50,6 +52,5 @@ const UserSchema = new mongoose.Schema(
 
 
 
-UserSchema.plugin(uniqueValidator);
 
 export default mongoose.model('User', UserSchema);

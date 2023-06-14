@@ -1,6 +1,6 @@
 import PostModel from "../models/PostModel.js";
 import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
-import ModelsWorker from "../utils/db/modelsWorker.js";
+import ModelsWorker from "../utils/modelsWorker.js";
 const modelsWorker = new ModelsWorker(PostModel);
 
 
@@ -10,7 +10,7 @@ const modelsWorker = new ModelsWorker(PostModel);
 class PostController {
     createPost = async (req, res) => {
         try {
-            const body = req.body;
+            const {rating, ...body} = req.body;
 
             //userId берется из middleware функции checkAuth
             const owner = req.userId;
@@ -55,6 +55,10 @@ class PostController {
     }
     removePost = async (req, res) => {
         const postId = req.params.id;
+        const userId = req.body.userId;
+        if (userId !== req.userId){
+            return res.status(450).json({message:'you cant do it'})
+        }
 
         try {
             await PostModel.findOneAndRemove({
@@ -68,8 +72,13 @@ class PostController {
     editPost = async (req, res) => {
         try {
             const postId = req.params.id;
+            const userId = req.body.userId;
 
-            const {imageOptions, ...body} = req.body;
+            if (req.userId !== userId){
+                return res.status(450).json({message: "you cant do it"})
+            }
+
+            const {imageOptions, rating, ...body} = req.body;
             const imageData = this.#service.getImagesOptions(req.files, imageOptions);
 
 
@@ -141,11 +150,11 @@ class PostController {
         getImagesOptions(files, bodyImageOptions){
             return {
                 imagesParams: {
-                    images: files || null,
-                    indexes: bodyImageOptions.indexes || null,
+                    images: files,
+                    indexes: bodyImageOptions?.indexes
                 },
                 options: {
-                    operation: bodyImageOptions.operation|| null,
+                    operation: bodyImageOptions?.operation,
                     operationType:  "array"
                 },
             }
@@ -173,10 +182,11 @@ class PostController {
 
 export const getUserPosts = async (ownerId) => {
     try {
-        return await PostModel.find({ownerId}).populate('User').exec();
+        return await PostModel.find({owner: ownerId}).populate('User').exec();
     } catch (e) {
         return false;
     }
 }
+
 
 export default new PostController;

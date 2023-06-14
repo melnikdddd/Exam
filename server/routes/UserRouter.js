@@ -1,7 +1,8 @@
 import express from "express";
-import _checkAuth from "../utils/checkAuth.js";
+import _checkAuth from "../utils/auth/checkAuth.js";
 import UserController from "../controllers/UserController.js";
 import multer from "multer";
+import {userValidation} from "../validations/userValidator.js";
 
 
 const upload = multer()
@@ -13,7 +14,7 @@ UserRouter.use(_checkAuth);
 UserRouter.get('/:id', UserController.getUser);
 
 UserRouter.route('/:id')
-    .patch(upload.single('avatar'), UserController.editUser)
-    .delete(UserController.removeUser);
+    .patch(_checkAuth, userValidation, upload.single('avatar'), UserController.editUser)
+    .delete(_checkAuth ,UserController.removeUser);
 
 export default UserRouter;
