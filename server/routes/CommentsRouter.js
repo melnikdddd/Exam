@@ -1,7 +1,7 @@
 import express from "express";
 import _checkAuth from "../utils/auth/checkAuth.js";
 import CommentController from "../controllers/CommentController.js";
-import commentValidator from "../validations/commentsValidator.js";
+import commentValidator from "../validations/CommentValidator.js";
 import multer from "multer";
 
 const upload = multer();

@@ -1,5 +1,5 @@
 import UserModel from "../models/UserModel.js";
-import {getUserPosts} from "./PostController.js";
+import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/strings.js";
 import ModelsWorker from "../utils/modelsWorker.js";
 const modelWorker = new ModelsWorker(UserModel);
@@ -42,10 +42,10 @@ class UserController{
                 return res.status(404).json({message: 'User can`t find'});
             }
 
-            const posts = await getUserPosts(userId);
+            const products = await getUserProducts(userId);
 
 
-            res.status(200).json({user: user,posts: posts});
+            res.status(200).json({user: user,products: products});
 
         } catch (error){
             console.log(error);

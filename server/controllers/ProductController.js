@@ -1,14 +1,14 @@
-import PostModel from "../models/PostModel.js";
 import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
 import ModelsWorker from "../utils/modelsWorker.js";
-const modelsWorker = new ModelsWorker(PostModel);
+import ProductModel from "../models/ProductModel.js";
+const modelsWorker = new ModelsWorker(ProductModel);
 
 
 
 
 
-class PostController {
-    createPost = async (req, res) => {
+class ProductController {
+    createProduct = async (req, res) => {
         try {
             const {rating, ...body} = req.body;
 
@@ -24,10 +24,10 @@ class PostController {
             }
 
 
-            const doc = new PostModel({...body, images: decodedImages, owner});
+            const doc = new ProductModel({...body, images: decodedImages, owner});
 
-            const post = await doc.save();
-            res.json(post);
+            const product = await doc.save();
+            res.json(product);
 
         } catch (err) {
             console.log(err);
@@ -37,11 +37,11 @@ class PostController {
 
         }
     }
-    getPost = async (req, res) => {
+    getProduct = async (req, res) => {
         try {
-            const postId = req.params.id;
+            const productId = req.params.id;
 
-            const doc = await PostModel.findOneAndUpdate({_id: postId},
+            const doc = await ProductModel.findOneAndUpdate({_id: productId},
                 {$inc: {viewsCount: 1}},
                 {returnDocument: 'after'}).populate('Comment');
             res.json(doc);
@@ -53,25 +53,25 @@ class PostController {
             })
         }
     }
-    removePost = async (req, res) => {
-        const postId = req.params.id;
+    removeProduct = async (req, res) => {
+        const productId = req.params.id;
         const userId = req.body.userId;
         if (userId !== req.userId){
             return res.status(450).json({message:'you cant do it'})
         }
 
         try {
-            await PostModel.findOneAndRemove({
-                _id: postId
+            await ProductModel.findOneAndRemove({
+                _id: productId
             })
             res.json({success: 'true'})
         } catch (e) {
             res.json({success: 'false', message: e})
         }
     }
-    editPost = async (req, res) => {
+    editProduct = async (req, res) => {
         try {
-            const postId = req.params.id;
+            const productId = req.params.id;
             const userId = req.body.userId;
 
             if (req.userId !== userId){
@@ -87,7 +87,7 @@ class PostController {
 
             modelsWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
 
-           const result = await modelsWorker.findAndUpdate(postId, body, imageData.imagesParams);
+           const result = await modelsWorker.findAndUpdate(productId, body, imageData.imagesParams);
 
             return res.status(200).json(result);
         }
@@ -100,15 +100,15 @@ class PostController {
         try {
             const startIndex = req.body.startIndex;
             const queryParams = req.params
-            const query = PostModel.find();
+            const query = ProductModelf.find();
             if (queryParams.filters){
                const parsedFilters = this.#service.parseQueryParams(queryParams.filters)
                 console.log(parsedFilters)
                 query.where(parsedFilters);
             }
 
-            const posts = await query.skip(startIndex).limit(30).exec();
-            return res.json({...posts});
+            const products = await query.skip(startIndex).limit(30).exec();
+            return res.json({...products});
 
         } catch (error) {
             console.log(error)
@@ -120,9 +120,9 @@ class PostController {
     updateRating = async(req, res) =>{
         try {
             const userId = req.userId;
-            const {postId, rateNum} = req.body.postId;
+            const {productId, rateNum} = req.body.productId;
 
-           const flag =  await PostModel.findOneAndUpdate({postId},(document)=>{
+           const flag =  await ProductModel.findOneAndUpdate({productId},(document)=>{
                 if(userId === document._id){
                     return false;
                 }
@@ -180,13 +180,13 @@ class PostController {
 
 }
 
-export const getUserPosts = async (ownerId) => {
+export const getUserProducts = async (ownerId) => {
     try {
-        return await PostModel.find({owner: ownerId}).populate('User').exec();
+        return await ProductModel.find({owner: ownerId}).populate('User').exec();
     } catch (e) {
         return false;
     }
 }
 
 
-export default new PostController;
+export default new ProductController;

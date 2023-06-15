@@ -20,9 +20,9 @@ const CommentSchema = new mongoose.Schema(
         type: String,
         default: [],
     }],
-    post: {
+    product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
+        ref: 'Product',
         required: false,
     },
     user: {

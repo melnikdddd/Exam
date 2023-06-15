@@ -15,7 +15,7 @@ const checkObjPropertyLength = (obj) =>{
     return true;
 }
 
-const postValidator = [
+const productValidator = [
     body('title','Title must been form 6 to 15 letters.').isLength({min: 6, max: 20}).optional(),
     body('text', 'Min length is 3 letters.').isLength({min: 8, max: 382}).optional(),
     body('city','This must be city').isString().optional(),
@@ -53,4 +53,4 @@ const postValidator = [
     })
 ]
 
-export default postValidator
+export default productValidator

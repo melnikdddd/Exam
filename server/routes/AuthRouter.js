@@ -1,5 +1,5 @@
 import express from "express"
-import {userValidation, loginValidation} from "../validations/userValidator.js";
+import {userValidation, loginValidation} from "../validations/UserValidator.js";
 import AuthController from "../controllers/AuthController.js";
 import multer from "multer";
 import {_checkDuplicate} from "../utils/modelsWorker.js";

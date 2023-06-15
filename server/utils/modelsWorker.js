@@ -1,7 +1,7 @@
 import { _decodingImagesFromArray, _decodingImageToString} from "./fsWorker.js";
 import UserModel from "../models/UserModel.js";
 import CommentModel from "../models/CommentModel.js";
-import PostModel from "../models/PostModel.js";
+import ProductModel from "../models/ProductModel.js";
 
 
 class ModelsWorker {
@@ -112,12 +112,12 @@ class ModelsWorker {
 
     #clearDependency = {
         UserModel : async (userId) =>{
-            return !(!await PostModel.deleteMany({owner: userId})
+            return !(!await ProductModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({user: userId}))
         },
-        PostModel : async (postId) => {
-            return !await CommentModel.deleteMany({post: postId})
+        ProductModel : async (productId) => {
+            return !await CommentModel.deleteMany({product: productId})
         }
     }
 }

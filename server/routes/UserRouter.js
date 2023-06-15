@@ -2,7 +2,7 @@ import express from "express";
 import _checkAuth from "../utils/auth/checkAuth.js";
 import UserController from "../controllers/UserController.js";
 import multer from "multer";
-import {userValidation} from "../validations/userValidator.js";
+import {userValidation} from "../validations/UserValidator.js";
 
 
 const upload = multer()
