@@ -1,0 +1,10 @@
+.AuthCard {
+  @apply shadow-xl;
+  background: white;
+  width: 400px;
+  padding: 32px;
+  border-radius: 15px;
+  border: 0.1px solid black;
+  display: flex;
+  flex-direction: column;
+}

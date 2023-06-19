@@ -1,11 +1,12 @@
 import styles from "./footer.module.scss";
+import Container from "../Wrapper/Container/Container";
 
 function Footer() {
     return (
         <footer>
-            <div className="container">
+            <Container>
                 <h1>Footer</h1>
-            </div>
+            </Container>
         </footer>
     );
 }

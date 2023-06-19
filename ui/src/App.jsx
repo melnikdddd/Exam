@@ -1,17 +1,17 @@
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
-import Choose from "./pages/Auth/Choose/Choose";
+import Login from "./pages/Auth/Login/Login";
+import Registration from "./pages/Auth/Registration/Registration";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
     <Route path={"/"} element={<Layout/>}>
         <Route index path={'/'}/>
         <Route path={"/auth"}>
-            <Route path={"choose"} element={<Choose/>}/>
-            <Route path={"login"}/>
-            <Route path={"registration"}/>
+            <Route path={"login"} element={<Login/>}/>
+            <Route path={"registration"} element={<Registration/>}/>
         </Route>
-        <Route path={'/products'}>
+        <Route path={'/market'}>
             <Route path={":id"}/>
             <Route path={":id/edit"}/>
             <Route path={":id/new"}/>

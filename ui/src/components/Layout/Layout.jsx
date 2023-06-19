@@ -1,18 +1,16 @@
 import Header from "../Header/Header";
 import {Outlet} from "react-router";
 import Footer from "../Footer/Footer";
-import "./Layout.scss"
+import styles from "./Layout.module.scss"
 function Layout(){
     return (
-        <>
+        <div className={styles.wrapper}>
             <Header/>
             <main>
-                <div className="container">
-                    <Outlet/>
-                </div>
+                <Outlet/>
             </main>
             <Footer/>
-        </>
+        </div>
     )
 }
 

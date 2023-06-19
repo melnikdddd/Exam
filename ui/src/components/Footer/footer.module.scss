@@ -1,7 +1,10 @@
 footer{
   width: 100%;
-  position: absolute;
-  bottom: 0;
+  height: 280px;
   background: black;
-  color: whitesmoke;
+border-top: 1px solid black;
+
+  @media (max-width: 1000px) {
+    display: none;
+  }
 }

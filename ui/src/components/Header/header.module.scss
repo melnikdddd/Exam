@@ -1,0 +1,63 @@
+.header{
+  @apply bg-gray-50 w-full m-0 h-16;
+
+}
+.nav{
+  @apply flex flex-row justify-between items-center py-3;
+}
+.navItems{
+    @apply flex justify-between;
+
+  .navItem{
+    padding: 5px 10px;
+    margin: 0 10px;
+    border-radius: 10px;
+    &:hover{
+      background: dodgerblue;
+      transition: 0.3s;
+      color: white;
+    }
+  }
+}
+
+.logo{
+  @apply font-bold  text-2xl;
+  border-radius: 10px;
+  padding: 10px 15px;
+  &:hover{
+    background: goldenrod;
+    transition: 0.3s;
+  }
+}
+
+.products{
+  @apply  text-lg;
+padding: 5px 15px;
+  border-radius: 10px;
+  &:hover{
+    color: white;
+    background: dodgerblue;
+    transition: 0.3s;
+
+  }
+}
+
+.login{
+  padding: 10px 15px;
+  background:dodgerblue;
+  border-radius: 10px;
+  &:hover{
+    background: cornflowerblue;
+    transition: 0.2s;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px; /* Пример: ограничение максимальной ширины контейнера */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px; /* Пример: внутренний отступ слева */
+  padding-right: 20px; /* Пример: внутренний отступ справа */
+  box-sizing: border-box; /* Пример: включение внешних и внутренних отступов в ширину контейнера */
+}
