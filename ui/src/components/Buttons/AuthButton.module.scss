@@ -1,6 +1,14 @@
-.buttonSubmit{
-  &:hover{
-    background: dodgerblue;
-    transition: 0.3s;
-  };
+.buttonSubmit {
+  &:not([disabled]) {
+    &:hover {
+      cursor: pointer;
+      background: dodgerblue;
+      transition: 0.3s;
+    }
+  }
+
+  &[disabled] {
+    background: #8697a4;
+    color: white;
+  }
 }

@@ -4,7 +4,7 @@ import styles from "./AuthInput.module.scss"
 function AuthInput(props){
 
     return (
-        <input name={props.name} type="text" placeholder={props.placeholder} className={styles.input}/>
+        <input type={props.type} {...props.register} placeholder={props.placeholder} className={styles.input}/>
     )
 }
 export default AuthInput;
