@@ -8,3 +8,16 @@
   display: flex;
   flex-direction: column;
 }
+
+.HelperCard {
+  @apply shadow-xl;
+  background: white;
+  padding: 15px;
+  height: 270px;
+  width: 300px;
+  border-radius: 15px;
+  border: 0.1px solid black;
+  display: flex;
+  flex-direction: column;
+  margin-left: 390px;
+}

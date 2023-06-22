@@ -3,4 +3,7 @@
   &:focus{
     background: white;
   }
+  &[disabled]{
+    @apply text-gray-500;
+  }
 }

@@ -4,7 +4,7 @@
   justify-content: space-between;
 }
 main{
-  height: 920px;
+  min-height: 900px;
   @media (max-width: 1000px) {
     height: 1200px;
   }

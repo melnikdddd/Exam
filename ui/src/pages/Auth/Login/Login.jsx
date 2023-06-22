@@ -54,7 +54,7 @@ function Login() {
         <BackGround background={"linear-gradient(129deg, #008000, #6c93e8)"}>
         <Container>
         <CenterWrapper>
-            <AuthCard height={"550px"}>
+            <AuthCard height={"560px"}>
                 <h1 className={textStyles.title}>
                     Sign in to your account.
                 </h1>
