@@ -1,5 +1,5 @@
 import {NavLink} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import zxcvbn from "zxcvbn"
 
@@ -15,9 +15,12 @@ import AuthButton from "../../../components/Buttons/AuthButton";
 
 
 
-import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
+import {checkDuplicate, initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+import Terms from "../../../components/Terms/Terms";
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 function Registration(){
 
@@ -25,29 +28,17 @@ function Registration(){
     const [identityType, setIdentity] = useState(initialIdentityValues.identityType);
     const [message, setMessage] = useState(initialIdentityValues.message);
 
+    const [passwordReliability, setPasswordReliability] = useState("");
+    const [firstEffect, setFirstEffect] = useState(true);
+
+
     const [isIdentityFocus, setIsIdentityFocus] = useState(false);
     const [isPasswordFocus, setIsPasswordFocus] = useState(false);
 
-    const setFocus = (set) =>{
-        set(true);
-    }
-    const setBlur = (set) =>{
-        set(false);
-    }
+    const [showTerms, setShowTerms] = useState(false);
 
-    const passwordRegex = {
-        mainRegex: /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/,
-        length: /^.{8,15}$/,
-        latin: /^[A-Za-z0-9]+$/,
-
-        checkOnRegex(regex) {
-            if (password.length !== 0){
-              return regex.test(password) ? "text-green-700" : "text-red-700";
-            }
-            return "text-black";
-        },
-}
-
+    //dbdubplicate
+    const [duplicateStr, setDuplicateStr] = useState("");
 
     const {
         register,
@@ -55,6 +46,7 @@ function Registration(){
         handleSubmit,
         watch,
         reset,
+        setValue,
     } = useForm({mode: "onChange"});
 
     const colors = {
@@ -66,13 +58,31 @@ function Registration(){
         white: "bg-white",
     }
 
+    const passwordRegex = {
+        mainRegex: /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/,
+        length: /^.{8,15}$/,
+        latin: /^[^\u0400-\u04FF]+$/,
+
+        checkOnRegex(regex) {
+            if (password.length !== 0){
+                return regex.test(password) ? "text-green-700" : "text-red-700";
+            }
+            return "text-black";
+        },
+    }
 
     const identityValue = watch('identity');
     const password = watch('password');
 
-    const [passwordReliability, setPasswordReliability] = useState("");
+    const setFocus = (set) =>{
+        set(true);
+    }
+    const setBlur = (set) =>{
+        set(false);
+    }
 
-    const [firstEffect, setFirstEffect] = useState(true);
+
+
 
     useEffect(() => {
         if (firstEffect){
@@ -86,10 +96,9 @@ function Registration(){
         const score = zxcvbn(password).score;
         setPasswordReliability(colors[score]);
     },[password]);
-    useEffect(()=>{
+    useEffect( ()=>{
         setIdentityValue(identityValue, {setRegex, setIdentity, setMessage});
     },[identityValue]);
-
 
 
     const onSubmit = (data) =>{
@@ -105,12 +114,20 @@ function Registration(){
         }
     };
 
+    const handleSpanClick = () => {
+        setShowTerms(true);
+    };
+    const handleCloseClick = () =>{
+        setShowTerms(false);
+    }
+
+
 
     return (
         <BackGround background={"linear-gradient(90deg, #C33764, #1D2671)"}>
             <Container>
                     <CenterWrapper>
-                    <AuthCard height={"1050px"}>
+                    <AuthCard height={"790px"}>
                         <h1 className={textStyles.title}>Sign up and join to our Marketplace.</h1>
                         <form onSubmit={handleSubmit(onSubmit)} className={"w-full flex flex-col mb-3"}>
                             <div className={"flex flex-col mt-3"}>
@@ -125,9 +142,7 @@ function Registration(){
                                            onFocus={() => setFocus(setIsIdentityFocus)}
                                            placeholder={"Email or phone number"} />
                                 <AuthErrorMessage condition={errors?.identity} message={errors?.identity?.message}/>
-
-                                {isIdentityFocus &&
-                                <HelperCard  height={"200px"}>
+                                {isIdentityFocus && <HelperCard  height={"200px"}>
                                     <div>
                                         <div className={"mb-3 flex flex-col"}>
                                             <lebel>Email</lebel>
@@ -244,15 +259,10 @@ function Registration(){
                                 </div>
                             </div>
                             <hr className={"my-3"}/>
-                            <div className={"text-center flex items-center flex-col"}>
-                                <p className={"text-lg"}>Avatar</p>
-                                <div className={"rounded-full border border-black h-52 w-52 mt-3"}></div>
-                            </div>
-                            <hr className={"my-3"}/>
                             <div className={"flex-1 flex flex-col"}>
                                 <div className={"flex flex-row justify-around"}>
                                     <input type="checkbox" {...register('terms', {required: "This is required."})}/>
-                                    <p>I accept the <NavLink to={"/terms"} className={"text-blue-500 underline hover:text-black transition"}>terms of the user agreement</NavLink>.</p>
+                                    <p>I accept the <span className={"text-blue-500 underline hover:text-black transition cursor-pointer"} onClick={handleSpanClick}>terms of the user agreement</span>.</p>
                                 </div>
                                 <AuthErrorMessage condition={errors?.terms} message={errors?.terms?.message}/>
                             </div>
@@ -261,6 +271,12 @@ function Registration(){
                             </div>
                         </form>
                     </AuthCard>
+                        <div className={"absolute"} style={{width: "580px"}}>
+                            {showTerms && <Terms>
+                                <FontAwesomeIcon icon={faXmark} className={"h-7 w-7 cursor-pointer bg-red-500 rounded hover:bg-red-400 transition-colors"}
+                                onClick={handleCloseClick}/>
+                            </Terms>}
+                        </div>
                     </CenterWrapper>
             </Container>
         </BackGround>

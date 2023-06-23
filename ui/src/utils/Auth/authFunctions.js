@@ -2,20 +2,21 @@ import axios from "../Axios/axios";
 
 export function checkIdentityValue(value){
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+    const phoneNumberRegex = /^\+\d{12}$/;
 
 
-    if (!value){
-        return {i: 'Email or phone number', r : /^/, m: ""}
-    }
-
-   if (value.startsWith('+')){
-        return {i: "Phone number", r : phoneNumberRegex, m: "Invalid phone number"};
-    }
-    else {
-        return {i: "Email", r : emailRegex, m: "Invalid email"};
-    }
-
+   if (!value){
+       return {i: 'Email or phone number', r : /^/, m: ""}
+   }
+   if (value.length > 2){
+       if (phoneNumberRegex.test(value) || /^\+\d{2,12}$/.test(value)){
+           return {i: "Phone number", r : phoneNumberRegex, m: "Invalid phone number"};
+       }
+       else if (emailRegex.test(value) || /^[a-zA-Z0-9]{5}@/){
+           return {i: "Email", r : emailRegex, m: "Invalid email"};
+       }
+   }
+     return {i: 'Email or phone number', r : /^/, m: ""}
 
 }
 
@@ -25,9 +26,9 @@ export const initialIdentityValues = {
         message: "",
 }
 
-export const checkDuplicate = async (value) =>{
-    const { flag } = await axios.post("/auth/checkDuplicate",{value});
-    return flag;
+export const checkDuplicate = async (valueType, value) =>{
+    const response = await axios.post("/auth/checkDuplicate",{valueType: valueType,value: value});
+    return response.data.flag;
 }
 
 
