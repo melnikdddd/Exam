@@ -2,11 +2,13 @@ import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider } f
 import Layout from "./components/Layout/Layout";
 import Login from "./pages/Auth/Login/Login";
 import Registration from "./pages/Auth/Registration/Registration";
+import Home from "./pages/Home/Home";
+import Error from "./pages/Erorr/Error";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
     <Route path={"/"} element={<Layout/>}>
-        <Route index path={'/'}/>
+        <Route path={'/home'} element={<Home/>}/>
         <Route path={"/auth"}>
             <Route path={"login"} element={<Login/>}/>
             <Route path={"registration"} element={<Registration/>}/>
@@ -22,6 +24,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
         </Route>
         <Route path={"/terms"}/>
         <Route path={"/contacts"}/>
+        <Route path="*" element={<Error error={"Not found"}/>} />
     </Route>
 ))
 

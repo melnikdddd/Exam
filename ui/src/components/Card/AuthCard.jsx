@@ -1,10 +1,10 @@
-import styles from "./AuthCard.module.scss"
+import styles from "./Card.module.scss"
 import {useState} from "react";
 
 function AuthCard(props){
 
     return(
-        <div className={styles.AuthCard}
+        <div className={styles.Card}
              style={{height: props.height, width: props.width}}>
             {props.children}
         </div>

@@ -7,7 +7,7 @@ function Header() {
            <Container>
                <div className={styles.nav}>
                         <div className="nav-logo">
-                            <NavLink to={"/"} className={styles.logo}>iMarketPlace</NavLink>
+                            <NavLink to={"/home"} className={styles.logo}>iMarketPlace</NavLink>
                         </div>
                    <div className={styles.navItems}>
                        <NavLink to={"/market"} className={styles.products}>Market</NavLink>

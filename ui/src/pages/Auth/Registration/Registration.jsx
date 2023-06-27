@@ -1,6 +1,7 @@
-import {NavLink} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
+
 import zxcvbn from "zxcvbn"
 
 import textStyles from "../../../styles/textStyles.module.scss"
@@ -14,13 +15,17 @@ import AuthInput from "../../../components/Inputs/AuthInput";
 import AuthButton from "../../../components/Buttons/AuthButton";
 
 
-
-import {checkDuplicate, initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
+import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 import Terms from "../../../components/Terms/Terms";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
+
+
+import axios from "../../../utils/Axios/axios";
+
+
 
 function Registration(){
 
@@ -37,16 +42,14 @@ function Registration(){
 
     const [showTerms, setShowTerms] = useState(false);
 
-    //dbdubplicate
-    const [duplicateStr, setDuplicateStr] = useState("");
+    const navigate = useNavigate();
 
     const {
         register,
         formState: { errors, isValid},
         handleSubmit,
         watch,
-        reset,
-        setValue,
+        setError,
     } = useForm({mode: "onChange"});
 
     const colors = {
@@ -81,9 +84,6 @@ function Registration(){
         set(false);
     }
 
-
-
-
     useEffect(() => {
         if (firstEffect){
             setFirstEffect(false);
@@ -101,16 +101,36 @@ function Registration(){
     },[identityValue]);
 
 
-    const onSubmit = (data) =>{
-        alert(data);
-        reset();
+    const onSubmit = async (data) =>{
+
+        const identityT = identityType === "Email" ? "email" : "phoneNumber";
+        const {identity, repeatPassword, terms, ...dataForSending} = data;
+        dataForSending[identityT] = identity;
+
+        try {
+            const response = await axios.post('/auth/registration', {...dataForSending});
+
+            if (response?.data.success === true){
+                navigate('/home');
+                return;
+            }
+
+        } catch (error){
+            if (error.response.status === 409){
+                setError("identity",{
+                    type: "validate",
+                    message : `This ${identityType.toLowerCase()} is already exits.`,
+                });
+            }
+
+        }
     }
 
     const validateRepeatPassword = (value) => {
         if (value === password) {
             return true;
         } else {
-            return 'Passwords must match';
+            return 'Passwords must match.';
         }
     };
 
@@ -145,11 +165,11 @@ function Registration(){
                                 {isIdentityFocus && <HelperCard  height={"200px"}>
                                     <div>
                                         <div className={"mb-3 flex flex-col"}>
-                                            <lebel>Email</lebel>
+                                            <label>Email</label>
                                             <AuthInput disabled={true} value={"Example@mail.com"}/>
                                         </div>
                                         <div className={"mt-4 flex flex-col"}>
-                                            <lebel>Phone number</lebel>
+                                            <label>Phone number</label>
                                             <AuthInput disabled={true} value={"+380001112233"}/>
                                         </div>
                                     </div>

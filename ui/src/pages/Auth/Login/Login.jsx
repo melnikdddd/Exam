@@ -1,4 +1,4 @@
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 
@@ -17,12 +17,14 @@ import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 
 import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+import axios from "../../../utils/Axios/axios";
 
 function Login() {
 
     const [regex, setRegex] = useState(initialIdentityValues.regex);
     const [identityType, setIdentity] = useState(initialIdentityValues.identityType);
     const [message, setMessage] = useState(initialIdentityValues.message);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -33,11 +35,13 @@ function Login() {
         handleSubmit,
         reset,
         watch,
+        setError,
     } = useForm({
-        mode: "onBlur"
+        mode: "onChange"
     });
 
     const identityValue = watch('identity');
+    const passwordValue = watch('password');
 
     useEffect(()=>{
         setIdentityValue(identityValue, {setRegex, setIdentity, setMessage});
@@ -45,16 +49,44 @@ function Login() {
 
 
 
-    const onSubmit = (data) =>{
-        alert(JSON.stringify(data));
-        reset();
+    const onSubmit = async (data) =>{
+        const identityT = identityType === "Email" ? 'email' : 'phoneNumber';
+        const dataForSend = {
+            [identityT] : identityValue,
+            password: passwordValue,
+        }
+        try {
+            const response = await axios.post('/auth/login', dataForSend);
+            if (response?.data.success === true){
+                navigate('/home');
+                return;
+            }
+
+        }catch (error){
+            if (error.response.status === 401){
+                console.log(401)
+                setError("password", {
+                    message: "Invalid password.",
+                    type: "validate",
+                })
+                return;
+            }
+            if (error.response.status === 404){
+                console.log(404)
+                setError("identity", {
+                    message: `Invalid ${identityType.toLowerCase()}.`,
+                    type: "validate",
+                })
+                return;
+            }
+        }
     }
 
     return (
         <BackGround background={"linear-gradient(129deg, #008000, #6c93e8)"}>
         <Container>
         <CenterWrapper>
-            <AuthCard height={"560px"}>
+            <AuthCard height={"590px"}>
                 <h1 className={textStyles.title}>
                     Sign in to your account.
                 </h1>
@@ -71,16 +103,21 @@ function Login() {
                                    placeholder={"Email or phone number"}/>
                         <AuthErrorMessage condition={errors?.identity} message={errors?.identity?.message}/>
                     </div>
-
                     <div className={"mt-3 flex-1 flex flex-col"}>
                         <label form={"password"}>Password</label>
-                        <AuthInput register={{...register('password',
+                        <AuthInput register={{
+                            ...register('password',
                                 {
                                     required: "Field is required.",
                                     minLength: {
                                         value: 8,
-                                        message: "Minimum 8 characters."
-                                    },})
+                                        message: "Password too short."
+                                    },
+                                    maxLength: {
+                                        value: 15,
+                                        message: "Password too long."
+                                    }
+                                })
                         }}
                                    placeholder={"Password"}
                                     type={"password"}/>
@@ -90,7 +127,17 @@ function Login() {
                     <AuthButton text={"Sign in"} disabled={!isValid}/>
                     </div>
                 </form>
-                <p className={"w-full text-center"}>Don’t have an account yet? <NavLink to={'/auth/registration'} className={"text-blue-500 font-bold underline " + styles.registrationLink}>Sign Up</NavLink></p>
+                <p className={"w-full text-center"}>Don’t have an account yet?
+                    <NavLink to={'/auth/registration'} className={"text-blue-500 font-bold underline " + styles.registrationLink}>
+                        <span> Sign Up.</span>
+                    </NavLink>
+                </p>
+                <p className={"text-center mt-3"}>
+                    <NavLink to={'/forgot'} className={"underline text-blue-500 font-bold " + styles.registrationLink}>
+                    Сan't sign in?
+                </NavLink>
+                </p>
+
                 <div className={"flex items-center my-3"}>
                     <hr className={"mx-2 flex-grow bg-gray-200 h-0.5"}/>
                     <span className={"text-gray-700"}>or</span>
