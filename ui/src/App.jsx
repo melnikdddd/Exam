@@ -4,14 +4,23 @@ import Login from "./pages/Auth/Login/Login";
 import Registration from "./pages/Auth/Registration/Registration";
 import Home from "./pages/Home/Home";
 import Error from "./pages/Erorr/Error";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
     <Route path={"/"} element={<Layout/>}>
         <Route path={'/home'} element={<Home/>}/>
-        <Route path={"/auth"}>
-            <Route path={"login"} element={<Login/>}/>
-            <Route path={"registration"} element={<Registration/>}/>
+        <Route path={"/auth"} isAuthNeed={false}>
+            <Route path={"login"} element={
+                <PrivateRoute isAuthNeed={false}>
+                    <Login/>
+                </PrivateRoute>
+            }/>
+            <Route path={"registration"} element={
+                <PrivateRoute isAuthNeed={false}>
+                    <Registration/>
+                </PrivateRoute>
+            }/>
         </Route>
         <Route path={'/market'}>
             <Route path={":id"}/>

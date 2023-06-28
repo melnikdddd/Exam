@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
 
 const UserSchema = new mongoose.Schema(
     {
@@ -41,6 +40,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: false,
             default: '',
+        },
+        isActivate :{
+            type: Boolean,
+            default: 'false',
         }
 
     },

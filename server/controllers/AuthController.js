@@ -26,27 +26,26 @@ class AuthController {
 
             const body = req.body;
 
+
             if (body.email){
-                if (!await _checkDuplicate("email",body.email)){
-                    return res.status(400).json({message: "This email is already exists"})
+                if (await _checkDuplicate(["email"],body.email)){
+                    return res.status(409).json({success: "Duplicate error", message: "This email is already exists"})
                 }
             }
+
             if (body.phoneNumber){
-                if (!await _checkDuplicate("phoneNumber",body.phoneNumber)){
-                    return res.status(400).json({message: "This phone number is already exists"})
+                if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)){
+                    return res.status(409).json({success: "Duplicate error" ,message: "This phone number is already exists"})
                 }
             }
 
-
-            const {data, ext} = req.file ? _decodingImageToString(req.file) :
-                await _decodingImageFromPath(__dirname + '/user-avatar.png')
 
             const {password, ...userData} = body;
             const hashPassword =  await this.#bcrypt.genPassword(password);
 
 
             const doc = new UserModel(
-                {...userData, hashPassword, userAvatar: {data, contentType: `image/${ext}`}});
+                {...userData, hashPassword});
 
 
             const userId = doc._id;
@@ -54,30 +53,34 @@ class AuthController {
 
             await doc.save();
 
-            res.json({...userData, token});
+            res.status(200).json({success: true, user: {...userData}, token: token});
 
         } catch (error) {
             console.log(error)
-            res.status(500).json(error);
+            res.status(500).json({success: false, message: "Something going wrong."});
         }
     }
     login = async (req, res) => {
         try {
-            const {email, password} = req.body;
+            const password = req.body.password;
+            const identity = req.body?.email || req.body.phoneNumber;
+            const identityType = req.body?.email ? "email" : "phoneNumber";
 
-            const user = await UserModel.findOne({email});
+            const user = await UserModel.findOne({[identityType] : identity});
 
             if (!user) {
                 return res.status(404).json({
-                    message: 'Wrong data'
+                  success : "User cant find",
                 })
             }
 
-            const isValidPass = this.#bcrypt.readHashPassword(password, user.hashPassword);
+
+
+            const isValidPass = await this.#bcrypt.readHashPassword(password, user.hashPassword);
 
             if (!isValidPass) {
-                return res.status(404).json({
-                    message: 'Invalid login or password'
+                return res.status(401).json({
+                    success: 'Invalid login or password'
                 })
             }
 
@@ -93,7 +96,11 @@ class AuthController {
                 id: userId,
             }
 
-            res.json({...userData, token})
+            res.json({
+                success: true,
+                user: userData,
+                token : token
+            })
 
         } catch (error) {
             console.log(error);
@@ -101,9 +108,9 @@ class AuthController {
         }
     }
     checkDuplicate = async (req, res) =>{
-        const value = req.body.value;
-       return !await _checkDuplicate({value});
-
+        const {valueType, value} = req.body;
+        const flag = await _checkDuplicate(valueType, value);
+        res.status(200).json({flag: flag});
     }
     verification = async (req, res) =>{
         const {verificationType} = req.body;

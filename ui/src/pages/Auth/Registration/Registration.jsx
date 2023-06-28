@@ -13,9 +13,6 @@ import Container from "../../../components/Wrapper/Container/Container";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import AuthInput from "../../../components/Inputs/AuthInput";
 import AuthButton from "../../../components/Buttons/AuthButton";
-
-
-import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 import Terms from "../../../components/Terms/Terms";
 
@@ -24,13 +21,16 @@ import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 
 import axios from "../../../utils/Axios/axios";
+import {initialIdentityValues, setIdentityValue, colors, passwordRegex} from "../../../utils/Auth/authFunctions";
 
+import {useDispatch} from "react-redux";
 
+import {setToken} from "../../../store/slices/AuthSlice";
 
 function Registration(){
 
     const [regex, setRegex] = useState(initialIdentityValues.regex);
-    const [identityType, setIdentity] = useState(initialIdentityValues.identityType);
+    const [identityType, setIdentityType] = useState(initialIdentityValues.identityType);
     const [message, setMessage] = useState(initialIdentityValues.message);
 
     const [passwordReliability, setPasswordReliability] = useState("");
@@ -44,6 +44,8 @@ function Registration(){
 
     const navigate = useNavigate();
 
+    const dispatch = useDispatch();
+
     const {
         register,
         formState: { errors, isValid},
@@ -52,27 +54,7 @@ function Registration(){
         setError,
     } = useForm({mode: "onChange"});
 
-    const colors = {
-        0: "bg-orange-700",
-        1: "bg-orange-500",
-        2: "bg-green-300",
-        3: "bg-green-500",
-        4: "bg-green-700",
-        white: "bg-white",
-    }
 
-    const passwordRegex = {
-        mainRegex: /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/,
-        length: /^.{8,15}$/,
-        latin: /^[^\u0400-\u04FF]+$/,
-
-        checkOnRegex(regex) {
-            if (password.length !== 0){
-                return regex.test(password) ? "text-green-700" : "text-red-700";
-            }
-            return "text-black";
-        },
-    }
 
     const identityValue = watch('identity');
     const password = watch('password');
@@ -96,8 +78,8 @@ function Registration(){
         const score = zxcvbn(password).score;
         setPasswordReliability(colors[score]);
     },[password]);
-    useEffect( ()=>{
-        setIdentityValue(identityValue, {setRegex, setIdentity, setMessage});
+    useEffect( ()=> {
+        setIdentityValue(identityValue, {setRegex, setIdentityType, setMessage});
     },[identityValue]);
 
 
@@ -110,19 +92,24 @@ function Registration(){
         try {
             const response = await axios.post('/auth/registration', {...dataForSending});
 
-            if (response?.data.success === true){
+            if (response.data?.success === true){
+
                 navigate('/home');
                 return;
             }
 
         } catch (error){
-            if (error.response.status === 409){
+            if (error?.response?.status === 409){
                 setError("identity",{
                     type: "validate",
                     message : `This ${identityType.toLowerCase()} is already exits.`,
                 });
+                return;
             }
-
+            setError("terms", {
+                message: "Something going wrong. Try later please.",
+                type: "validate",
+            })
         }
     }
 
@@ -254,13 +241,13 @@ function Registration(){
                                            </div>
                                             <hr className={"mt-3 h-2"}/>
                                             <ul>
-                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.mainRegex)}>
+                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.mainRegex, password)}>
                                                     Contain one capital letter, one small letter, one number.
                                                 </li>
-                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.latin)}>
+                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.latin, password)}>
                                                     Contain only latin letters.
                                                 </li>
-                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.length)}>
+                                                <li className={"my-3 " + passwordRegex.checkOnRegex(passwordRegex.length, password)}>
                                                     Contain at least 8 and no more than 15 characters.
                                                 </li>
                                             </ul>

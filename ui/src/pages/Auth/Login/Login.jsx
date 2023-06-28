@@ -1,9 +1,11 @@
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink, useNavigate, useLocation} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 
+
 import styles from "./Login.module.scss";
-import textStyles from "../../../styles/textStyles.module.scss"
+import textStyles from "../../../styles/textStyles.module.scss";
+
 
 import {faGoogle, faTelegram} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -11,20 +13,33 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AuthButton from "../../../components/Buttons/AuthButton";
 import AuthInput from "../../../components/Inputs/AuthInput";
 import AuthCard from "../../../components/Card/AuthCard";
+import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+
+
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import Container from "../../../components/Wrapper/Container/Container";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 
-import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
-import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+import {setToken} from "../../../store/slices/AuthSlice";
+import {useDispatch} from "react-redux";
+
 import axios from "../../../utils/Axios/axios";
+import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
+
+
+
 
 function Login() {
 
     const [regex, setRegex] = useState(initialIdentityValues.regex);
-    const [identityType, setIdentity] = useState(initialIdentityValues.identityType);
+    const [identityType, setIdentityType] = useState(initialIdentityValues.identityType);
     const [message, setMessage] = useState(initialIdentityValues.message);
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const location = useLocation();
+    const fromPage = location.state?.from?.pathname || '/home';
 
     const {
         register,
@@ -44,7 +59,7 @@ function Login() {
     const passwordValue = watch('password');
 
     useEffect(()=>{
-        setIdentityValue(identityValue, {setRegex, setIdentity, setMessage});
+        setIdentityValue(identityValue, {setRegex, setIdentityType, setMessage});
     },[identityValue])
 
 
@@ -58,7 +73,13 @@ function Login() {
         try {
             const response = await axios.post('/auth/login', dataForSend);
             if (response?.data.success === true){
-                navigate('/home');
+                const token = response?.data.token;
+                if (!token){
+                    return
+                }
+
+                dispatch(setToken(token));
+                navigate(fromPage);
                 return;
             }
 

@@ -7,7 +7,7 @@ const AuthRouter = express.Router();
 
 const upload = multer()
 
-AuthRouter.post('/registration',userValidation, upload.single('avatar'), AuthController.registration);
+AuthRouter.post('/registration',userValidation,  AuthController.registration);
 AuthRouter.post('/login', loginValidation, AuthController.login);
 AuthRouter.post('/verification', AuthController.verification);
 AuthRouter.post('/checkDuplicate',AuthController.checkDuplicate)

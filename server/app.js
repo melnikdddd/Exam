@@ -4,7 +4,7 @@ import MainRouter from "./routes/MainRouter.js";
 import dotenv from "dotenv";
 import limiter from "./utils/limitter.js";
 import bodyParser from "body-parser"
-
+import cors from "cors"
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ mongoose
 const app = express();
 
 const PORT = +process.env.PORT;
-
+app.use(cors())
 app.use(express.json());
 app.use(MainRouter);
 app.use(limiter);

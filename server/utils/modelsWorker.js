@@ -122,10 +122,11 @@ class ModelsWorker {
     }
 }
 
-export const  _checkDuplicate = async (valueType,value) =>{
-    // true - dont exists
-    //false - exists
-    return !await UserModel.findOne({[valueType]:value})
+export const  _checkDuplicate = async (valueType, value) =>{
+    // true -  exists
+    //false - dont exists
+    const user = await UserModel.findOne({[valueType]: value});
+    return !!user;
 }
 
 

@@ -6,17 +6,17 @@ export function checkIdentityValue(value){
 
 
    if (!value){
-       return {i: 'Email or phone number', r : /^/, m: ""}
+       return {identityType: 'Email or phone number', regex : /^/, m: ""}
    }
    if (value.length > 2){
        if (phoneNumberRegex.test(value) || /^\+\d{2,12}$/.test(value)){
-           return {i: "Phone number", r : phoneNumberRegex, m: "Invalid phone number"};
+           return {identityType: "Phone number", regex : phoneNumberRegex, message: "Invalid phone number"};
        }
        else if (emailRegex.test(value) || /^[a-zA-Z0-9]{5}@/){
-           return {i: "Email", r : emailRegex, m: "Invalid email"};
+           return {identityType: "Email", regex : emailRegex, message: "Invalid email"};
        }
    }
-     return {i: 'Email or phone number', r : /^/, m: ""}
+     return {identityType: 'Email or phone number', regex : /^/, message: ""}
 
 }
 
@@ -26,21 +26,38 @@ export const initialIdentityValues = {
         message: "",
 }
 
-export const checkDuplicate = async (valueType, value) =>{
-    const response = await axios.post("/auth/checkDuplicate",{valueType: valueType,value: value});
-    return response.data.flag;
+
+export const setIdentityValue = (identityValue, {setRegex, setIdentityType, setMessage}) =>{
+    if (identityValue){
+        const {identityType, regex, message} = checkIdentityValue(identityValue);
+        setIdentityType(identityType);
+        setRegex(regex);
+        setMessage(message)
+        return;
+    }
+    setRegex(initialIdentityValues.regex);
+    setIdentityType(initialIdentityValues.identityType);
+    setMessage(initialIdentityValues.message);
 }
 
+export const colors = {
+    0: "bg-orange-700",
+    1: "bg-orange-500",
+    2: "bg-green-300",
+    3: "bg-green-500",
+    4: "bg-green-700",
+    white: "bg-white",
+}
 
-export const setIdentityValue = (identityValue, {setRegex, setIdentity, setMessage}) =>{
-    if (identityValue){
-        const {i, r, m} = checkIdentityValue(identityValue);
-        setRegex(r);
-        setIdentity(i);
-        setMessage(m)
-    } else {
-        setRegex(initialIdentityValues.regex);
-        setIdentity(initialIdentityValues.identityType);
-        setMessage(initialIdentityValues.message);
-    }
+export const passwordRegex =  {
+    mainRegex: /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/,
+    length: /^.{8,15}$/,
+    latin: /^[^\u0400-\u04FF]+$/,
+
+    checkOnRegex(regex, password) {
+        if (password.length !== 0){
+            return regex.test(password) ? "text-green-700" : "text-red-700";
+        }
+        return "text-black";
+    },
 }
