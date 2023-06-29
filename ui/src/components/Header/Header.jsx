@@ -1,7 +1,14 @@
 import {NavLink} from "react-router-dom";
 import styles from "./header.module.scss"
 import Container from "../Wrapper/Container/Container";
+import {useSelector} from "react-redux";
+import {selectIsAuth} from "../../store/slices/AuthSlice";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
+
 function Header() {
+    const isAuth = useSelector(selectIsAuth);
+    
     return (
         <header className={styles.header} >
            <Container>
@@ -17,7 +24,11 @@ function Header() {
                        <NavLink to={"/help"} className={styles.navItem}>Help</NavLink>
                    </div>
                    <div className="nav-auth">
-                        <NavLink to={"/auth/login"} className={styles.login}>Login</NavLink>
+                       {
+                           isAuth === true ? 
+                               <NavLink to={`users/`}><FontAwesomeIcon icon={faUser}/></NavLink>
+                               :  <NavLink to={"/auth/login"} className={styles.login}>Login</NavLink>
+                       }
                    </div>
                </div>
            </Container>

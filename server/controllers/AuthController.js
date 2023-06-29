@@ -18,9 +18,10 @@ dotenv.config();
 class AuthController {
     registration = async (req, res) => {
         try {
+
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(400).json(errors.array());
+                return res.status(400).json({success: false, message: "Wrong data"});
             }
 
 
@@ -51,7 +52,9 @@ class AuthController {
             const userId = doc._id;
             const token = this.#createToken(userId);
 
+
             await doc.save();
+
 
             res.status(200).json({success: true, user: {...userData}, token: token});
 

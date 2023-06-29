@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 dotenv.config()
 
 const _checkAuth = (req, res, next) =>{
-
-
     const authorizationToken = req.headers.authorization;
 
     if (!authorizationToken){

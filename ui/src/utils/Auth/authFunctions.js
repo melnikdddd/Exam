@@ -1,4 +1,3 @@
-import axios from "../Axios/axios";
 
 export function checkIdentityValue(value){
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -60,4 +59,85 @@ export const passwordRegex =  {
         }
         return "text-black";
     },
+}
+
+
+
+export const setAuth = (token, dispatch, setToken)=>{
+    dispatch(setToken(token));
+    window.localStorage.setItem('token', token);
+}
+export const removeAuth = () => {
+
+}
+
+export const loginErrors = {
+    [401]: {
+        field: "password",
+        options: {
+            message : "Invalid password.",
+            type: "validate",
+        }
+    },
+    [404]: {
+        field: "identity",
+        options: {
+            message :  identityType => `Invalid ${identityType.toLowerCase()}.`,
+            type: "validate"
+        }
+    },
+    [500]: {
+        field: "identity",
+        options: {
+            message: "Something going wrong, try later please.",
+            type: "validate"
+        }
+    }
+
+}
+
+export const registrationErrors = {
+    [400]:{
+      field: "terms",
+      options: {
+          message: "Wrong data.",
+          type: "validation",
+      }
+    },
+    [409]: {
+        field: "identity",
+        options: {
+            message: identityType => `This ${identityType.toLowerCase()} already exists.`,
+            type: "validate",
+        }
+    },
+    [500]: {
+        field: "terms",
+        options: {
+            message: "Something going wrong. Try later please.",
+            type: "validate",
+        }
+    },
+    [404]: {
+        field: "terms",
+        options: {
+            message: "Something going wrong. Try later please.",
+            type: "validate",
+        }
+    }
+}
+
+export const errorHandler = (errorsType ,status, setError, identityType) => {
+    const errorData = errorsType[status];
+
+
+    if (typeof errorData.options.message === 'function'){
+        setError(errorData.field, {
+            message: errorData.options.message(identityType),
+            type : errorData.options.type,
+        })
+        return;
+    }
+
+    setError(errorData.field, errorData.options)
 }

@@ -23,8 +23,14 @@ import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import {setToken} from "../../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 
-import axios from "../../../utils/Axios/axios";
-import {initialIdentityValues, setIdentityValue} from "../../../utils/Auth/authFunctions";
+import {fetchLogin, fetchPost} from "../../../utils/Axios/functions";
+import {
+    errorHandler,
+    initialIdentityValues,
+    loginErrors,
+    setAuth,
+    setIdentityValue
+} from "../../../utils/Auth/authFunctions";
 
 
 
@@ -70,37 +76,15 @@ function Login() {
             [identityT] : identityValue,
             password: passwordValue,
         }
-        try {
-            const response = await axios.post('/auth/login', dataForSend);
-            if (response?.data.success === true){
-                const token = response?.data.token;
-                if (!token){
-                    return
-                }
 
-                dispatch(setToken(token));
-                navigate(fromPage);
-                return;
-            }
+        const responseData = await fetchPost("/auth/login", dataForSend);
 
-        }catch (error){
-            if (error.response.status === 401){
-                console.log(401)
-                setError("password", {
-                    message: "Invalid password.",
-                    type: "validate",
-                })
-                return;
-            }
-            if (error.response.status === 404){
-                console.log(404)
-                setError("identity", {
-                    message: `Invalid ${identityType.toLowerCase()}.`,
-                    type: "validate",
-                })
-                return;
-            }
+        if (responseData.success === false){
+            errorHandler(loginErrors, responseData.status, setError, identityType);
+               return;
         }
+        setAuth(responseData.data.token, dispatch, setToken);
+        navigate(fromPage);
     }
 
     return (

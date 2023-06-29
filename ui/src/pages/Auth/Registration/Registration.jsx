@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 import zxcvbn from "zxcvbn"
 
@@ -20,8 +20,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 
-import axios from "../../../utils/Axios/axios";
-import {initialIdentityValues, setIdentityValue, colors, passwordRegex} from "../../../utils/Auth/authFunctions";
+import {fetchPost, fetchRegistration} from "../../../utils/Axios/functions";
+import {
+    initialIdentityValues,
+    setIdentityValue,
+    colors,
+    passwordRegex,
+    loginErrors, errorHandler, registrationErrors, setAuth
+} from "../../../utils/Auth/authFunctions";
 
 import {useDispatch} from "react-redux";
 
@@ -43,6 +49,8 @@ function Registration(){
     const [showTerms, setShowTerms] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const fromPage = location.state?.from?.pathname || '/home';
 
     const dispatch = useDispatch();
 
@@ -84,33 +92,19 @@ function Registration(){
 
 
     const onSubmit = async (data) =>{
-
         const identityT = identityType === "Email" ? "email" : "phoneNumber";
         const {identity, repeatPassword, terms, ...dataForSending} = data;
         dataForSending[identityT] = identity;
 
-        try {
-            const response = await axios.post('/auth/registration', {...dataForSending});
+        const responseData = await fetchPost("/auth/registration", dataForSending);
 
-            if (response.data?.success === true){
-
-                navigate('/home');
-                return;
-            }
-
-        } catch (error){
-            if (error?.response?.status === 409){
-                setError("identity",{
-                    type: "validate",
-                    message : `This ${identityType.toLowerCase()} is already exits.`,
-                });
-                return;
-            }
-            setError("terms", {
-                message: "Something going wrong. Try later please.",
-                type: "validate",
-            })
+        if (responseData.success === false){
+            errorHandler(registrationErrors, responseData.status, setError, identityType);
+            return;
         }
+
+        setAuth(responseData.token, dispatch, setToken);
+        navigate(fromPage);
     }
 
     const validateRepeatPassword = (value) => {

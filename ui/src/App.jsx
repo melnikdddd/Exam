@@ -5,6 +5,9 @@ import Registration from "./pages/Auth/Registration/Registration";
 import Home from "./pages/Home/Home";
 import Error from "./pages/Erorr/Error";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import {useDispatch} from "react-redux";
+import {useEffect} from "react";
+import {setToken} from "./store/slices/AuthSlice";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -38,6 +41,14 @@ const routes = createBrowserRouter(createRoutesFromElements(
 ))
 
 function App (){
+    const dispatch = useDispatch();
+    useEffect(() => {
+     const token = window.localStorage.getItem('token');
+     if (token){
+         dispatch(setToken(token));
+     }
+    }, []);
+
     return (
         <>
             <RouterProvider router={routes}/>

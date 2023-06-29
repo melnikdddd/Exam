@@ -1,26 +1,16 @@
 import nodemailer from "nodemailer";
-import {google} from "googleapis";
 
 import dotenv from "dotenv";
 dotenv.config();
-
-
-const oAuth2 = google.auth.OAuth2;
-const oAuth2Client = new oAuth2(process.env.GOOGLE_OAUTH_CLIENT, process.env.GOOGLE_OAUTH_SECRET_KEY);
-
-oAuth2Client.setCredentials({refresh_token :  process.env.GOOGLE_OAUTH_REFRESH_TOKEN});
-
-const accessToken = oAuth2Client.getAccessToken();
-
 class EmailWorker {
     constructor() {
          this.mailTransporter = nodemailer.createTransport({
-             type: 'oAuth2',
-             user: process.env.EMAIL_ADDRESS,
-             clientId: process.env.GOOGLE_OAUTH_CLIENT,
-             clientSecret: process.env.GOOGLE_OAUTH_SECRET_KEY,
-             refreshToken: process.env.GOOGLE_OAUTH_REFRESH_TOKEN,
-             accessToken: accessToken
+             service: "gmail",
+             auth :{
+                 user: process.env.GOOGLE_USERNAME,
+                 pass: process.env.GOOGLE_PASSWORD,
+             },
+
          })
     }
 
