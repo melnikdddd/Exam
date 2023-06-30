@@ -1,3 +1,6 @@
+import {setToken} from "../../store/slices/AuthSlice";
+import {fetchUserByToken} from "../Axios/functions";
+import {setUserData} from "../../store/slices/UserDataSlice";
 
 export function checkIdentityValue(value){
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -24,7 +27,6 @@ export const initialIdentityValues = {
         identityType: "Email or phone number",
         message: "",
 }
-
 
 export const setIdentityValue = (identityValue, {setRegex, setIdentityType, setMessage}) =>{
     if (identityValue){
@@ -61,14 +63,19 @@ export const passwordRegex =  {
     },
 }
 
-
-
-export const setAuth = (token, dispatch, setToken)=>{
+export const login = (dispatch, {token, setToken}, {setUserData, userData})=>{
     dispatch(setToken(token));
+    dispatch(setUserData(userData));
+
+    //setUserDataInLocalStorage(userData);
     window.localStorage.setItem('token', token);
 }
-export const removeAuth = () => {
+export const logout = (dispatch, clearToken, clearUserData) => {
+    dispatch(clearToken());
+    dispatch(clearUserData());
 
+    //window.localStorage.removeItem("userData");
+    window.localStorage.removeItem("token");
 }
 
 export const loginErrors = {
@@ -100,7 +107,7 @@ export const registrationErrors = {
     [400]:{
       field: "terms",
       options: {
-          message: "Wrong data.",
+          message: "Wrong fields. Try again please",
           type: "validation",
       }
     },
@@ -130,7 +137,6 @@ export const registrationErrors = {
 export const errorHandler = (errorsType ,status, setError, identityType) => {
     const errorData = errorsType[status];
 
-
     if (typeof errorData.options.message === 'function'){
         setError(errorData.field, {
             message: errorData.options.message(identityType),
@@ -140,4 +146,25 @@ export const errorHandler = (errorsType ,status, setError, identityType) => {
     }
 
     setError(errorData.field, errorData.options)
+}
+
+export const getAuthResponseValues = (response) =>{
+    return {token: response.data.token, userData: response.data.user}
+}
+
+export const firstEffectEntry = async (dispatch) =>{
+    const token = window.localStorage.getItem('token');
+    if (token) {
+        const userData = await fetchUserByToken();
+        if (!userData){
+            window.localStorage.removeItem('token');
+            return;
+        }
+
+        dispatch(setUserData(userData))
+        dispatch(setToken(token));
+        return;
+    }
+    window.localStorage.removeItem('token');
+
 }

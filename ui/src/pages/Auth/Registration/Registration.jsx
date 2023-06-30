@@ -26,7 +26,7 @@ import {
     setIdentityValue,
     colors,
     passwordRegex,
-    loginErrors, errorHandler, registrationErrors, setAuth
+    loginErrors, errorHandler, registrationErrors, login
 } from "../../../utils/Auth/authFunctions";
 
 import {useDispatch} from "react-redux";
@@ -103,7 +103,7 @@ function Registration(){
             return;
         }
 
-        setAuth(responseData.token, dispatch, setToken);
+        login(responseData.data.token, dispatch, setToken);
         navigate(fromPage);
     }
 

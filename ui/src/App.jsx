@@ -8,6 +8,8 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import {useDispatch} from "react-redux";
 import {useEffect} from "react";
 import {setToken} from "./store/slices/AuthSlice";
+import {fetchUser} from "./utils/Axios/functions";
+import {firstEffectEntry} from "./utils/Auth/authFunctions";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -42,11 +44,13 @@ const routes = createBrowserRouter(createRoutesFromElements(
 
 function App (){
     const dispatch = useDispatch();
+
     useEffect(() => {
-     const token = window.localStorage.getItem('token');
-     if (token){
-         dispatch(setToken(token));
-     }
+        const fetchData = async () => {
+            await firstEffectEntry(dispatch);
+        };
+
+        fetchData();
     }, []);
 
     return (

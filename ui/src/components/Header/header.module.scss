@@ -25,7 +25,8 @@
   border-radius: 10px;
   padding: 10px 15px;
   &:hover{
-    background: goldenrod;
+    outline: 1px solid black;
+    background: gold;
     transition: 0.3s;
   }
 }
@@ -50,6 +51,9 @@ padding: 5px 15px;
     background: cornflowerblue;
     transition: 0.2s;
   }
+}
+.authNav{
+  width: 8%;
 }
 
 .container {

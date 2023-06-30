@@ -23,14 +23,15 @@ import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import {setToken} from "../../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 
-import {fetchLogin, fetchPost} from "../../../utils/Axios/functions";
+import {fetchPost} from "../../../utils/Axios/functions";
 import {
     errorHandler,
     initialIdentityValues,
     loginErrors,
-    setAuth,
-    setIdentityValue
+    login,
+    setIdentityValue, getAuthResponseValues
 } from "../../../utils/Auth/authFunctions";
+import {setUserData} from "../../../store/slices/UserDataSlice";
 
 
 
@@ -83,8 +84,11 @@ function Login() {
             errorHandler(loginErrors, responseData.status, setError, identityType);
                return;
         }
-        setAuth(responseData.data.token, dispatch, setToken);
-        navigate(fromPage);
+        const {token, userData} = getAuthResponseValues(responseData);
+
+
+        login(dispatch, {token, setToken}, {setUserData, userData});
+         navigate(fromPage);
     }
 
     return (
