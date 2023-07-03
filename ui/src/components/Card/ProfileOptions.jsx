@@ -5,6 +5,7 @@ import {clearToken} from "../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 import {clearUserData} from "../../store/slices/UserDataSlice"
 import {useEffect} from "react";
+import DecodedImageFromBase64 from "../Images/DecodedImage";
 
 
 
@@ -14,15 +15,16 @@ function ProfileOptions(props) {
         logout(dispatch, clearToken, clearUserData);
     }
 
-
+    const userData = props.userData;
 
     return (
         <div className={styles.profileOptions}>
-            <img className="w-15 h-15 rounded-full" src={props.userImage} alt="userAvatar"/>
+            <NavLink to={`users/${userData._id}`}>
+                <DecodedImageFromBase64 data={userData.userAvatar.data} ext={userData.userAvatar.ext} className="w-16 h-16 rounded-full"/>
+            </NavLink>
             <div>
-            <span>{props.firstname}</span> <span>{props.lastname}</span>
+            <span>{userData.firstname}</span> <span>{userData.lastname}</span>
             </div>
-            <NavLink to={`users/${props.id}`}>My profile</NavLink>
             <button className={"py-1 px-2 hover:bg-red-400 hover:text-black transition-colors rounded cursor-pointer bg-red-500"} onClick={handleLogoutClick}>Logout</button>
         </div>
     );

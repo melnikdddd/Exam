@@ -2,6 +2,8 @@ import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/strings.js";
 import ModelsWorker from "../utils/modelsWorker.js";
+import jwt from "jsonwebtoken";
+import Jwt from "../utils/auth/jwt.js";
 const modelWorker = new ModelsWorker(UserModel);
 
 
@@ -36,12 +38,20 @@ class UserController{
     }
     getUser = async (req, res) =>{
         try {
-            const userId = req.params.id;
-            const user = await UserModel.findById(userId).select(userString);
-            if(!user){
-                return res.status(404).json({message: 'User can`t find'});
+            const  userId = req.params.id;
+            if (!userId){
+                return res.status(400).json({success: 400, message: "Bad request."})
             }
 
+            const isProductsNeed = req.body;
+            const user = await UserModel.findById(userId).select(userString);
+
+            if(!user){
+                return res.status(404).json({success: false, message: 'User can`t find.'});
+            }
+            if (!isProductsNeed){
+                return  res.status(200).json({success: true, user: user});
+            }
             const products = await getUserProducts(userId);
 
 
@@ -52,6 +62,29 @@ class UserController{
             res.status(500).send("Try later");
         }
     }
+
+    getUserByToken = async (req, res) =>{
+        const userId = req.userId;
+
+        if (!userId) return res.status(400).json({success: false, message: "Bad request."});
+
+        const user = await UserModel.findById(userId).select(userString);
+
+        if(!user){
+            return res.status(404).json({success: false, message: 'User can`t find.'});
+        }
+
+        return res.status(200).json({success: true, userData : user});
+    }
+
+    getUserProducts = async (req, res) =>{
+        const ownerId = req.body.userId;
+
+        const products = await getUserProducts(ownerId);
+
+        res.status(200).json(products);
+    }
+
     #service = {
         getImagesOptions(file, bodyImageOptions){
             return {

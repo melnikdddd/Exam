@@ -54,4 +54,4 @@ export const emailStrings = {
 }
 
 
-export const userString = "firstname lastname phoneNumber aboutUser createdAt updatedAt rating "
+export const userString = "firstname lastname email phoneNumber aboutUser createdAt updatedAt rating userAvatar";

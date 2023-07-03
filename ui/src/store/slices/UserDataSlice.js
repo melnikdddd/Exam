@@ -43,6 +43,7 @@ export const getUserDataFromLocalStorage = () =>{
     return  window.localStorage.getItem(JSON.parse('userData'));
 }
 
+export const selectUserData = state => state.userData.userData;
 
 export const {setUserData,updateValue, clearValue, clearUserData} = UserDataSlice.actions;
 

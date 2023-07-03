@@ -1,29 +1,30 @@
 import {NavLink} from "react-router-dom";
 import styles from "./header.module.scss"
 import Container from "../Wrapper/Container/Container";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 import {useEffect, useState} from "react";
 import ProfileOptions from "../Card/ProfileOptions";
+import {selectUserData} from "../../store/slices/UserDataSlice";
 
 function Header() {
     const isAuth = useSelector(selectIsAuth);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const userData = useSelector(selectUserData);
     const [showProfileOptions, setShowProfileOptions] = useState(false);
 
     useEffect(() => {
-        setIsLoaded(isAuth);
         setShowProfileOptions(false);
-    },[isAuth]);
+    },[]);
 
 
     const handleProfileClick = () =>{
         setShowProfileOptions(!showProfileOptions);
     }
-    
+
+
     return (
         <header className={styles.header} >
            <Container>
@@ -46,7 +47,7 @@ function Header() {
                                    <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"} onClick={handleProfileClick}/>
                                    <FontAwesomeIcon icon={faBell} id={"notificationButton"} className={"h-5 hover:bg-purple-700 hover:text-white transition-colors p-2 rounded cursor-pointer"}/>
                                    {showProfileOptions &&
-                                       <ProfileOptions id={""} />
+                                       <ProfileOptions userData={userData} />
                                    }
                                </div>
                                :  <NavLink to={"/auth/login"} className={styles.login}>Login</NavLink>

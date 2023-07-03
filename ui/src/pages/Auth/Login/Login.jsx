@@ -83,8 +83,8 @@ function Login() {
         if (responseData.success === false){
             errorHandler(loginErrors, responseData.status, setError, identityType);
                return;
-        }
-        const {token, userData} = getAuthResponseValues(responseData);
+        }        const {token, userData} = getAuthResponseValues(responseData);
+
 
 
         login(dispatch, {token, setToken}, {setUserData, userData});

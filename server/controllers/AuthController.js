@@ -1,15 +1,15 @@
 import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
-import jwt from "jsonwebtoken";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
-import {_decodingImageFromPath, _decodingImageToString, __dirname} from "../utils/fsWorker.js"
+import {_decodingImageFromPath, __dirname} from "../utils/fsWorker.js"
 import EmailWorker from "../utils/contacts/emailWorker.js";
 import {emailStrings} from "../utils/strings.js";
 
 
 import dotenv from "dotenv"
 import {_genSixDigitCode} from "../utils/someFunctions.js";
+import Jwt from "../utils/auth/jwt.js";
 dotenv.config();
 
 
@@ -40,17 +40,17 @@ class AuthController {
                 }
             }
 
-
             const {password, ...userData} = body;
             const hashPassword =  await this.#bcrypt.genPassword(password);
 
+            const decodedUserAvatar = await _decodingImageFromPath(__dirname + '/user-avatar.png')
 
             const doc = new UserModel(
-                {...userData, hashPassword});
+                {...userData, hashPassword, userAvatar: decodedUserAvatar});
 
 
             const userId = doc._id;
-            const token = this.#createToken(userId);
+            const token = Jwt.sign(userId);
 
 
             await doc.save();
@@ -77,8 +77,6 @@ class AuthController {
                 })
             }
 
-
-
             const isValidPass = await this.#bcrypt.readHashPassword(password, user.hashPassword);
 
             if (!isValidPass) {
@@ -88,7 +86,7 @@ class AuthController {
             }
 
             const userId = user._id;
-            const token = this.#createToken(userId);
+            const token = Jwt.sign(userId);
 
             const userData = {
                 firstname: user.firstname,
@@ -96,6 +94,9 @@ class AuthController {
                 email: user.email,
                 phoneNumber: user.phoneNumber,
                 userAvatar: user.userAvatar,
+                aboutUser: user.aboutUser,
+                createdAt: user.createdAt,
+                rating: user.rating,
                 id: userId,
             }
 
@@ -146,15 +147,6 @@ class AuthController {
 
 
     }
-
-    #createToken(_id) {
-        return jwt.sign(
-            {
-                _id: _id,
-            }, process.env.JWT_PRIVATE_KEY,{expiresIn: '30d'});
-    }
-
-
 
     #bcrypt ={
         secretNumber: process.env.BCRYPT_NUMBER,

@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Jwt from "./jwt.js";
 dotenv.config()
 
 const _checkAuth = (req, res, next) =>{
@@ -18,7 +18,8 @@ const _checkAuth = (req, res, next) =>{
 
     try {
         //декодирование и отправка его дальше в работу
-        const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+        const decoded =  Jwt.verify(token);
+
         req.userId = decoded._id;
         next();
 

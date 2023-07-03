@@ -26,12 +26,14 @@ import {
     setIdentityValue,
     colors,
     passwordRegex,
-    loginErrors, errorHandler, registrationErrors, login
+    errorHandler, registrationErrors,
+    login, getAuthResponseValues
 } from "../../../utils/Auth/authFunctions";
 
 import {useDispatch} from "react-redux";
 
 import {setToken} from "../../../store/slices/AuthSlice";
+import {setUserData} from "../../../store/slices/UserDataSlice";
 
 function Registration(){
 
@@ -103,7 +105,9 @@ function Registration(){
             return;
         }
 
-        login(responseData.data.token, dispatch, setToken);
+        const {token, userData} = getAuthResponseValues(responseData);
+
+        login(dispatch, {token, setToken}, {setUserData, userData});
         navigate(fromPage);
     }
 

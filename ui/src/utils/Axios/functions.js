@@ -8,6 +8,9 @@ export const fetchPost = async (path, data) => {
         return {success: true, data: response.data};
 
     } catch (error) {
+        if (!error.response.status){
+            return {success: false, status: 404}
+        }
         return {success: false, status: error.response.status}
     }
 }
@@ -15,7 +18,9 @@ export const fetchPost = async (path, data) => {
 export const fetchUserByToken = async () =>{
     try {
         const response = await axios.get(`users/getUserByToken`);
-        return response.data;
+        const userData = response.data?.userData
+
+        return  userData ? userData : false;
     }
     catch (error){
         return false;

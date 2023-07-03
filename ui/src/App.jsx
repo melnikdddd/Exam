@@ -6,10 +6,10 @@ import Home from "./pages/Home/Home";
 import Error from "./pages/Erorr/Error";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import {useDispatch} from "react-redux";
-import {useEffect} from "react";
-import {setToken} from "./store/slices/AuthSlice";
-import {fetchUser} from "./utils/Axios/functions";
+import {useEffect, useState} from "react";
 import {firstEffectEntry} from "./utils/Auth/authFunctions";
+import LoadingBlock from "./components/Loading/LoadingBlock";
+import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -43,15 +43,27 @@ const routes = createBrowserRouter(createRoutesFromElements(
 ))
 
 function App (){
+
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             await firstEffectEntry(dispatch);
+            setIsLoading(true);
         };
 
         fetchData();
     }, []);
+
+    if (!isLoading){
+        return <CenterWrapper>
+                <LoadingBlock className={"h-40 mt-60"}/>
+            </CenterWrapper>
+
+
+
+    }
 
     return (
         <>
