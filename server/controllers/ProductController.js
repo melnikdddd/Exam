@@ -1,4 +1,4 @@
-import {__dirname, _decodingImageFromPath, _decodingImagesFromArray} from "../utils/fsWorker.js";
+import {_decodingImagesFromArray} from "../utils/fsWorker.js";
 import ModelsWorker from "../utils/modelsWorker.js";
 import ProductModel from "../models/ProductModel.js";
 const modelsWorker = new ModelsWorker(ProductModel);
@@ -19,8 +19,6 @@ class ProductController {
             if (req.body.files){
                 const files = req.body.files;
                decodedImages.push(..._decodingImagesFromArray(files))
-            } else{
-                decodedImages.push(await _decodingImageFromPath(__dirname +'/none-file.png'));
             }
 
 

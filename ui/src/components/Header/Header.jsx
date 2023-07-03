@@ -1,4 +1,4 @@
-import {NavLink} from "react-router-dom";
+import {NavLink, useLocation} from "react-router-dom";
 import styles from "./header.module.scss"
 import Container from "../Wrapper/Container/Container";
 import {useSelector} from "react-redux";
@@ -7,17 +7,20 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 import {useEffect, useState} from "react";
-import ProfileOptions from "../Card/ProfileOptions";
+import ProfileWindow from "../Card/ProfileWindow";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 
 function Header() {
+    const location = useLocation()
     const isAuth = useSelector(selectIsAuth);
     const userData = useSelector(selectUserData);
     const [showProfileOptions, setShowProfileOptions] = useState(false);
 
+
     useEffect(() => {
         setShowProfileOptions(false);
-    },[]);
+    },[isAuth, location]);
+
 
 
     const handleProfileClick = () =>{
@@ -40,14 +43,17 @@ function Header() {
                        <NavLink to={"/help"} className={styles.navItem}>Help</NavLink>
                    </div>
 
-
                        {
                            isAuth === true ?
                                <div className={"flex justify-around items-center" + `${styles.navItem} ${styles.authNav}`}>
-                                   <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"} onClick={handleProfileClick}/>
+                                   {
+                                       location.pathname !== "/users/me" &&
+                                       <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"} onClick={handleProfileClick}/>
+
+                                   }
                                    <FontAwesomeIcon icon={faBell} id={"notificationButton"} className={"h-5 hover:bg-purple-700 hover:text-white transition-colors p-2 rounded cursor-pointer"}/>
                                    {showProfileOptions &&
-                                       <ProfileOptions userData={userData} />
+                                       <ProfileWindow userData={userData} />
                                    }
                                </div>
                                :  <NavLink to={"/auth/login"} className={styles.login}>Login</NavLink>

@@ -27,8 +27,6 @@ class ModelsWorker {
             return {success: false, message: "document cant find"}
         }
 
-
-
          if (this.imageWorker && this.imageWorker.options.isCanWork){
              if (!this.imageWorker.goWork(document, imagesParams)){
                 return {success: false, message: "Images worker Error"};
@@ -95,7 +93,6 @@ class ModelsWorker {
         arrayImageOperations = {
             add: (array, images) =>{
                 const decodedImages = _decodingImagesFromArray(images);
-
                return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
             },
             remove : (array, indexes) => {

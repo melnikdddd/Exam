@@ -2,7 +2,6 @@ import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
-import {_decodingImageFromPath, __dirname} from "../utils/fsWorker.js"
 import EmailWorker from "../utils/contacts/emailWorker.js";
 import {emailStrings} from "../utils/strings.js";
 
@@ -43,10 +42,9 @@ class AuthController {
             const {password, ...userData} = body;
             const hashPassword =  await this.#bcrypt.genPassword(password);
 
-            const decodedUserAvatar = await _decodingImageFromPath(__dirname + '/user-avatar.png')
 
             const doc = new UserModel(
-                {...userData, hashPassword, userAvatar: decodedUserAvatar});
+                {...userData, hashPassword});
 
 
             const userId = doc._id;

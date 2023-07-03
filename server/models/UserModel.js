@@ -33,9 +33,11 @@ const UserSchema = new mongoose.Schema(
             votes: {type: Number, default: 0},
         },
         userAvatar:{
-            data: Buffer,
-            contentType: String,
-            ext: String,
+            data: {
+                type: Buffer,
+                default: '',
+            },
+            ext:{type: String, default: ''}
         },
         aboutUser: {
             type: String,

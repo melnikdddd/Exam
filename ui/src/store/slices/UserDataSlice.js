@@ -1,7 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
+import {decodeBase64Image} from "../../components/Images/utils";
 
 const initialState = {
-  userData: {
+  data: {
       id: null,
       firstname: null,
       lastname: null,
@@ -20,7 +21,14 @@ const UserDataSlice = createSlice({
     initialState,
     reducers: {
         setUserData: (state, action) =>{
-            state.userData = action.payload;
+            const {userAvatar,...data} = action.payload;
+
+            const imageData = action.payload.userAvatar?.data | '';
+            const ext = action.payload.userAvatar?.ext | '';
+
+            data.userAvatar = decodeBase64Image(imageData, ext);
+            state.data = data;
+
         },
         clearUserData: (state, action) =>{
                 state.userData = {};
@@ -43,7 +51,9 @@ export const getUserDataFromLocalStorage = () =>{
     return  window.localStorage.getItem(JSON.parse('userData'));
 }
 
-export const selectUserData = state => state.userData.userData;
+export const selectUserData = state => state.userData.data;
+
+export const selectUserImage = state => state.userData.data.userAvatar;
 
 export const {setUserData,updateValue, clearValue, clearUserData} = UserDataSlice.actions;
 

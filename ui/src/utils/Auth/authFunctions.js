@@ -156,6 +156,7 @@ export const firstEffectEntry = async (dispatch) =>{
     const token = window.localStorage.getItem('token');
     if (token) {
         const userData = await fetchUserByToken();
+
         if (!userData){
             window.localStorage.removeItem('token');
             return;

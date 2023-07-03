@@ -1,6 +1,10 @@
-export function decodeBase64Image(base64String, ext) {
-    const base64 = String.fromCharCode.apply(null, base64String);
-    const image = new Image();
-    image.src = `data:image/${ext};base64,` + base64;
-    return image;
+export function decodeBase64Image(data, ext) {
+
+    if (!data){
+        return  process.env.PUBLIC_URL + "user-avatar.png";
+    }
+
+    const base64 = String.fromCharCode.apply(null, data);
+
+    return `data:image/${ext};base64,` + base64;
 }

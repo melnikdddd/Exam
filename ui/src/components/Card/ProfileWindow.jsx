@@ -5,11 +5,11 @@ import {clearToken} from "../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 import {clearUserData} from "../../store/slices/UserDataSlice"
 import {useEffect} from "react";
-import DecodedImageFromBase64 from "../Images/DecodedImage";
+import UserAvatar from "../Images/DecodedImage";
 
 
 
-function ProfileOptions(props) {
+function ProfileWindow(props) {
     const dispatch = useDispatch();
     const handleLogoutClick  = () =>{
         logout(dispatch, clearToken, clearUserData);
@@ -19,15 +19,15 @@ function ProfileOptions(props) {
 
     return (
         <div className={styles.profileOptions}>
-            <NavLink to={`users/${userData._id}`}>
-                <DecodedImageFromBase64 data={userData.userAvatar.data} ext={userData.userAvatar.ext} className="w-16 h-16 rounded-full"/>
+            <NavLink to={`users/me`}>
+                <UserAvatar className="w-16 h-16 rounded-full"/>
             </NavLink>
             <div>
             <span>{userData.firstname}</span> <span>{userData.lastname}</span>
             </div>
-            <button className={"py-1 px-2 hover:bg-red-400 hover:text-black transition-colors rounded cursor-pointer bg-red-500"} onClick={handleLogoutClick}>Logout</button>
+            <button className={"py-1 mt-3 px-2 hover:bg-red-400 hover:text-black transition-colors rounded cursor-pointer bg-red-500"} onClick={handleLogoutClick}>Logout</button>
         </div>
     );
 }
 
-export default ProfileOptions;
+export default ProfileWindow;

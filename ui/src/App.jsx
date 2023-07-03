@@ -10,6 +10,7 @@ import {useEffect, useState} from "react";
 import {firstEffectEntry} from "./utils/Auth/authFunctions";
 import LoadingBlock from "./components/Loading/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
+import UserProfile from "./pages/Users/UserProfile";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -33,6 +34,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
             <Route path={":id/new"}/>
         </Route>
         <Route path={"/users"}>
+            <Route path={"me"} element={<UserProfile/>}/>
             <Route path={":id"}/>
             <Route path={':id/edit'}/>
         </Route>
