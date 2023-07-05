@@ -47,7 +47,7 @@ function Header() {
                            isAuth === true ?
                                <div className={"flex justify-around items-center" + `${styles.navItem} ${styles.authNav}`}>
                                    {
-                                       location.pathname !== "/users/me" &&
+                                       location.pathname !== `/users/${userData._id}` &&
                                        <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"} onClick={handleProfileClick}/>
 
                                    }

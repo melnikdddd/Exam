@@ -19,7 +19,7 @@ function ProfileWindow(props) {
 
     return (
         <div className={styles.profileOptions}>
-            <NavLink to={`users/me`}>
+            <NavLink to={`users/${userData._id}`}>
                 <UserAvatar className="w-16 h-16 rounded-full"/>
             </NavLink>
             <div>

@@ -34,8 +34,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
             <Route path={":id/new"}/>
         </Route>
         <Route path={"/users"}>
-            <Route path={"me"} element={<UserProfile/>}/>
-            <Route path={":id"}/>
+            <Route path={":id"} element={<UserProfile/>}/>
             <Route path={':id/edit'}/>
         </Route>
         <Route path={"/terms"}/>

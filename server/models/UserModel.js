@@ -29,8 +29,8 @@ const UserSchema = new mongoose.Schema(
             required: true
         },
         rating: {
-            ratingNumber: {type: Number, default: 0},
-            votes: {type: Number, default: 0},
+            likes: {type: Number, default: 0},
+            dislikes: {type: Number, default: 0},
         },
         userAvatar:{
             data: {

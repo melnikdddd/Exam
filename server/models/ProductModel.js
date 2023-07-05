@@ -45,8 +45,8 @@ const ProductSchema = new mongoose.Schema(
             required: false,
         },
         rating: {
-            ratingNumber: {type: Number, default: 0},
-            votes: {type: Number, default: 0},
+            likes: {type: Number, default: 0},
+            dislikes: {type: Number, default: 0},
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
