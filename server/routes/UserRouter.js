@@ -10,8 +10,6 @@ const upload = multer()
 const UserRouter = express.Router();
 
 
-UserRouter.use(_checkAuth);
-
 UserRouter.get("/getUserByToken", checkAuth ,UserController.getUserByToken)
 
 UserRouter.get('/:id', UserController.getUser);

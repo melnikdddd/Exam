@@ -8,10 +8,26 @@ export const fetchPost = async (path, data) => {
         return {success: true, data: response.data};
 
     } catch (error) {
-        if (!error.response.status){
-            return {success: false, status: 404}
+        const status = error.response?.status || 500;
+
+        if (status === 500){
+            return {success: false, status: 500}
         }
-        return {success: false, status: error.response.status}
+        return {success: false, status: status}
+    }
+}
+
+export const fetchGet = async (path) =>{
+    try {
+        const response = await axios.get(path);
+        return {success: true, data: response.data};
+    } catch (error) {
+        const status = error.response?.status || 500;
+
+        if (status === 500){
+            return {success: false, status: 500}
+        }
+        return {success: false, status: status}
     }
 }
 

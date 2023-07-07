@@ -5,7 +5,7 @@ import {clearToken} from "../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 import {clearUserData} from "../../store/slices/UserDataSlice"
 import {useEffect} from "react";
-import UserAvatar from "../Images/DecodedImage";
+import UserAvatar from "../Images/UserAvatar";
 
 
 

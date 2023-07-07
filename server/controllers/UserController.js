@@ -43,15 +43,12 @@ class UserController{
                 return res.status(400).json({success: 400, message: "Bad request."})
             }
 
-            const isProductsNeed = req.body;
             const user = await UserModel.findById(userId).select(userString);
 
             if(!user){
                 return res.status(404).json({success: false, message: 'User can`t find.'});
             }
-            if (!isProductsNeed){
-                return  res.status(200).json({success: true, user: user});
-            }
+
             const products = await getUserProducts(userId);
 
 

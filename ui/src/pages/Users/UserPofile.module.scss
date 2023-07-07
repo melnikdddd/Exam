@@ -1,22 +1,31 @@
 .profileCard {
   height: 100%;
   width: 100%;
-  //display: flex;
-  //align-items: center;
-  //flex-direction: row;
-  //justify-content: space-between;
-
-  //background: linear-gradient(90deg, rgba(152,94,151,1) 0%, rgba(233,194,148,1) 0 0 / 100% 300px no-repeat);
-  background: linear-gradient(90deg, rgba(152,94,151,1), rgba(233,194,148,1)) 0 0 / 100% 250px no-repeat, white;
-
+  flex-direction: column;
+  padding: 30px 0;
 }
 
 .userInformation {
-  display: flex;
-
-
-
   .informationItem{
 
   }
+
+
+}
+
+.ratingButton{
+  @apply w-1/2 py-1 flex justify-around items-center bg-gray-100 rounded hover:bg-gray-200 transition-colors;
+  border: 1px solid gray;
+  cursor: pointer;
+
+
+  &.left{
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+  &.right{
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+  }
+
 }

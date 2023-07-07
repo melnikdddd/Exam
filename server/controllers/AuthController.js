@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
 import EmailWorker from "../utils/contacts/emailWorker.js";
-import {emailStrings} from "../utils/strings.js";
+import {emailStrings, userString} from "../utils/strings.js";
 
 
 import dotenv from "dotenv"
@@ -67,7 +67,7 @@ class AuthController {
             const identity = req.body?.email || req.body.phoneNumber;
             const identityType = req.body?.email ? "email" : "phoneNumber";
 
-            const user = await UserModel.findOne({[identityType] : identity});
+            const user = await UserModel.findOne({[identityType] : identity}).select(userString);
 
             if (!user) {
                 return res.status(404).json({
@@ -86,21 +86,10 @@ class AuthController {
             const userId = user._id;
             const token = Jwt.sign(userId);
 
-            const userData = {
-                firstname: user.firstname,
-                lastname: user.lastname,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                userAvatar: user.userAvatar,
-                aboutUser: user.aboutUser,
-                createdAt: user.createdAt,
-                rating: user.rating,
-                id: userId,
-            }
 
             res.json({
                 success: true,
-                user: userData,
+                user: user,
                 token : token
             })
 

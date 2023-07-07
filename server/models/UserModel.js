@@ -32,6 +32,12 @@ const UserSchema = new mongoose.Schema(
             likes: {type: Number, default: 0},
             dislikes: {type: Number, default: 0},
         },
+        latestOnline : {type: Date, default: null},
+        deals : {
+            purchase:{type: Number, default: 0},
+            sales:{type: Number, default: 0},
+        },
+        userStatus: {type: String, default: ''},
         userAvatar:{
             data: {
                 type: Buffer,

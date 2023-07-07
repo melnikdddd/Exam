@@ -3,7 +3,7 @@ import {decodeBase64Image} from "../../components/Images/utils";
 
 const initialState = {
   data: {
-      id: null,
+      _id: null,
       firstname: null,
       lastname: null,
       phoneNumber: null,
@@ -12,6 +12,7 @@ const initialState = {
       createdAt: null,
       rating: null,
       userAvatar: null,
+      deals: null,
   }
 }
 
@@ -23,8 +24,8 @@ const UserDataSlice = createSlice({
         setUserData: (state, action) =>{
             const {userAvatar,...data} = action.payload;
 
-            const imageData = action.payload.userAvatar?.data | '';
-            const ext = action.payload.userAvatar?.ext | '';
+            const imageData = action.payload.userAvatar?.data || '';
+            const ext = action.payload.userAvatar?.ext || '';
 
             data.userAvatar = decodeBase64Image(imageData, ext);
             state.data = data;

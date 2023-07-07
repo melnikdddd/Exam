@@ -34,7 +34,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
             <Route path={":id/new"}/>
         </Route>
         <Route path={"/users"}>
-            <Route path={":id"} element={<UserProfile/>}/>
+            <Route path={":id"} element={<UserProfile/>} />
             <Route path={':id/edit'}/>
         </Route>
         <Route path={"/terms"}/>
@@ -61,9 +61,6 @@ function App (){
         return <CenterWrapper>
                 <LoadingBlock className={"h-40 mt-60"}/>
             </CenterWrapper>
-
-
-
     }
 
     return (
