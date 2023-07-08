@@ -3,12 +3,13 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
 import EmailWorker from "../utils/contacts/emailWorker.js";
-import {emailStrings, userString} from "../utils/strings.js";
+import {emailStrings, userLoginString, userString} from "../utils/strings.js";
 
 
 import dotenv from "dotenv"
 import {_genSixDigitCode} from "../utils/someFunctions.js";
 import Jwt from "../utils/auth/jwt.js";
+import userModel from "../models/UserModel.js";
 dotenv.config();
 
 
@@ -40,11 +41,11 @@ class AuthController {
             }
 
             const {password, ...userData} = body;
-            const hashPassword =  await this.#bcrypt.genPassword(password);
+            const hash =  await this.#bcrypt.genPassword(password);
 
 
             const doc = new UserModel(
-                {...userData, hashPassword});
+                {...userData, hashPassword: hash});
 
 
             const userId = doc._id;
@@ -53,8 +54,9 @@ class AuthController {
 
             await doc.save();
 
+            const {hashPassword, latestOnline, __v, updatedAt, ...user} = {...doc._doc}
 
-            res.status(200).json({success: true, user: {...userData}, token: token});
+            res.status(200).json({success: true, user: user, token: token});
 
         } catch (error) {
             console.log(error)
@@ -67,7 +69,7 @@ class AuthController {
             const identity = req.body?.email || req.body.phoneNumber;
             const identityType = req.body?.email ? "email" : "phoneNumber";
 
-            const user = await UserModel.findOne({[identityType] : identity}).select(userString);
+            const user = await UserModel.findOne({[identityType] : identity}).select(userLoginString);
 
             if (!user) {
                 return res.status(404).json({
@@ -76,6 +78,7 @@ class AuthController {
             }
 
             const isValidPass = await this.#bcrypt.readHashPassword(password, user.hashPassword);
+
 
             if (!isValidPass) {
                 return res.status(401).json({
@@ -86,10 +89,12 @@ class AuthController {
             const userId = user._id;
             const token = Jwt.sign(userId);
 
+            const {hashPassword, ...returnedUser} = {...user._doc}
+
 
             res.json({
                 success: true,
-                user: user,
+                user: returnedUser,
                 token : token
             })
 

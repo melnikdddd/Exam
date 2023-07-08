@@ -1,6 +1,7 @@
 import {setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/functions";
 import {setUserData} from "../../store/slices/UserDataSlice";
+import {Navigate} from "react-router-dom";
 
 export function checkIdentityValue(value){
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -71,11 +72,10 @@ export const login = (dispatch, {token, setToken}, {setUserData, userData})=>{
     window.localStorage.setItem('token', token);
 }
 export const logout = (dispatch, clearToken, clearUserData) => {
+    window.localStorage.removeItem("token");
+
     dispatch(clearToken());
     dispatch(clearUserData());
-
-    //window.localStorage.removeItem("userData");
-    window.localStorage.removeItem("token");
 }
 
 export const loginErrors = {

@@ -2,18 +2,19 @@ import {createSlice} from "@reduxjs/toolkit";
 import {decodeBase64Image} from "../../components/Images/utils";
 
 const initialState = {
-  data: {
-      _id: null,
-      firstname: null,
-      lastname: null,
-      phoneNumber: null,
-      email: null,
-      aboutUser: null,
-      createdAt: null,
-      rating: null,
-      userAvatar: null,
-      deals: null,
-  }
+   data: {
+       _id: null,
+       firstname: null,
+       lastname: null,
+       phoneNumber: null,
+       email: null,
+       aboutUser: null,
+       createdAt: null,
+       rating: null,
+       isActivate: null,
+       userAvatar: null,
+       deals: null,
+   }
 }
 
 
@@ -24,15 +25,18 @@ const UserDataSlice = createSlice({
         setUserData: (state, action) =>{
             const {userAvatar,...data} = action.payload;
 
-            const imageData = action.payload.userAvatar?.data || '';
+
+
+            const imageData = action.payload.userAvatar?.data?.data || ''
+            const image = imageData.length === 0  || !imageData ? '' : imageData;
             const ext = action.payload.userAvatar?.ext || '';
 
-            data.userAvatar = decodeBase64Image(imageData, ext);
+            data.userAvatar = decodeBase64Image(image, ext);
             state.data = data;
 
         },
         clearUserData: (state, action) =>{
-                state.userData = {};
+                state.data = initialState.data;
         },
         updateValue : (state, action) =>{
             state.userData[action.payload.field] = action.payload;
