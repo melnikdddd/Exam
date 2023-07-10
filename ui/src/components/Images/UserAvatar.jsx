@@ -6,9 +6,8 @@ import {selectIsAuth} from "../../store/slices/AuthSlice";
 
 const UserAvatar = (props) =>{
     const image = useSelector(selectUserImage);
-    const isAuth = useSelector(selectIsAuth);
 
-    if (isAuth && props.isOwner === true){
+    if (props.isOwner === true){
         return <div className={props.className} >
             <img src={image} alt={"userImage"} className={"w-full h-full rounded-full"}/>
         </div>

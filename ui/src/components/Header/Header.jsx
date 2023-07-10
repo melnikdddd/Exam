@@ -6,26 +6,13 @@ import {selectIsAuth} from "../../store/slices/AuthSlice";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
-import {useEffect, useState} from "react";
-import ProfileWindow from "../Card/ProfileWindow";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 
 function Header() {
     const location = useLocation()
     const isAuth = useSelector(selectIsAuth);
     const userData = useSelector(selectUserData);
-    const [showProfileOptions, setShowProfileOptions] = useState(false);
 
-
-    useEffect(() => {
-        setShowProfileOptions(false);
-    },[isAuth, location]);
-
-
-
-    const handleProfileClick = () =>{
-        setShowProfileOptions(!showProfileOptions);
-    }
 
 
     return (
@@ -48,13 +35,12 @@ function Header() {
                                <div className={"flex justify-around items-center" + `${styles.navItem} ${styles.authNav}`}>
                                    {
                                        location.pathname !== `/users/${userData._id}` &&
-                                       <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"} onClick={handleProfileClick}/>
+                                      <NavLink to={`users/${userData._id}`}>
+                                          <FontAwesomeIcon icon={faUser} className={"h-5 hover:bg-lime-600 hover:text-white transition-colors p-2 rounded cursor-pointer"}/>
+                                      </NavLink>
 
                                    }
                                    <FontAwesomeIcon icon={faBell} id={"notificationButton"} className={"h-5 hover:bg-purple-700 hover:text-white transition-colors p-2 rounded cursor-pointer"}/>
-                                   {showProfileOptions &&
-                                       <ProfileWindow userData={userData} />
-                                   }
                                </div>
                                :  <NavLink to={"/auth/login"} className={styles.login}>Login</NavLink>
                        }
