@@ -14,7 +14,7 @@ function UserProfileData(props) {
 
     return (
         <div className={"flex"}>
-            <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"}>
+            <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{height: "360px"}}>
                 <UserAvatar image={userData.userAvatar} className={"w-full h-44 "} isOwner={isOwner}/>
                 <div className={"w-full flex justify-between items-center p-3 px-6"} style={{minWidth: "180px"}}>
                     <span className={"text-lg"}>{userData.firstname}</span>
@@ -62,6 +62,14 @@ function UserProfileData(props) {
                     </span>
                     <span className={"text-lg ml-4"}>
                         Purchase: {userData.deals.sales}.
+                    </span>
+                </div>
+                <div className={"w-full p-4"}>
+                    <p className={"text-slate-500"}>
+                        About me:
+                    </p>
+                    <span className={"text-lg "}>
+                        {userData.aboutUser ? userData.aboutUser : 'Not indicated.'}
                     </span>
                 </div>
                 <div className={"w-full border-t border-gray-300 p-4 flex justify-between"}>

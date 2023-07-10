@@ -1,8 +1,7 @@
-import UserAvatar from "../../components/Images/UserAvatar";
-import {logout} from "../../utils/Auth/authFunctions";
-import {clearToken, selectIsAuth} from "../../store/slices/AuthSlice";
-import {clearUserData, selectUserData} from "../../store/slices/UserDataSlice";
-import {useDispatch, useSelector} from "react-redux";
+
+import {selectIsAuth} from "../../store/slices/AuthSlice";
+import {selectProducts, selectUserData} from "../../store/slices/UserDataSlice";
+import {useSelector} from "react-redux";
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
 import ProfileCard from "../../components/Card/ProfileCard";
 import styles from "./UserPofile.module.scss"
@@ -14,18 +13,17 @@ import {fetchGet} from "../../utils/Axios/functions";
 import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper";
 import LoadingBlock from "../../components/Loading/LoadingBlock";
 import {decodeBase64Image} from "../../components/Images/utils";
-import {NavLink} from "react-router-dom";
-import LogoutButton from "../../components/Buttons/LogoutButton";
-import moment from "moment";
+
 import UserProfileData from "./UserProfileData";
-import ProductsCard from "../../components/Products/ProductsCard";
+import ProfileProducts from "../../components/Products/ProfileProducts";
 
 function UserProfile(props) {
     const isAuth = useSelector(selectIsAuth);
+
     const {id} = useParams();
 
     const [userData, setUserData] = useState(useSelector(selectUserData));
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(useSelector(selectProducts));
 
     const [isLoading,setIsLoading] = useState(false);
     const [isProfile, setIsProfile] = useState(true);
@@ -60,12 +58,6 @@ function UserProfile(props) {
         setIsLoading(true);
     },[])
 
-    const handleLikeClick = () =>{
-
-    }
-    const handleDisLikeClick = () =>{
-
-    }
     const handleTabsProfileClick = (event)=>{
         setIsProfile(true);
     }
@@ -91,7 +83,8 @@ function UserProfile(props) {
                       </li>
                   </ul>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
-                        {isProfile ? <UserProfileData userData={userData} isOwner={isOwner}/> : <ProductsCard/>}
+                        {isProfile ? <UserProfileData userData={userData} isOwner={isOwner}/> :
+                            <ProfileProducts products={products} isOwner={isOwner}/>}
                     </ProfileCard>
                 </div>
             </Container>

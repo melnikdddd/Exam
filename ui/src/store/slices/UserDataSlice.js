@@ -14,7 +14,8 @@ const initialState = {
        isActivate: null,
        userAvatar: null,
        deals: null,
-   }
+   },
+   products : []
 }
 
 
@@ -24,8 +25,6 @@ const UserDataSlice = createSlice({
     reducers: {
         setUserData: (state, action) =>{
             const {userAvatar,...data} = action.payload;
-
-
 
             const imageData = action.payload.userAvatar?.data?.data || ''
             const image = imageData.length === 0  || !imageData ? '' : imageData;
@@ -37,6 +36,7 @@ const UserDataSlice = createSlice({
         },
         clearUserData: (state, action) =>{
                 state.data = initialState.data;
+                state.products = initialState.products;
         },
         updateValue : (state, action) =>{
             state.userData[action.payload.field] = action.payload;
@@ -59,6 +59,8 @@ export const getUserDataFromLocalStorage = () =>{
 export const selectUserData = state => state.userData.data;
 
 export const selectUserImage = state => state.userData.data.userAvatar;
+
+export const selectProducts = state => state.userData.products;
 
 export const {setUserData,updateValue, clearValue, clearUserData} = UserDataSlice.actions;
 
