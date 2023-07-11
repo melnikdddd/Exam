@@ -1,4 +1,4 @@
-import styles from "./Card.module.scss";
+import styles from "../Card.module.scss";
 import {NavLink} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";

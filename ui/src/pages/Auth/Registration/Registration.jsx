@@ -7,12 +7,12 @@ import zxcvbn from "zxcvbn"
 import textStyles from "../../../styles/textStyles.module.scss"
 
 
-import AuthCard, {HelperCard} from "../../../components/Card/AuthCard";
+import AuthCard, {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import AuthInput from "../../../components/Inputs/AuthInput";
-import AuthButton from "../../../components/Buttons/AuthButton";
+import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 import Terms from "../../../components/Terms/Terms";
 

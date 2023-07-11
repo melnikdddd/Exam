@@ -20,9 +20,17 @@ const UserSchema = new mongoose.Schema(
             unique: false,
             default: "",
         },
-        city: {
-            type: String,
-            required: false,
+        blockedUsers: {
+            type: Array,
+            default: []
+        },
+        favoritesUsers: {
+            type: Array,
+            default: []
+        },
+        reports: {
+            type: Array,
+            default: []
         },
         hashPassword: {
             type: String,
@@ -50,11 +58,6 @@ const UserSchema = new mongoose.Schema(
             required: false,
             default: '',
         },
-        isActivate :{
-            type: Boolean,
-            default: 'false',
-        }
-
     },
     {
         timestamps: true,

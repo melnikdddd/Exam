@@ -14,6 +14,8 @@ const initialState = {
        isActivate: null,
        userAvatar: null,
        deals: null,
+       favoritesUsers: null,
+       blockedUsers: null,
    },
    products : []
 }

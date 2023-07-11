@@ -1,5 +1,4 @@
-import styles from "./Card.module.scss"
-import {useState} from "react";
+import styles from "../Card.module.scss"
 
 function AuthCard(props){
 

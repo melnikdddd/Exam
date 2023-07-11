@@ -1,4 +1,4 @@
-import styles from "./Card.module.scss"
+import styles from "../Card.module.scss"
 function ProfileCard(props) {
     return (
         <div className={`${styles.Card}  ${props.className}`}>

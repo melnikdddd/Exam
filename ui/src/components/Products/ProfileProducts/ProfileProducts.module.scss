@@ -1,0 +1,12 @@
+.addProduct{
+  @apply bg-white  w-full flex items-center text-center rounded-lg shadow-md  p-4 justify-center cursor-pointer mb-10;
+  &:hover{
+    @apply bg-gray-100 text-gray-600 transition-colors;
+
+    .circle{
+      @apply bg-slate-300 text-slate-600 transition-colors;
+    }
+  }
+
+}
+

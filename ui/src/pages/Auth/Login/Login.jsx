@@ -10,9 +10,9 @@ import textStyles from "../../../styles/textStyles.module.scss";
 import {faGoogle, faTelegram} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-import AuthButton from "../../../components/Buttons/AuthButton";
+import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
 import AuthInput from "../../../components/Inputs/AuthInput";
-import AuthCard from "../../../components/Card/AuthCard";
+import AuthCard from "../../../components/Card/AuthCard/AuthCard";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 
 

@@ -1,16 +1,36 @@
 import UserAvatar from "../../components/Images/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircle, faEllipsisVertical, faGear} from "@fortawesome/free-solid-svg-icons";
+import {
+    faBan,
+    faBookmark,
+    faCircle,
+    faCircleExclamation,
+    faEllipsisVertical,
+    faGear
+} from "@fortawesome/free-solid-svg-icons";
 import {NavLink} from "react-router-dom";
-import LogoutButton from "../../components/Buttons/LogoutButton";
+import LogoutButton from "../../components/Buttons/LogoutButton/LogoutButton";
 import moment from "moment";
-import RatingButtons from "../../components/Buttons/RatingButtons";
+import styles from "./UserPofile.module.scss";
+import RatingButtons from "../../components/Buttons/RatingButton/RatingButtons";
+import React, {useEffect, useState} from "react";
 
 function UserProfileData(props) {
-    const {userData,isOwner} = props;
+    const {userData, isOwner, isAuth} = props;
 
+    const [showProfileOptions, setShowProfileOptions] = useState(false);
 
+    useEffect(()=>{
+       setShowProfileOptions(false);
+    },[]);
 
+    const handleShowOptionsClick = ()=>{
+        setShowProfileOptions(!showProfileOptions);
+    }
+
+    const handleProfileOptionsOnMouseLeave = () =>{
+        setShowProfileOptions(false);
+    }
 
     return (
         <div className={"flex"}>
@@ -39,7 +59,12 @@ function UserProfileData(props) {
                         <>
                             <button className={"bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors cursor-pointer"}>Message</button>
                             <FontAwesomeIcon icon={faEllipsisVertical}
-                                             className={"h-6 hover:text-blue-600 transition-colors cursor-pointer"}/>
+                                             className={`h-6 hover:text-blue-600 transition-colors cursor-pointer ${showProfileOptions ? "text-blue-600" : ''}`}
+                                             onClick={handleShowOptionsClick}
+                            />
+                            {showProfileOptions &&
+                                <ProfileOptions onMouseLeave={handleProfileOptionsOnMouseLeave} isAuth={isAuth}/>
+                            }
                         </>
                     }
                 </div>
@@ -90,6 +115,38 @@ function UserProfileData(props) {
             </div>
         </div>
     );
+}
+
+function ProfileOptions(props){
+    const isAuth = props.isAuth;
+    const handleFavoriteClick = ()=>{
+
+    }
+    const handleBlockClick = ()=>{
+
+    }
+    const handleReportClick = ()=>{
+
+    }
+
+    return (
+        <ul className={styles.options}  onMouseLeave={props.onMouseLeave}>
+            <li className={`${styles.optionItem} rounded-t-lg`}>
+                <span>To favorites</span>
+                <FontAwesomeIcon icon={faBookmark}/>
+            </li>
+            <hr/>
+            <li className={`${styles.optionItem} `}>
+                <span>Block</span>
+                <FontAwesomeIcon icon={faBan}/>
+            </li>
+            <hr/>
+            <li className={`${styles.optionItem}  rounded-b-lg`}>
+                <span>Report</span>
+                <FontAwesomeIcon icon={faCircleExclamation} />
+            </li>
+        </ul>
+    )
 }
 
 export default UserProfileData;

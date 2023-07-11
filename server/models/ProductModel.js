@@ -39,6 +39,10 @@ const ProductSchema = new mongoose.Schema(
             default: {"":""},
             required: false,
         },
+        status: {
+          type: String,
+          default: "sale"
+        },
         city: {
             type: String,
             default: "",

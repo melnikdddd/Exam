@@ -59,3 +59,12 @@
 .tabsActive{
   @apply bg-gray-200 text-blue-600;
 }
+.options{
+  @apply  bg-white flex-col absolute rounded-lg border border-gray-300 w-36 shadow-md select-none;
+  margin-left: 200px;
+  margin-top: -50px;
+}
+
+.optionItem{
+  @apply p-2 hover:text-gray-600 hover:bg-gray-100 flex justify-between items-center bg-gray-50 text-slate-700 cursor-pointer;
+}

@@ -3,7 +3,7 @@ import {selectIsAuth} from "../../store/slices/AuthSlice";
 import {selectProducts, selectUserData} from "../../store/slices/UserDataSlice";
 import {useSelector} from "react-redux";
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
-import ProfileCard from "../../components/Card/ProfileCard";
+import ProfileCard from "../../components/Card/ProfileCard/ProfileCard";
 import styles from "./UserPofile.module.scss"
 import Container from "../../components/Wrapper/Container/Container";
 
@@ -15,18 +15,20 @@ import LoadingBlock from "../../components/Loading/LoadingBlock";
 import {decodeBase64Image} from "../../components/Images/utils";
 
 import UserProfileData from "./UserProfileData";
-import ProfileProducts from "../../components/Products/ProfileProducts";
+import ProfileProducts from "../../components/Products/ProfileProducts/ProfileProducts";
+import {useLocation} from "react-router-dom";
 
 function UserProfile(props) {
     const isAuth = useSelector(selectIsAuth);
 
     const {id} = useParams();
+    const location = useLocation();
 
     const [userData, setUserData] = useState(useSelector(selectUserData));
     const [products, setProducts] = useState(useSelector(selectProducts));
 
     const [isLoading,setIsLoading] = useState(false);
-    const [isProfile, setIsProfile] = useState(true);
+    const [isProfile, setIsProfile] = useState(location.state?.isProfile | false);
 
     const isOwner = isAuth && id === userData._id;
 
@@ -39,8 +41,6 @@ function UserProfile(props) {
             const imageData = userAvatar?.data?.data || ''
             const image = imageData.length === 0  || !imageData ? '' : imageData;
             const ext = data.userAvatar?.ext || '';
-
-
 
             uData.userAvatar = decodeBase64Image(image, ext);
 
@@ -83,7 +83,7 @@ function UserProfile(props) {
                       </li>
                   </ul>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
-                        {isProfile ? <UserProfileData userData={userData} isOwner={isOwner}/> :
+                        {isProfile ? <UserProfileData userData={userData} isOwner={isOwner} isAuth={isAuth}/> :
                             <ProfileProducts products={products} isOwner={isOwner}/>}
                     </ProfileCard>
                 </div>

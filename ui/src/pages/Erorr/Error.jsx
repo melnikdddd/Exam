@@ -1,7 +1,7 @@
 import Container from "../../components/Wrapper/Container/Container";
 import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper";
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
-import ErrorCard from "../../components/Card/ErrorCard";
+import ErrorCard from "../../components/Card/ErrorCard/ErrorCard";
 
 
 function Error(props) {
