@@ -4,6 +4,7 @@ import UserController from "../controllers/UserController.js";
 import multer from "multer";
 import {userValidation} from "../validations/UserValidator.js";
 import checkAuth from "../utils/auth/checkAuth.js";
+import {_updateUser} from "../utils/middleware/userMiddleware.js";
 
 
 const upload = multer()
@@ -14,8 +15,9 @@ UserRouter.get("/getUserByToken", checkAuth ,UserController.getUserByToken)
 
 UserRouter.get('/:id', UserController.getUser);
 
+
 UserRouter.route('/:id')
-    .patch(_checkAuth, userValidation, upload.single('avatar'), UserController.editUser)
+    .patch(_checkAuth, userValidation, _updateUser, upload.single('avatar'), UserController.updateUser)
     .delete(_checkAuth ,UserController.removeUser);
 
 UserRouter.get('/:id/products', UserController.getUserProducts);

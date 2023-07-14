@@ -21,24 +21,50 @@ const UserSchema = new mongoose.Schema(
             default: "",
         },
         blockedUsers: {
-            type: Array,
-            default: []
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: 'User',
+            default: [],
+            set: function(users) {
+                return Array.from(new Set(users));
+            }
         },
         favoritesUsers: {
-            type: Array,
-            default: []
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: 'User',
+            default: [],
+            set: function(users) {
+                return Array.from(new Set(users));
+            }
         },
         reports: {
-            type: Array,
-            default: []
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: 'User',
+            default: [],
+            set: function(users) {
+                return Array.from(new Set(users));
+            }
         },
         hashPassword: {
             type: String,
             required: true
         },
         rating: {
-            likes: {type: Number, default: 0},
-            dislikes: {type: Number, default: 0},
+            likes: {
+                type: [mongoose.Schema.Types.ObjectId],
+                ref: 'User',
+                default: [],
+                set: function(users) {
+                    return Array.from(new Set(users));
+                }
+            },
+            dislikes: {
+                type: [mongoose.Schema.Types.ObjectId],
+                ref: 'User',
+                default: [],
+                set: function(users) {
+                    return Array.from(new Set(users));
+                }
+            },
         },
         latestOnline : {type: Date, default: null},
         deals : {

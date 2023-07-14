@@ -41,10 +41,11 @@ const UserDataSlice = createSlice({
                 state.products = initialState.products;
         },
         updateValue : (state, action) =>{
-            state.userData[action.payload.field] = action.payload;
+            console.log('value: ' + action.payload.value )
+            state.data[action.payload.field] = action.payload.value;
         },
         clearValue : (state, action) =>{
-            state.userData[action.payload.field] = null;
+            state.data[action.payload.field] = null;
         }
     }
 

@@ -1,11 +1,21 @@
-export const filterUpdateUser = (req, res, next) =>{
-    const {id} = req.body;
-    const userId = req.userId;
+import mongoose from "mongoose";
 
-    if (userId === id){
+export const _updateUser = async (req, res, next) => {
+        const ownerId = req.userId;
+        const body = req.body;
+        const userStringId = req.params.id;
+
+        const userPropertiesTypes = ['blockedUsers', 'favoritesUsers', 'rating', 'reports'];
+
+
+        if (ownerId !== userStringId && userPropertiesTypes.includes(body.listType)){
+                const userId = new mongoose.Types.ObjectId(body.userId);
+                req.body = {
+                        userId : userId,
+                        listType: body.listType,
+                        operation : body.operation
+                };
+        }
         next();
-        return;
-    }
 
-    next();
 }

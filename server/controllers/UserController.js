@@ -20,22 +20,18 @@ class UserController{
         return res.json({success: false})
 
     }
-    editUser = async (req, res) =>{
+    updateUser = async (req, res) =>{
         const userId = req.params.id;
 
-        if (userId !== req.userId){
-            return res.status(450).json({message:"You cant do it"})
-        }
+        const {imageOptions, ...body} = req.body;
 
-        const {imageOptions, rating,...body} = req.body;
         const imageData = this.#service.getImagesOptions(req.file, imageOptions);
-
         modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
 
         const result = await modelWorker.findAndUpdate(userId, body, imageData.imagesParams);
-
         return res.json({result});
     }
+
     getUser = async (req, res) =>{
         try {
             const  userId = req.params.id;
@@ -89,7 +85,7 @@ class UserController{
                     image: file || null,
                 },
                 options: {
-                    operation: bodyImageOptions?.operation,
+                    operation: bodyImageOptions?.operation || null,
                     operationType:  "user"
                 },
             }

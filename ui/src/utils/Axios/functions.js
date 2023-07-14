@@ -30,7 +30,19 @@ export const fetchGet = async (path) =>{
         return {success: false, status: status}
     }
 }
+export const fetchUpdate = async (path, data) =>{
+    try {
+        const response = await axios.patch(path, data);
+        return {success: true, data: response.data};
+    } catch (error) {
+        const status = error.response?.status || 500;
 
+        if (status === 500){
+            return {success: false, status: 500}
+        }
+        return {success: false, status: status}
+    }
+}
 export const fetchUserByToken = async () =>{
     try {
         const response = await axios.get(`users/getUserByToken`);

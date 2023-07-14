@@ -9,6 +9,8 @@ class ModelsWorker {
         this.model = model;
         this.imageWorker = null;
     }
+
+
     setImageWorkerOptions = (operation, imagesType) => {
         if(!operation){
             return false;
@@ -20,14 +22,32 @@ class ModelsWorker {
     }
 
     findAndUpdate = async (id ,data, imagesParams) => {
-
-         const document = await this.model.findOne({_id: id});
+        const document = await this.model.findById({_id: id});
 
         if (!document){
             return {success: false, message: "document cant find"}
         }
 
-         if (this.imageWorker && this.imageWorker.options.isCanWork){
+        if (data.rating){
+           const doc =  this.#updateRating(document, data.rating, data.operation);
+            if (doc){
+                doc.save();
+                return doc;
+            }
+            return false;
+        }
+
+        if (data.listType === "favoritesUsers" || data.listType === "blockedUsers" || data.listType === "reports"){
+            const doc = this.#updateArray(document, {userId: data.userId, listType: data.listType, operation: data.operation});
+
+            if (doc) {
+                doc.save();
+                return doc;
+            }
+            return  false;
+        }
+
+        if (this.imageWorker && this.imageWorker.options.isCanWork){
              if (!this.imageWorker.goWork(document, imagesParams)){
                 return {success: false, message: "Images worker Error"};
              }
@@ -49,10 +69,34 @@ class ModelsWorker {
                 throw new Error("DEPENDENCY ERROR")
             }
         }
-        if (await this.model.findOneAndDelete({_id : id})){
-            return true;
+        return !!(await this.model.findOneAndDelete({_id: id}));
+
+    }
+    #updateRating =  (document, rating, ratingOperation) =>{
+            const rateType = rating?.like ? "like" : "dislike";
+
+            const likesFilter = document.rating.likes.filter(rate => rate === rating);
+            if (rateType === "like" && ratingOperation.push){
+                likesFilter.push(rating);
+            }
+            const dislikesFilter = document.rating.dislikes.filter(rate => rate === rating);
+            if (rateType === "dislike" && ratingOperation === "add"){
+               likesFilter.push(rating);
+            }
+            document.rating = {likes: likesFilter, dislikes: dislikesFilter}
+
+
+            return document;
+    }
+    #updateArray = (document, {userId, listType, operation}) =>{
+        const filteredDocument = document[listType].filter(element => element === userId);
+
+        if (operation === "add"){
+            filteredDocument.push(userId);
         }
-        return false;
+
+        document[listType] = filteredDocument;
+        return document;
     }
 
     #ImagesWorker = class extends ModelsWorker {
@@ -64,7 +108,6 @@ class ModelsWorker {
             operation: null,
             imagesType: null,
         }
-
         goWork = (document, ...params) =>{
             const {operation,imagesType} =  this.options;
 

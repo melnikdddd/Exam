@@ -1,22 +1,16 @@
 import UserAvatar from "../../components/Images/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faBan,
-    faBookmark,
-    faCircle,
-    faCircleExclamation,
-    faEllipsisVertical,
-    faGear
-} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faEllipsisVertical, faGear} from "@fortawesome/free-solid-svg-icons";
 import {NavLink} from "react-router-dom";
 import LogoutButton from "../../components/Buttons/LogoutButton/LogoutButton";
 import moment from "moment";
-import styles from "./UserPofile.module.scss";
 import RatingButtons from "../../components/Buttons/RatingButton/RatingButtons";
 import React, {useEffect, useState} from "react";
+import ProfileOptions from "./ProfileOptions";
 
 function UserProfileData(props) {
-    const {userData, isOwner, isAuth} = props;
+    const {user, isOwner, isAuth, owner} = props;
+
 
     const [showProfileOptions, setShowProfileOptions] = useState(false);
 
@@ -35,10 +29,10 @@ function UserProfileData(props) {
     return (
         <div className={"flex"}>
             <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{height: "360px"}}>
-                <UserAvatar image={userData.userAvatar} className={"w-full h-44 "} isOwner={isOwner}/>
+                <UserAvatar image={user.userAvatar} className={"w-full h-44 "} isOwner={isOwner}/>
                 <div className={"w-full flex justify-between items-center p-3 px-6"} style={{minWidth: "180px"}}>
-                    <span className={"text-lg"}>{userData.firstname}</span>
-                    <span className={"text-lg"}>{userData.lastname}</span>
+                    <span className={"text-lg"}>{user.firstname}</span>
+                    <span className={"text-lg"}>{user.lastname}</span>
                 </div>
                 <div className={"text-center mb-3"}>
                     <span className={"text-base"}>
@@ -49,7 +43,7 @@ function UserProfileData(props) {
                 <div className={"flex items-center justify-between mt-3"}>
                     {isOwner ?
                         <>
-                        <NavLink to={`/users/${userData._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
+                        <NavLink to={`/users/${user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
                             Setting
                             <FontAwesomeIcon icon={faGear} className={"ml-1"}/>
                         </NavLink>
@@ -63,7 +57,11 @@ function UserProfileData(props) {
                                              onClick={handleShowOptionsClick}
                             />
                             {showProfileOptions &&
-                                <ProfileOptions onMouseLeave={handleProfileOptionsOnMouseLeave} isAuth={isAuth}/>
+                                <ProfileOptions onMouseLeave={handleProfileOptionsOnMouseLeave}
+                                                isAuth={isAuth}
+                                                user={user}
+                                                owner={owner}
+                                />
                             }
                         </>
                     }
@@ -75,7 +73,7 @@ function UserProfileData(props) {
                         Status:
                     </p>
                     <span className={"text-lg "}>
-                        {userData.userStatus ? userData.userStatus : "Not indicated."}
+                        {user.userStatus ? user.userStatus : "Not indicated."}
                     </span>
                 </div>
                 <div className={"w-full p-4"}>
@@ -83,10 +81,10 @@ function UserProfileData(props) {
                         Deals:
                     </p>
                     <span className={"text-lg "}>
-                        Purchase: {userData.deals.purchase}
+                        Purchase: {user.deals.purchase}
                     </span>
                     <span className={"text-lg ml-4"}>
-                        Purchase: {userData.deals.sales}.
+                        Purchase: {user.deals.sales}.
                     </span>
                 </div>
                 <div className={"w-full p-4"}>
@@ -94,7 +92,7 @@ function UserProfileData(props) {
                         About me:
                     </p>
                     <span className={"text-lg "}>
-                        {userData.aboutUser ? userData.aboutUser : 'Not indicated.'}
+                        {user.aboutUser ? user.aboutUser : 'Not indicated.'}
                     </span>
                 </div>
                 <div className={"w-full border-t border-gray-300 p-4 flex justify-between"}>
@@ -104,11 +102,11 @@ function UserProfileData(props) {
                             21-05-2023
                         </span>
                     </div>
-                    <RatingButtons rating={userData.rating} className={''} isDisabled={isOwner}/>
+                    <RatingButtons rating={user.rating} className={''} isDisabled={isOwner} owner={owner}/>
                     <div>
                         <p className={"text-slate-600 text-lg"}>Since:</p>
                         <span className="text-slate-900 text-lg">
-                        {moment(userData.createdAt).format("DD-MM-YYYY")}
+                        {moment(user.createdAt).format("DD-MM-YYYY")}
                         </span>
                     </div>
                 </div>
@@ -117,36 +115,6 @@ function UserProfileData(props) {
     );
 }
 
-function ProfileOptions(props){
-    const isAuth = props.isAuth;
-    const handleFavoriteClick = ()=>{
 
-    }
-    const handleBlockClick = ()=>{
-
-    }
-    const handleReportClick = ()=>{
-
-    }
-
-    return (
-        <ul className={styles.options}  onMouseLeave={props.onMouseLeave}>
-            <li className={`${styles.optionItem} rounded-t-lg`}>
-                <span>To favorites</span>
-                <FontAwesomeIcon icon={faBookmark}/>
-            </li>
-            <hr/>
-            <li className={`${styles.optionItem} `}>
-                <span>Block</span>
-                <FontAwesomeIcon icon={faBan}/>
-            </li>
-            <hr/>
-            <li className={`${styles.optionItem}  rounded-b-lg`}>
-                <span>Report</span>
-                <FontAwesomeIcon icon={faCircleExclamation} />
-            </li>
-        </ul>
-    )
-}
 
 export default UserProfileData;

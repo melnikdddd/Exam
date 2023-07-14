@@ -40,6 +40,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
         <Route path={"/terms"}/>
         <Route path={"/contacts"}/>
         <Route path="*" element={<Error error={"Not found"}/>} />
+        <Route path={"/error"} element={<Error error={"Not found"}/>} />
     </Route>
 ))
 
