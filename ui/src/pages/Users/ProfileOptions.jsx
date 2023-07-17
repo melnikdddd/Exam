@@ -31,20 +31,23 @@ function ProfileOptions(props){
     const updateOwnerList = async (listType, boolean, set) =>{
 
         const operation = boolean ? "remove" : "add";
-
-        const {success} = await fetchUpdate(`/users/${owner._id}`,
-            {userId: userId, listType: listType, operation: operation});
-        if (!success){
-            return false;
-        }
-
         let updatedArray = [...owner[listType]];
+
 
         if (!boolean) updatedArray.push(userId);
         else  updatedArray = updatedArray.filter(element => updatedArray === userId);
 
         dispatch(updateValue({field: listType, value: updatedArray}))
         set(!boolean);
+
+        const {success} = await fetchUpdate(`/users/${owner._id}`,
+            {userId: userId, listType: listType, operation: operation});
+
+        if (!success){
+            return false;
+        }
+
+
     }
     const handleFavoriteClick = async ()=>{
         if (isAuth){
@@ -63,14 +66,14 @@ function ProfileOptions(props){
     }
     const handleReportClick = async ()=>{
         if (isAuth){
+            setIsReported(true);
+            user.reports.push(ownerId);
             const {success} = await fetchUpdate(`/users/${userId}`,
                 {userId: ownerId, listType: "reports", operation: "add"});
             if (!success){
                 alert(success)
                 return;
             }
-            user.reports.push(ownerId);
-            setIsReported(true);
             return;
         }
         navigate("/auth/login", { state: {from: `/users/${userId}`}});

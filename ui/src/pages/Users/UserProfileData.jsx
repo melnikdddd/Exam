@@ -102,7 +102,7 @@ function UserProfileData(props) {
                             21-05-2023
                         </span>
                     </div>
-                    <RatingButtons rating={user.rating} className={''} isDisabled={isOwner} owner={owner}/>
+                    <RatingButtons rateObj={user} isAuth={isAuth} isDisabled={isOwner} owner={owner} entity={`users`}/>
                     <div>
                         <p className={"text-slate-600 text-lg"}>Since:</p>
                         <span className="text-slate-900 text-lg">
