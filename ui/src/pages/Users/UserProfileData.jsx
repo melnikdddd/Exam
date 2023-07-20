@@ -10,13 +10,21 @@ import ProfileOptions from "./ProfileOptions";
 import {useParams} from "react-router";
 
 function UserProfileData(props) {
-    const {user, isOwner, isAuth, owner, isBlocked, setIsBlocked} = props;
-
     const [showProfileOptions, setShowProfileOptions] = useState(false);
+    const {user, owner, isOwner, isAuth, isBlocked, setIsBlocked} = props;
+
+    const [data, setData] =
+        useState({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
 
     useEffect(()=>{
        setShowProfileOptions(false);
     },[]);
+
+    useEffect(() => {
+        setData({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
+    }, [user, owner, isOwner, isAuth, isBlocked, setIsBlocked]);
+
+
 
     const handleShowOptionsClick = ()=>{
         setShowProfileOptions(!showProfileOptions);
@@ -29,10 +37,10 @@ function UserProfileData(props) {
     return (
         <div className={"flex"}>
             <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{height: "360px"}}>
-                <UserAvatar image={user.userAvatar} className={"w-full h-44 "} isOwner={isOwner}/>
+                <UserAvatar image={data.user.userAvatar} className={"w-full h-44 "} isOwner={data.isOwner}/>
                 <div className={"w-full flex justify-between items-center p-3 px-6"} style={{minWidth: "180px"}}>
-                    <span className={"text-lg"}>{user.firstname}</span>
-                    <span className={"text-lg"}>{user.lastname}</span>
+                    <span className={"text-lg"}>{data.user.firstname}</span>
+                    <span className={"text-lg"}>{data.user.lastname}</span>
                 </div>
                 <div className={"text-center mb-3"}>
                     <span className={"text-base"}>
@@ -43,7 +51,7 @@ function UserProfileData(props) {
                 <div className={"flex items-center justify-between mt-3"}>
                     {isOwner ?
                         <>
-                        <NavLink to={`/users/${user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
+                        <NavLink to={`/users/${data.user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
                             Setting
                             <FontAwesomeIcon icon={faGear} className={"ml-1"}/>
                         </NavLink>
@@ -62,11 +70,11 @@ function UserProfileData(props) {
                             />
                             {showProfileOptions &&
                                 <ProfileOptions onMouseLeave={handleProfileOptionsOnMouseLeave}
-                                                isAuth={isAuth}
-                                                user={user}
-                                                owner={owner}
-                                                isBlocked={isBlocked}
-                                                setIsBlocked={setIsBlocked}
+                                                isAuth={data.isAuth}
+                                                user={data.user}
+                                                owner={data.owner}
+                                                isBlocked={data.isBlocked}
+                                                setIsBlocked={data.setIsBlocked}
                                 />
                             }
                         </>
@@ -75,7 +83,7 @@ function UserProfileData(props) {
             </div>
             {isBlocked ?
                 <div className={"bg-white ml-2 shadow-md rounded-lg w-full flex flex-col items-center justify-center"}>
-                    <h1 className={"text-center text-2xl"}>{user.firstname} is blocked.</h1>
+                    <h1 className={"text-center text-2xl"}>{data.user.firstname} is blocked.</h1>
                 </div>
                 :
                 <div className={"bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-between"}>
@@ -84,7 +92,7 @@ function UserProfileData(props) {
                             Status:
                         </p>
                         <span className={"text-lg "}>
-                        {user.userStatus ? user.userStatus : "Not indicated."}
+                        {data.user.userStatus ? data.user.userStatus : "Not indicated."}
                     </span>
                     </div>
                     <div className={"w-full p-4"}>
@@ -92,10 +100,10 @@ function UserProfileData(props) {
                             Deals:
                         </p>
                         <span className={"text-lg "}>
-                        Purchase: {user.deals.purchase}
+                        Purchase: {data.user.deals.purchase}
                     </span>
                         <span className={"text-lg ml-4"}>
-                        Purchase: {user.deals.sales}.
+                        Purchase: {data.user.deals.sales}.
                     </span>
                     </div>
                     <div className={"w-full p-4"}>
@@ -103,7 +111,7 @@ function UserProfileData(props) {
                             About me:
                         </p>
                         <span className={"text-lg "}>
-                        {user.aboutUser ? user.aboutUser : 'Not indicated.'}
+                        {data.user.aboutUser ? data.user.aboutUser : 'Not indicated.'}
                     </span>
                     </div>
                     <div className={"w-full border-t border-gray-300 p-4 flex justify-between"}>
@@ -113,11 +121,11 @@ function UserProfileData(props) {
                             21-05-2023
                         </span>
                         </div>
-                        <RatingButtons rateObj={user} isAuth={isAuth} isDisabled={isOwner} ownerId={owner._id} entity={`users`}/>
+                        <RatingButtons rateObj={data.user} isAuth={data.isAuth} isDisabled={data.isOwner} ownerId={data.owner._id} entity={`users`}/>
                         <div>
                             <p className={"text-slate-600 text-lg"}>Since:</p>
                             <span className="text-slate-900 text-lg">
-                        {moment(user.createdAt).format("DD-MM-YYYY")}
+                        {moment(data.user.createdAt).format("DD-MM-YYYY")}
                         </span>
                         </div>
                     </div>

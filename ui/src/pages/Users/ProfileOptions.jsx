@@ -24,6 +24,8 @@ function ProfileOptions(props){
     const [isFavorites, setIsFavorites] = useState(isFavoriteUser);
     const [isReported, setIsReported] = useState(isReportedUser);
 
+
+
     const updateOwnerList = async (listType, boolean, set) =>{
 
         const operation = boolean ? "remove" : "add";

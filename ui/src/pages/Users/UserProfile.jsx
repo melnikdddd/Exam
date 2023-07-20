@@ -69,6 +69,7 @@ function UserProfile(props) {
             setIsOwner(true);
             setUser(owner);
             setProducts(ownerProducts);
+            setIsBlocked(null);
             setIsLoading(true);
             return;
         }
@@ -103,8 +104,8 @@ function UserProfile(props) {
                   </ul>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
                         {isProfile ?
-                            <UserProfileData user={user} isOwner={isOwner} isAuth={isAuth} owner={owner}
-                            setIsBlocked={setIsBlocked} isBlocked={isBlocked}/>
+                            <UserProfileData user={user} owner={owner} isOwner={isOwner} isAuth={isAuth}
+                                             isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>
                             :
                             <ProfileProducts products={products} isOwner={isOwner} isBlocked={isBlocked}/>}
                     </ProfileCard>
