@@ -41,7 +41,6 @@ const UserDataSlice = createSlice({
                 state.products = initialState.products;
         },
         updateValue : (state, action) =>{
-            console.log('value: ' + action.payload.value )
             state.data[action.payload.field] = action.payload.value;
         },
         clearValue : (state, action) =>{

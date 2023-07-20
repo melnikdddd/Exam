@@ -28,11 +28,11 @@ class ModelsWorker {
             return {success: false, message: "document cant find"}
         }
 
-        if (data.rating){
-           const doc =  this.#updateRating(document, data.rating, data.operation);
+        if (data.listType === "like" || data.listType === "dislike"){
+           const doc =  this.#updateRating(document, data.userId, data.listType, data.operation);
             if (doc){
                 doc.save();
-                return doc;
+                return doc.rating;
             }
             return false;
         }
@@ -42,7 +42,7 @@ class ModelsWorker {
 
             if (doc) {
                 doc.save();
-                return doc;
+                return doc.listType;
             }
             return  false;
         }
@@ -72,16 +72,17 @@ class ModelsWorker {
         return !!(await this.model.findOneAndDelete({_id: id}));
 
     }
-    #updateRating =  (document, rating, ratingOperation) =>{
-            const rateType = rating?.like ? "like" : "dislike";
+    #updateRating =  (document, userId, ratingType, ratingOperation) =>{
 
-            const likesFilter = document.rating.likes.filter(rate => rate === rating);
-            if (rateType === "like" && ratingOperation.push){
-                likesFilter.push(rating);
+            const likesFilter = document.rating.likes.filter(rate => rate === userId);
+            if (ratingType === "like" && ratingOperation === "add"){
+                likesFilter.push(userId);
             }
-            const dislikesFilter = document.rating.dislikes.filter(rate => rate === rating);
-            if (rateType === "dislike" && ratingOperation === "add"){
-               likesFilter.push(rating);
+
+            const dislikesFilter = document.rating.dislikes.filter(rate => rate === userId);
+
+            if (ratingType === "dislike" && ratingOperation === "add"){
+                dislikesFilter.push(userId);
             }
             document.rating = {likes: likesFilter, dislikes: dislikesFilter}
 

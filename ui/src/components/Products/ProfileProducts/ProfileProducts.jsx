@@ -5,7 +5,16 @@ import {faBan, faBookmark, faCircle, faCircleExclamation, faPlus} from "@fortawe
 import styles from "./ProfileProducts.module.scss"
 
 function ProfileProducts(props) {
-    const {products, isOwner} = props;
+    const {products, isOwner, isBlocked} = props;
+
+    if (isBlocked){
+        return (
+            <div className={"p-6"}>
+                <h1 className={"text-2xl text-slate-500 text-center"}>User is blocked.</h1>
+            </div>
+        )
+    }
+
     return (
         <div className={"p-6"}>
             {isOwner &&
@@ -18,7 +27,6 @@ function ProfileProducts(props) {
                     </div>
                 </div>
             }
-
             {
                 products.length > 0 ?
                     products.map((product) => (
@@ -26,7 +34,6 @@ function ProfileProducts(props) {
                             <ProductCard product={product} key={product._id}/>
                         </div>
                     ))
-
                  :  <h1 className={"text-2xl text-slate-500 text-center"}>No products.</h1>
 
             }

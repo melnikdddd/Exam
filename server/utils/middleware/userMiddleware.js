@@ -5,7 +5,7 @@ export const _updateUser = async (req, res, next) => {
         const body = req.body;
         const userStringId = req.params.id;
 
-        const userPropertiesTypes = ['blockedUsers', 'favoritesUsers', 'rating', 'reports'];
+        const userPropertiesTypes = ['blockedUsers', 'favoritesUsers', 'like', 'dislike', 'reports'];
 
 
         if (ownerId !== userStringId && userPropertiesTypes.includes(body.listType)){

@@ -5,9 +5,9 @@
   min-width: 100px;
 
   &:not([disabled]):hover{
-    @apply bg-slate-300;
-    transition: 0.3s;
+    @apply bg-slate-300 transition-colors;
   }
+
 
   &[disabled]{
     cursor: default;
@@ -16,14 +16,12 @@
 }
 .left{
   @apply rounded-r-none border-r-0;
-  &.clicked{
-    @apply bg-green-400;
-  }
+
 }
 .right{
   @apply rounded-l-none;
-  &.clicked{
-    @apply bg-red-400;
-  }
 }
 
+.clicked{
+  @apply bg-slate-400  transition-colors;
+}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThumbsDown, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import styles from "./RatingBottons.module.scss"
@@ -6,53 +6,76 @@ import {useNavigate} from "react-router-dom";
 import {fetchUpdate} from "../../../utils/Axios/functions";
 
 function RatingButtons(props) {
-    const {rateObj, isAuth, isDisabled, owner, entity} = props;
-
+    const {rateObj, isAuth, isDisabled, ownerId, entity} = props;
     const navigate = useNavigate();
 
-    const rating = rateObj.rating;
+    useEffect(()=>{
+        setLikesLength(rateObj.rating.likes.length);
+        setDislikesLength(rateObj.rating.dislikes.length);
+        setIstLiked(rateObj.rating.likes.includes(ownerId));
+        setIsDisliked(rateObj.rating.dislikes.includes(ownerId));
 
-    const liked = rating.likes.includes(owner._id);
-    const disliked = rating.dislikes.includes(owner._id);
+    },[rateObj, isAuth, isDisabled, ownerId, entity])
 
 
-    const [isLiked, seIstLiked] = useState(liked);
-    const [isDisliked, seIsDisliked] = useState(disliked);
+    const [likesLength, setLikesLength] = useState(rateObj.rating.likes.length);
+    const [dislikesLength, setDislikesLength] = useState(rateObj.rating.dislikes.length);
+
+
+    const [isLiked, setIstLiked] = useState(rateObj.rating.likes.includes(ownerId));
+    const [isDisliked, setIsDisliked] = useState(rateObj.rating.dislikes.includes(ownerId));
 
     const updateRating = async (ratingType, boolean) =>{
         const operation = boolean ? 'remove' : 'add';
-        await fetchUpdate(`/${entity}/${rateObj._id}`,
-            {userId: owner._id, listType: ratingType, operation: operation});
+        return  await fetchUpdate(`/${entity}/${rateObj._id}`,
+            {userId: ownerId, listType: ratingType, operation: operation});
     }
 
     const handleLikeClick = async () =>{
         if (isAuth){
+            setLikesLength(isLiked ? (likesLength - 1) : (likesLength + 1));
+            setIstLiked(!isLiked);
+            setDislikesLength(isDisliked ? dislikesLength - 1 : dislikesLength);
+            setIsDisliked(false);
+            const response = await updateRating('like', isLiked);
+            console.log(response);
             return;
         }
         navigate("/auth/login", { state: {from: `${window.location.pathname}`}});
-
     }
+
     const handleDisLikeClick = async () =>{
         if (isAuth){
+            setDislikesLength(isDisliked ? (dislikesLength - 1) : (dislikesLength + 1));
+            setIsDisliked(!isDisliked);
+            setLikesLength(isLiked ? likesLength - 1 : likesLength);
+            setIstLiked(false);
 
+            const response = await updateRating('dislike', isDisliked);
+            console.log(response);
+
+            if (response.success){
+            }
             return;
         }
         navigate("/auth/login", { state: {from: `${window.location.pathname}`}});
 
     }
+
 
 
     return (
         <div className={"flex"}>
-            <button className={`${styles.ratingButton} ${styles.left}`}
+            <button className={`${styles.ratingButton} ${styles.left} ${isLiked ? styles.clicked : ''}`}
                     disabled={isDisabled}
             onClick={handleLikeClick}>
                 <FontAwesomeIcon icon={faThumbsUp} className={"h-7"}/>
-                {rating.likes.length}
+                {likesLength}
             </button>
-            <button className={`${styles.ratingButton} ${styles.right}`} disabled={isDisabled}>
+            <button className={`${styles.ratingButton} ${styles.right} ${isDisliked ? styles.clicked : ''}`} disabled={isDisabled}
+            onClick={handleDisLikeClick}>
                  <FontAwesomeIcon icon={faThumbsDown} className={"h-7"}/>
-                {rating.dislikes.length}
+                {dislikesLength}
             </button>
         </div>
 

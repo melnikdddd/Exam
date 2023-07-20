@@ -1,5 +1,5 @@
 import {selectIsAuth} from "../../store/slices/AuthSlice";
-import {selectUserData} from "../../store/slices/UserDataSlice";
+import {selectProducts, selectUserData} from "../../store/slices/UserDataSlice";
 import {useDispatch, useSelector} from "react-redux";
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
 import ProfileCard from "../../components/Card/ProfileCard/ProfileCard";
@@ -16,7 +16,6 @@ import {decodeBase64Image} from "../../components/Images/utils";
 import UserProfileData from "./UserProfileData";
 import ProfileProducts from "../../components/Products/ProfileProducts/ProfileProducts";
 import {useNavigate, useLocation} from "react-router-dom";
-import error from "../Erorr/Error";
 
 function UserProfile(props) {
     const isAuth = useSelector(selectIsAuth);
@@ -27,14 +26,18 @@ function UserProfile(props) {
     const navigate = useNavigate();
 
     const owner = useSelector(selectUserData);
+    const ownerProducts = useSelector(selectProducts);
+
     const [user, setUser] = useState(null);
 
     const [products, setProducts] = useState(null);
     const [isOwner,setIsOwner] = useState(null)
 
+    const [isBlocked, setIsBlocked] = useState(null);
     const [isLoading,setIsLoading] = useState(false);
-    const [isProfile, setIsProfile] = useState(location.state?.isProfile | true);
 
+
+    const [isProfile, setIsProfile] = useState(location.state?.isProfile ?? true);
 
 
     useEffect(()=>{
@@ -48,7 +51,7 @@ function UserProfile(props) {
 
             const {userAvatar, ...uData} = data.user;
 
-            const imageData = userAvatar?.data?.data || ''
+            const imageData = userAvatar?.data?.data || '';
             const image = imageData.length === 0  || !imageData ? '' : imageData;
             const ext = data.userAvatar?.ext || '';
 
@@ -57,13 +60,15 @@ function UserProfile(props) {
             setIsOwner(false);
             setUser(uData);
             setProducts(data.products)
+            setIsBlocked(isAuth ? owner.blockedUsers.includes(id)  : false);
             setIsLoading(true);
         }
 
         if (isAuth && owner._id === id){
+
             setIsOwner(true);
             setUser(owner);
-            setProducts(owner.products);
+            setProducts(ownerProducts);
             setIsLoading(true);
             return;
         }
@@ -97,8 +102,11 @@ function UserProfile(props) {
                       </li>
                   </ul>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
-                        {isProfile ? <UserProfileData user={user} isOwner={isOwner} isAuth={isAuth} owner={owner}/> :
-                            <ProfileProducts products={products} isOwner={isOwner}/>}
+                        {isProfile ?
+                            <UserProfileData user={user} isOwner={isOwner} isAuth={isAuth} owner={owner}
+                            setIsBlocked={setIsBlocked} isBlocked={isBlocked}/>
+                            :
+                            <ProfileProducts products={products} isOwner={isOwner} isBlocked={isBlocked}/>}
                     </ProfileCard>
                 </div>
             </Container>

@@ -67,12 +67,13 @@ class UserController{
             return res.status(404).json({success: false, message: 'User can`t find.'});
         }
 
+        user.products  = await getUserProducts(userId)
+
         return res.status(200).json({success: true, userData : user});
     }
 
     getUserProducts = async (req, res) =>{
         const ownerId = req.body.userId;
-
         const products = await getUserProducts(ownerId);
 
         res.status(200).json(products);

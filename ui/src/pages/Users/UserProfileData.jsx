@@ -7,10 +7,10 @@ import moment from "moment";
 import RatingButtons from "../../components/Buttons/RatingButton/RatingButtons";
 import React, {useEffect, useState} from "react";
 import ProfileOptions from "./ProfileOptions";
+import {useParams} from "react-router";
 
 function UserProfileData(props) {
-    const {user, isOwner, isAuth, owner} = props;
-
+    const {user, isOwner, isAuth, owner, isBlocked, setIsBlocked} = props;
 
     const [showProfileOptions, setShowProfileOptions] = useState(false);
 
@@ -51,7 +51,11 @@ function UserProfileData(props) {
                         </>
                         :
                         <>
-                            <button className={"bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors cursor-pointer"}>Message</button>
+                            <button className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors cursor-pointer
+                            disabled:bg-gray-100 disabled:text-gray-600 disabled:hover:none disabled:cursor-default`}
+                            disabled={isBlocked}>
+                                Message
+                            </button>
                             <FontAwesomeIcon icon={faEllipsisVertical}
                                              className={`h-6 hover:text-blue-600 transition-colors cursor-pointer ${showProfileOptions ? "text-blue-600" : ''}`}
                                              onClick={handleShowOptionsClick}
@@ -61,56 +65,64 @@ function UserProfileData(props) {
                                                 isAuth={isAuth}
                                                 user={user}
                                                 owner={owner}
+                                                isBlocked={isBlocked}
+                                                setIsBlocked={setIsBlocked}
                                 />
                             }
                         </>
                     }
                 </div>
             </div>
-            <div className={"bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-between"}>
-                <div className={"w-full p-4"}>
-                    <p className={"text-slate-500"}>
-                        Status:
-                    </p>
-                    <span className={"text-lg "}>
+            {isBlocked ?
+                <div className={"bg-white ml-2 shadow-md rounded-lg w-full flex flex-col items-center justify-center"}>
+                    <h1 className={"text-center text-2xl"}>{user.firstname} is blocked.</h1>
+                </div>
+                :
+                <div className={"bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-between"}>
+                    <div className={"w-full p-4"}>
+                        <p className={"text-slate-500"}>
+                            Status:
+                        </p>
+                        <span className={"text-lg "}>
                         {user.userStatus ? user.userStatus : "Not indicated."}
                     </span>
-                </div>
-                <div className={"w-full p-4"}>
-                    <p className={"text-slate-500"}>
-                        Deals:
-                    </p>
-                    <span className={"text-lg "}>
+                    </div>
+                    <div className={"w-full p-4"}>
+                        <p className={"text-slate-500"}>
+                            Deals:
+                        </p>
+                        <span className={"text-lg "}>
                         Purchase: {user.deals.purchase}
                     </span>
-                    <span className={"text-lg ml-4"}>
+                        <span className={"text-lg ml-4"}>
                         Purchase: {user.deals.sales}.
                     </span>
-                </div>
-                <div className={"w-full p-4"}>
-                    <p className={"text-slate-500"}>
-                        About me:
-                    </p>
-                    <span className={"text-lg "}>
+                    </div>
+                    <div className={"w-full p-4"}>
+                        <p className={"text-slate-500"}>
+                            About me:
+                        </p>
+                        <span className={"text-lg "}>
                         {user.aboutUser ? user.aboutUser : 'Not indicated.'}
                     </span>
-                </div>
-                <div className={"w-full border-t border-gray-300 p-4 flex justify-between"}>
-                    <div>
-                        <p className={"text-slate-600 text-lg"}>Last active:</p>
-                        <span className="text-slate-900 text-lg">
+                    </div>
+                    <div className={"w-full border-t border-gray-300 p-4 flex justify-between"}>
+                        <div>
+                            <p className={"text-slate-600 text-lg"}>Last active:</p>
+                            <span className="text-slate-900 text-lg">
                             21-05-2023
                         </span>
-                    </div>
-                    <RatingButtons rateObj={user} isAuth={isAuth} isDisabled={isOwner} owner={owner} entity={`users`}/>
-                    <div>
-                        <p className={"text-slate-600 text-lg"}>Since:</p>
-                        <span className="text-slate-900 text-lg">
+                        </div>
+                        <RatingButtons rateObj={user} isAuth={isAuth} isDisabled={isOwner} ownerId={owner._id} entity={`users`}/>
+                        <div>
+                            <p className={"text-slate-600 text-lg"}>Since:</p>
+                            <span className="text-slate-900 text-lg">
                         {moment(user.createdAt).format("DD-MM-YYYY")}
                         </span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     );
 }

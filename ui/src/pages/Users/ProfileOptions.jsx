@@ -9,23 +9,19 @@ import {faBan, faBookmark, faCircleExclamation} from "@fortawesome/free-solid-sv
 import {type} from "@testing-library/user-event/dist/type";
 
 function ProfileOptions(props){
-    const {isAuth, owner, user} = props;
+    const {isAuth, owner, user, isBlocked, setIsBlocked} = props;
     const userId = user?._id;
     const ownerId = owner?._id;
     const navigate = useNavigate();
 
-        console.log(ownerId);
-        console.log(user.reports);
 
     const isFavoriteUser = isAuth ? owner.favoritesUsers.includes(userId)  : false;
-    const isBlockedUser = isAuth ? owner.blockedUsers.includes(userId)  : false;
     const isReportedUser = isAuth ? user.reports.includes(ownerId)  : false;
 
 
     const dispatch = useDispatch();
 
     const [isFavorites, setIsFavorites] = useState(isFavoriteUser);
-    const [isBlocked, setIsBlocked] = useState(isBlockedUser);
     const [isReported, setIsReported] = useState(isReportedUser);
 
     const updateOwnerList = async (listType, boolean, set) =>{
