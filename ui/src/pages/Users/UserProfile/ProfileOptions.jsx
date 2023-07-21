@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import React, {useState} from "react";
-import {fetchUpdate} from "../../utils/Axios/functions";
-import {setUserData, updateValue} from "../../store/slices/UserDataSlice";
+import {fetchUpdate} from "../../../utils/Axios/functions";
+import {setUserData, updateValue} from "../../../store/slices/UserDataSlice";
 import styles from "./UserPofile.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBan, faBookmark, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";

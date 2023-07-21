@@ -1,21 +1,22 @@
-import {selectIsAuth} from "../../store/slices/AuthSlice";
-import {selectProducts, selectUserData} from "../../store/slices/UserDataSlice";
+import {selectIsAuth} from "../../../store/slices/AuthSlice";
+import {selectProducts, selectUserData} from "../../../store/slices/UserDataSlice";
 import {useDispatch, useSelector} from "react-redux";
-import BackGround from "../../components/Wrapper/BackGround/BackGround";
-import ProfileCard from "../../components/Card/ProfileCard/ProfileCard";
+import BackGround from "../../../components/Wrapper/BackGround/BackGround";
+import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
 import styles from "./UserPofile.module.scss"
-import Container from "../../components/Wrapper/Container/Container";
+import Container from "../../../components/Wrapper/Container/Container";
 
 import {useParams} from "react-router";
 import {useEffect, useState} from "react";
-import {fetchGet} from "../../utils/Axios/functions";
-import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper";
-import LoadingBlock from "../../components/Loading/LoadingBlock";
-import {decodeBase64Image} from "../../components/Images/utils";
+import {fetchGet} from "../../../utils/Axios/functions";
+import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
+import LoadingBlock from "../../../components/Loading/LoadingBlock";
+import {decodeBase64Image} from "../../../components/Images/utils";
 
 import UserProfileData from "./UserProfileData";
-import ProfileProducts from "../../components/Products/ProfileProducts/ProfileProducts";
+import ProfileProducts from "../../../components/Products/ProfileProducts/ProfileProducts";
 import {useNavigate, useLocation} from "react-router-dom";
+import Tabs from "../../../components/Buttons/Tabs/Tabs";
 
 function UserProfile(props) {
     const isAuth = useSelector(selectIsAuth);
@@ -76,32 +77,14 @@ function UserProfile(props) {
 
         getUserData(id);
 
-    },[id])
-
-    const handleTabsProfileClick = (event)=>{
-        setIsProfile(true);
-    }
-    const handleTabsProductsClick = (event)=>{
-        setIsProfile(false);
-    }
+    },[id]);
 
     if (isLoading){
         return (
              <BackGround background={"radial-gradient(circle, rgba(174,238,214,1) 0%, rgba(148,187,233,1) 100%)"}>
             <Container className={"pt-6"}>
                 <div className={"w-full"}>
-                  <ul className={styles.tabs}>
-                      <li className={`${styles.tabsItem} ${styles.left} 
-                      ${isProfile ? styles.tabsActive : ''}`}
-                      onClick={isProfile ? ()=>{} : handleTabsProfileClick}>
-                          Profile
-                      </li>
-                      <li className={`${styles.tabsItem} ${styles.right} 
-                      ${!isProfile ? styles.tabsActive : ''}`}
-                          onClick={!isProfile ? ()=>{} : handleTabsProductsClick}>
-                          Products
-                      </li>
-                  </ul>
+                    <Tabs boolean={isProfile} setBoolean={setIsProfile} optionA={"Profile"} optionB={"Products"}/>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
                         {isProfile ?
                             <UserProfileData user={user} owner={owner} isOwner={isOwner} isAuth={isAuth}

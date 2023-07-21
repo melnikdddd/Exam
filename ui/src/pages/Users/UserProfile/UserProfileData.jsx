@@ -1,10 +1,10 @@
-import UserAvatar from "../../components/Images/UserAvatar";
+import UserAvatar from "../../../components/Images/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faEllipsisVertical, faGear} from "@fortawesome/free-solid-svg-icons";
 import {NavLink} from "react-router-dom";
-import LogoutButton from "../../components/Buttons/LogoutButton/LogoutButton";
+import LogoutButton from "../../../components/Buttons/LogoutButton/LogoutButton";
 import moment from "moment";
-import RatingButtons from "../../components/Buttons/RatingButton/RatingButtons";
+import RatingButtons from "../../../components/Buttons/RatingButton/RatingButtons";
 import React, {useEffect, useState} from "react";
 import ProfileOptions from "./ProfileOptions";
 import {useParams} from "react-router";
@@ -16,15 +16,14 @@ function UserProfileData(props) {
     const [data, setData] =
         useState({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
 
+
     useEffect(()=>{
        setShowProfileOptions(false);
     },[]);
 
-    useEffect(() => {
-        setData({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
-    }, [user, owner, isOwner, isAuth, isBlocked, setIsBlocked]);
-
-
+    useEffect(()=>{
+        setData({user, owner, isOwner, isAuth, isBlocked, setIsBlocked})
+    }, [user, owner, isOwner, isAuth, isBlocked, setIsBlocked])
 
     const handleShowOptionsClick = ()=>{
         setShowProfileOptions(!showProfileOptions);
@@ -38,7 +37,7 @@ function UserProfileData(props) {
         <div className={"flex"}>
             <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{height: "360px"}}>
                 <UserAvatar image={data.user.userAvatar} className={"w-full h-44 "} isOwner={data.isOwner}/>
-                <div className={"w-full flex justify-between items-center p-3 px-6"} style={{minWidth: "180px"}}>
+                <div className={"w-full flex justify-between items-center p-3 px-3"} style={{minWidth: "180px"}}>
                     <span className={"text-lg"}>{data.user.firstname}</span>
                     <span className={"text-lg"}>{data.user.lastname}</span>
                 </div>
@@ -51,7 +50,7 @@ function UserProfileData(props) {
                 <div className={"flex items-center justify-between mt-3"}>
                     {isOwner ?
                         <>
-                        <NavLink to={`/users/${data.user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
+                        <NavLink to={`/users/${user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
                             Setting
                             <FontAwesomeIcon icon={faGear} className={"ml-1"}/>
                         </NavLink>
@@ -61,7 +60,7 @@ function UserProfileData(props) {
                         <>
                             <button className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors cursor-pointer
                             disabled:bg-gray-100 disabled:text-gray-600 disabled:hover:none disabled:cursor-default`}
-                            disabled={isBlocked}>
+                            disabled={data.isBlocked}>
                                 Message
                             </button>
                             <FontAwesomeIcon icon={faEllipsisVertical}
@@ -81,6 +80,7 @@ function UserProfileData(props) {
                     }
                 </div>
             </div>
+
             {isBlocked ?
                 <div className={"bg-white ml-2 shadow-md rounded-lg w-full flex flex-col items-center justify-center"}>
                     <h1 className={"text-center text-2xl"}>{data.user.firstname} is blocked.</h1>
