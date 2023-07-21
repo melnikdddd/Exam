@@ -1,6 +1,6 @@
 import UserAvatar from "../../../components/Images/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircle, faEllipsisVertical, faGear} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faEllipsisVertical, faGear, faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {NavLink} from "react-router-dom";
 import LogoutButton from "../../../components/Buttons/LogoutButton/LogoutButton";
 import moment from "moment";
@@ -35,9 +35,9 @@ function UserProfileData(props) {
 
     return (
         <div className={"flex"}>
-            <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{height: "360px"}}>
+            <div className={"border rounded-lg flex-col px-6 pt-6 pb-4 bg-white shadow-md items-center"} style={{maxHeight: "360px"}}>
                 <UserAvatar image={data.user.userAvatar} className={"w-full h-44 "} isOwner={data.isOwner}/>
-                <div className={"w-full flex justify-between items-center p-3 px-3"} style={{minWidth: "180px"}}>
+                <div className={"w-full flex justify-between items-center p-3 px-4"} style={{minWidth: "180px"}}>
                     <span className={"text-lg"}>{data.user.firstname}</span>
                     <span className={"text-lg"}>{data.user.lastname}</span>
                 </div>
@@ -105,6 +105,12 @@ function UserProfileData(props) {
                         <span className={"text-lg ml-4"}>
                         Purchase: {data.user.deals.sales}.
                     </span>
+                    </div>
+                    <div className={"w-full p-4"}>
+                        <p className={"text-slate-500"}>
+                            Location <FontAwesomeIcon icon={faLocationDot}/>
+                        </p>
+                        <span className={"text-lg"}> {user.location ? user.location : "Not indicated."}</span>
                     </div>
                     <div className={"w-full p-4"}>
                         <p className={"text-slate-500"}>

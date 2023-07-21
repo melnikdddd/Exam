@@ -16,6 +16,7 @@ const initialState = {
        deals: null,
        favoritesUsers: null,
        blockedUsers: null,
+       location: null,
    },
    products : []
 }

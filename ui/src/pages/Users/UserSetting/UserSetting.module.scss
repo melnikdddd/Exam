@@ -1,3 +1,15 @@
 .label{
-  @apply text-gray-600 text-sm;
+  @apply text-gray-600 text-base;
+}
+
+.submit{
+  @apply  py-2 px-7 rounded-lg;
+
+  :not([disabled]){
+    @apply bg-blue-500 text-white hover:bg-blue-600 transition-colors cursor-pointer;
+  }
+  &[disabled]{
+  @apply bg-gray-100 text-gray-600;
+ }
+
 }

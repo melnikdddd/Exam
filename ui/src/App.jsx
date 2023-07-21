@@ -10,7 +10,8 @@ import {useEffect, useState} from "react";
 import {firstEffectEntry} from "./utils/Auth/authFunctions";
 import LoadingBlock from "./components/Loading/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
-import UserProfile from "./pages/Users/UserProfile";
+import UserProfile from "./pages/Users/UserProfile/UserProfile";
+import UserSetting from "./pages/Users/UserSetting/UserSetting";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -35,7 +36,12 @@ const routes = createBrowserRouter(createRoutesFromElements(
         </Route>
         <Route path={"/users"}>
             <Route path={":id"} element={<UserProfile/>} />
-            <Route path={':id/edit'}/>
+
+            <Route path={':id/setting'} element={
+                <PrivateRoute isAuthNeed={true}>
+                <UserSetting/>
+                </PrivateRoute>
+            }/>
         </Route>
         <Route path={"/terms"}/>
         <Route path={"/contacts"}/>

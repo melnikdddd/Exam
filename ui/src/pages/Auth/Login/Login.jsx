@@ -11,7 +11,7 @@ import {faGoogle, faTelegram} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
-import AuthInput from "../../../components/Inputs/AuthInput";
+import AuthInput from "../../../components/Inputs/Auth/AuthInput";
 import AuthCard from "../../../components/Card/AuthCard/AuthCard";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 

@@ -1,21 +1,30 @@
 import {useSelector} from "react-redux";
 import {selectUserImage} from "../../store/slices/UserDataSlice";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
+import {useEffect, useState} from "react";
 
 
 
 const UserAvatar = (props) =>{
-    const image = useSelector(selectUserImage);
 
-    if (props.isOwner === true){
-        return <div className={props.className} >
-            <img src={image} alt={"userImage"} className={"w-full h-full rounded-full"}/>
+    const {isChanged, image} = props;
+
+    const [imageState, setImageState] = useState(image);
+
+    useEffect(() => {
+        setImageState(image)
+    }, [image]);
+
+
+
+    if (isChanged){
+        return <div className={props.className} onClick={props.onClick}>
+            <img src={imageState} alt={"userImage"} className={"w-full h-full rounded-full cursor-pointer"}/>
         </div>
     }
 
-
     return <div className={props.className} >
-        <img src={props.image} alt={"userImage"} className={"w-full h-full rounded-full"}/>
+        <img src={imageState} alt={"userImage"} className={"w-full h-full rounded-full"}/>
     </div>
 
 

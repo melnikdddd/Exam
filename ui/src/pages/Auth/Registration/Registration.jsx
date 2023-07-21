@@ -11,7 +11,7 @@ import AuthCard, {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
-import AuthInput from "../../../components/Inputs/AuthInput";
+import AuthInput from "../../../components/Inputs/Auth/AuthInput";
 import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
 import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
 import Terms from "../../../components/Terms/Terms";
