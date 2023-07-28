@@ -42,8 +42,9 @@ const getFileExtensionFromPath = (filePath) =>{
     return path.extname(filePath).slice(1).toLowerCase()
 }
 
-const getFileExtensionFromFile = (file) =>{
-   const originalFileName = file.originalname;
+
+
+export const getFileExtensionFromFilename = (originalFileName) =>{
    return originalFileName.substring(originalFileName.lastIndexOf('.')).slice(1);
 
 }

@@ -1,4 +1,4 @@
-import { _decodingImagesFromArray, _decodingImageToString} from "./fsWorker.js";
+import { getFileExtensionFromFilename} from "./fsWorker.js";
 import UserModel from "../models/UserModel.js";
 import CommentModel from "../models/CommentModel.js";
 import ProductModel from "../models/ProductModel.js";
@@ -11,17 +11,17 @@ class ModelsWorker {
     }
 
 
-    setImageWorkerOptions = (operation, imagesType) => {
+    setImageWorkerOptions = (operation, imageFieldName) => {
         if(!operation){
             return false;
         }
 
         this.imageWorker = new this.#ImagesWorker;
-        this.imageWorker.options = {operation, imagesType};
+        this.imageWorker.options = {operation: operation, imageFieldName: imageFieldName};
         this.imageWorker.options.isCanWork = true;
     }
 
-    findAndUpdate = async (id ,data, imagesParams) => {
+    findAndUpdate = async (id ,data, image_s) => {
         const document = await this.model.findById({_id: id});
 
         if (!document){
@@ -47,10 +47,14 @@ class ModelsWorker {
             return  false;
         }
 
+
         if (this.imageWorker && this.imageWorker.options.isCanWork){
-             if (!this.imageWorker.goWork(document, imagesParams)){
-                return {success: false, message: "Images worker Error"};
-             }
+            const result = this.imageWorker.goWork(image_s);
+
+            if (result){
+                document[this.imageWorker.options.imageFieldName] = result;
+            }
+
          }
 
         for (const key in data){
@@ -107,33 +111,32 @@ class ModelsWorker {
         options = {
             isCanWork: false,
             operation: null,
-            imagesType: null,
+            imageFieldName: null,
         }
-        goWork = (document, ...params) =>{
-            const {operation,imagesType} =  this.options;
+        goWork = (image_s) =>{
+            const {operation,imageFieldName} =  this.options;
 
-            const goOperation = imagesType === "array" ? this.arrayImageOperations[operation] :
+            const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
                 this.singleImageOperations[operation];
 
-            const operationResult = goOperation(document[imagesType], ...params);
+            const operationResult = goOperation(image_s);
 
             if (!operationResult){
                 return false;
             }
-            document[imagesType] = operationResult;
-            return  true;
-
+            return operationResult;
         }
 
         singleImageOperations = {
-            addOrReplace : (image) => {
-               return _decodingImageToString(image)
+            replace : (image) => {
+               return {data: image.buffer, ext: getFileExtensionFromFilename(image.originalname)}
             },
 
             remove : () => {
-                return {data: '', contentType: ''}
+                return {data: '', ext: ''}
             },
         }
+
         arrayImageOperations = {
             add: (array, images) =>{
                 const decodedImages = _decodingImagesFromArray(images);

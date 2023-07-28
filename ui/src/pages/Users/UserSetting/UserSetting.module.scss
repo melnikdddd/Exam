@@ -3,13 +3,13 @@
 }
 
 .submit{
-  @apply  py-2 px-7 rounded-lg;
 
-  :not([disabled]){
-    @apply bg-blue-500 text-white hover:bg-blue-600 transition-colors cursor-pointer;
+  &:not([disabled]){
+   @apply hover:bg-blue-600 hover:transition-colors;
   }
+
   &[disabled]{
-  @apply bg-gray-100 text-gray-600;
+    @apply bg-gray-100 text-gray-600 cursor-default;
  }
 
 }

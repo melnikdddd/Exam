@@ -20,7 +20,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 
-import {fetchPost, fetchRegistration} from "../../../utils/Axios/functions";
+import {fetchPost} from "../../../utils/Axios/functions";
 import {
     initialIdentityValues,
     setIdentityValue,

@@ -23,12 +23,16 @@ class UserController{
     updateUser = async (req, res) =>{
         const userId = req.params.id;
 
-        const {imageOptions, ...body} = req.body;
+        const {imageOperation, ...body} = req.body;
 
-        const imageData = this.#service.getImagesOptions(req.file, imageOptions);
-        modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
+        //создаю объект настроек для дальнейшей работы с файлом
+        const imageData = this.#service.getImagesOptions(req.file, imageOperation);
 
-        const result = await modelWorker.findAndUpdate(userId, body, imageData.imagesParams);
+        //задаю эти настройки в ImageWorker
+        modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
+
+        //вызвыаю общий для всех моделей метод апдейта, уже с настройками для записи файла
+        const result = await modelWorker.findAndUpdate(userId, body, imageData.image);
         return res.json({result});
     }
 
@@ -80,14 +84,12 @@ class UserController{
     }
 
     #service = {
-        getImagesOptions(file, bodyImageOptions){
+        getImagesOptions(file, imageOperation){
             return {
-                imagesParams: {
-                    image: file || null,
-                },
+                image: file || null,
                 options: {
-                    operation: bodyImageOptions?.operation || null,
-                    operationType:  "user"
+                    operation: imageOperation || null,
+                    imageFieldName: "userAvatar",
                 },
             }
         },

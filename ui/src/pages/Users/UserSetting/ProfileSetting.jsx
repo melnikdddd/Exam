@@ -4,26 +4,33 @@ import styles from './UserSetting.module.scss';
 import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLocationDot} from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {fetchUpdate} from "../../../utils/Axios/functions";
+import userAvatar from "../../../components/Images/UserAvatar";
 
 function ProfileSetting(props) {
     const owner = props.owner;
 
     const [image, setImage] = useState(owner.userAvatar);
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [isFormDirty, setIsFormDirty] = useState(false);
 
+    console.log(isFormDirty);
     const {
         register,
         formState: {
             errors,
-            isValid,
         },
         handleSubmit,
         reset,
         watch,
         setError,
+        formState,
     } = useForm({
         mode: "onChange"
     });
+
+
 
     const handleAboutUserInput = (event) => {
         const textarea = event.target;
@@ -31,11 +38,13 @@ function ProfileSetting(props) {
         textarea.style.height = `${textarea.scrollHeight}px`;
     }
 
+
     const handleImageClick = (event) => {
         document.getElementById("fileInput").click();
     }
     const handleFileChange = (event) => {
-        const file = event.target.files[0];
+        const file =  event.target.files[0];
+        setUploadedImage(file);
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -43,10 +52,30 @@ function ProfileSetting(props) {
             }
             reader.readAsDataURL(file);
         }
+
+    }
+
+    useEffect(() => {
+        setIsFormDirty(formState.isDirty)
+    }, [formState.isDirty]);
+
+
+    const onSubmit = async  () => {
+        const formData = new FormData();
+
+        console.log(formState.dirtyFields);
+
+        if (uploadedImage){
+            formData.append("userAvatar", uploadedImage);
+            formData.append("imageOperation", "replace");
+        }
+
+       const response = await fetchUpdate(`/users/${owner._id}`, formData);
+        console.log(response);
     }
 
     return (
-        <form className={"flex w-full h-full"}>
+        <form className={"flex w-full h-full"} onSubmit={handleSubmit(onSubmit)}>
             <div className={"flex flex-col items-center"}>
                 <div
                     className={"border rounded-lg flex flex-col p-6 pb-4 bg-white shadow-md items-center justify-center"}
@@ -54,7 +83,7 @@ function ProfileSetting(props) {
                     <UserAvatar image={image} className={"h-44 w-44"} isOwner={true}
                                 isChanged={true} onClick={handleImageClick}/>
 
-                    <input type="file" hidden={true} onChange={handleFileChange}
+                    <input type="file" hidden={true} onInput={handleFileChange}
                            id={"fileInput"}
                            {...register('userAvatar')}/>
 
@@ -68,22 +97,23 @@ function ProfileSetting(props) {
                     </div>
                 </div>
                 <div className={"bg-white shadow-md mt-3 p-3 rounded-lg w-full text-center"}>
-                    <button type={"submit"} className={styles.submit} disabled={true}>
+                    <button  className={`rounded-lg bg-blue-500 text-white  cursor-pointer py-2 px-7 ${styles.submit}`}
+                             type={"submit"} disabled={!isFormDirty}>
                         Save
                     </button>
                 </div>
             </div>
             <div className={"bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-around p-4"}>
-                <div className={"w-full flex flex-col pb-10"}>
+                <div className={"w-full flex flex-col basis-1/3"}>
                     <label className={styles.label}>Status</label>
                     <UserProfileInput placeholder={owner.status ? owner.status : "Not indicated"} inputType={"text"}/>
                 </div>
-                <div className={"w-full flex flex-col my-20"}>
+                <div className={"w-full flex flex-col basis-1/3 my-20"}>
                     <label className={styles.label}>Location <FontAwesomeIcon icon={faLocationDot}/></label>
                     <UserProfileInput placeholder={owner.location ? owner.location : "Not indicated"}
                                       inputType={"text"}/>
                 </div>
-                <div className={"w-full flex flex-col pt-4"}>
+                <div className={"w-full flex flex-col basis-1/3 "}>
                     <label className={styles.label}>About me</label>
                     <UserProfileInput placeholder={owner.aboutUser ? owner.aboutUser : "Not indicated"}
                                       inputType={"textarea"}

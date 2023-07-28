@@ -17,7 +17,7 @@ UserRouter.get('/:id', UserController.getUser);
 
 
 UserRouter.route('/:id')
-    .patch(_checkAuth, userValidation, _updateUser, upload.single('avatar'), UserController.updateUser)
+    .patch(_checkAuth, userValidation, _updateUser, upload.single('userAvatar'), UserController.updateUser)
     .delete(_checkAuth ,UserController.removeUser);
 
 UserRouter.get('/:id/products', UserController.getUserProducts);
