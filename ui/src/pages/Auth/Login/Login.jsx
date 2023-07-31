@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
 import AuthInput from "../../../components/Inputs/Auth/AuthInput";
 import AuthCard from "../../../components/Card/AuthCard/AuthCard";
-import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 
 
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
@@ -23,7 +23,7 @@ import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import {setToken} from "../../../store/slices/AuthSlice";
 import {useDispatch} from "react-redux";
 
-import {fetchPost} from "../../../utils/Axios/functions";
+import {fetchPost} from "../../../utils/Axios/axiosFunctions";
 import {
     errorHandler,
     initialIdentityValues,
@@ -110,7 +110,7 @@ function Login() {
                                 }
                             )}}
                                    placeholder={"Email or phone number"}/>
-                        <AuthErrorMessage condition={errors?.identity} message={errors?.identity?.message}/>
+                        <FormErrorMessage errorField={errors?.identity}/>
                     </div>
                     <div className={"mt-3 flex-1 flex flex-col"}>
                         <label form={"password"}>Password</label>
@@ -130,7 +130,7 @@ function Login() {
                         }}
                                    placeholder={"Password"}
                                     type={"password"}/>
-                        <AuthErrorMessage condition={errors?.password} message={errors?.password?.message}/>
+                        errorField={errors?.password}
                     </div>
                     <div className={"w-full mt-5"}>
                     <AuthButton text={"Sign in"} disabled={!isValid}/>

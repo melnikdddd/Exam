@@ -13,14 +13,14 @@ import Container from "../../../components/Wrapper/Container/Container";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import AuthInput from "../../../components/Inputs/Auth/AuthInput";
 import AuthButton from "../../../components/Buttons/AuthButton/AuthButton";
-import AuthErrorMessage from "../../../components/Message/AuthErrorMessage";
+import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import Terms from "../../../components/Terms/Terms";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 
 
-import {fetchPost} from "../../../utils/Axios/functions";
+import {fetchPost} from "../../../utils/Axios/axiosFunctions";
 import {
     initialIdentityValues,
     setIdentityValue,
@@ -146,7 +146,7 @@ function Registration(){
                                            onBlur={()=> setBlur(setIsIdentityFocus)}
                                            onFocus={() => setFocus(setIsIdentityFocus)}
                                            placeholder={"Email or phone number"} />
-                                <AuthErrorMessage condition={errors?.identity} message={errors?.identity?.message}/>
+                                <FormErrorMessage errorField={errors?.identity}/>
                                 {isIdentityFocus && <HelperCard  height={"200px"}>
                                     <div>
                                         <div className={"mb-3 flex flex-col"}>
@@ -180,7 +180,7 @@ function Registration(){
                                         }
                                     })
                                 }} placeholder={"Firstname"}/>
-                                <AuthErrorMessage condition={errors?.firstname} message={errors?.firstname?.message}/>
+                                <FormErrorMessage errorField={errors?.firstname}/>
                             </div>
                             <div className={"mt-3 flex-1 flex flex-col"}>
                                 <label form={"lastname"}>Lastname</label>
@@ -202,7 +202,7 @@ function Registration(){
 
                                     })
                                 }} placeholder={"Lastname"}/>
-                                <AuthErrorMessage condition={errors?.lastname} message={errors?.lastname?.message}/>
+                                <FormErrorMessage errorField={errors?.lastname}/>
                             </div>
                             <hr className={"my-3"}/>
                             <div className={"flex-1 flex flex-col"}>
@@ -229,7 +229,7 @@ function Registration(){
                                                onBlur={()=> setBlur(setIsPasswordFocus)}
                                                placeholder={"Password"} type={"password"}/>
 
-                                    <AuthErrorMessage condition={errors?.password} message={errors?.password?.message}/>
+                                    <FormErrorMessage errorField={errors?.password}/>
 
                                     {isPasswordFocus &&
                                         <HelperCard height={"250px"}>
@@ -259,7 +259,7 @@ function Registration(){
                                             validate: validateRepeatPassword,
                                         })
                                     }} placeholder={"Repeat password"} type={"password"} />
-                                    <AuthErrorMessage  condition={errors?.repPassword} message={errors?.repPassword?.message}/>
+                                    <FormErrorMessage errorField={errors?.repPassword}/>
 
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ function Registration(){
                                     <input type="checkbox" {...register('terms', {required: "This is required."})}/>
                                     <p>I accept the <span className={"text-blue-500 underline hover:text-black transition cursor-pointer"} onClick={handleSpanClick}>terms of the user agreement</span>.</p>
                                 </div>
-                                <AuthErrorMessage condition={errors?.terms} message={errors?.terms?.message}/>
+                                <FormErrorMessage errorField={errors?.terms}/>
                             </div>
                             <div className={"w-full mt-5"}>
                                 <AuthButton text={"Sign up"} disabled={!isValid}/>

@@ -1,5 +1,5 @@
 import {setToken} from "../../store/slices/AuthSlice";
-import {fetchUserByToken} from "../Axios/functions";
+import {fetchUserByToken} from "../Axios/axiosFunctions";
 import {setUserData} from "../../store/slices/UserDataSlice";
 import {Navigate} from "react-router-dom";
 

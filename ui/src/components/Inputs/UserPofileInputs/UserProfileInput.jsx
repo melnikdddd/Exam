@@ -7,7 +7,9 @@ function UserProfileInput(props) {
         return (
             <input type={"text"}
                    placeholder={placeholder}
-                   className={styles.profileInput} />
+                   className={styles.profileInput}
+                   {...props.register}/>
+
         );
     }
     if (inputType === "textarea"){
@@ -15,7 +17,8 @@ function UserProfileInput(props) {
             <textarea placeholder={placeholder}
                       className={`${styles.profileInput} ${styles.textarea}`}
                       rows={1}
-                      onInput={props.onInput}>
+                      onInput={props.onInput}
+                      {...props.register}>
 
             </textarea>
         )

@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThumbsDown, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import styles from "./RatingBottons.module.scss"
 import {useNavigate} from "react-router-dom";
-import {fetchUpdate} from "../../../utils/Axios/functions";
+import {fetchUpdate} from "../../../utils/Axios/axiosFunctions";
 
 function RatingButtons(props) {
     const {rateObj, isAuth, isDisabled, ownerId, entity} = props;

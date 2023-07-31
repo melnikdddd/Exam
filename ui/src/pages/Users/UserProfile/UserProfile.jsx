@@ -8,7 +8,7 @@ import Container from "../../../components/Wrapper/Container/Container";
 
 import {useParams} from "react-router";
 import {useEffect, useState} from "react";
-import {fetchGet} from "../../../utils/Axios/functions";
+import {fetchGet} from "../../../utils/Axios/axiosFunctions";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import LoadingBlock from "../../../components/Loading/LoadingBlock";
 import {decodeBase64Image} from "../../../components/Images/utils";
