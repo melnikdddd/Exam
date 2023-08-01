@@ -1,6 +1,6 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {defauldImage} from "../../Images/utils";
+import {defaultImage} from "../../Images/utils";
 import {useEffect, useState} from "react";
 import styles from "./RemoveImage.module.scss"
 
@@ -10,7 +10,6 @@ function RemoveImageButton(props) {
     const handleRemoveClick = () =>{
 
         if (isEnable){
-            props.setImage(defauldImage());
             props.setIsClicked(true);
             setIsEnable(false);
         }

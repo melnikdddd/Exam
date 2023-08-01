@@ -9,8 +9,6 @@ import SecuritySetting from "./SecuritySetting";
 import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
 import {selectUserData} from "../../../store/slices/UserDataSlice";
 function UserSetting() {
-    const [owner, setOwner] = useState(useSelector(selectUserData));
-
     const [isProfile, setIsProfile] = useState(true);
 
     return (
@@ -20,7 +18,7 @@ function UserSetting() {
                     <Tabs boolean={isProfile} setBoolean={setIsProfile} optionA={"Profile"} optionB={"Security"}/>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
                         {isProfile ?
-                            <ProfileSetting owner={owner}/>  :
+                            <ProfileSetting/>  :
                             <SecuritySetting/>
                         }
                     </ProfileCard>

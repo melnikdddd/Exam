@@ -25,6 +25,8 @@ class UserController{
 
         const {imageOperation, ...body} = req.body;
 
+        console.log(req.body);
+
         //создаю объект настроек для дальнейшей работы с файлом
         const imageData = this.#service.getImagesOptions(req.file, imageOperation);
 

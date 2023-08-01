@@ -130,7 +130,7 @@ function Login() {
                         }}
                                    placeholder={"Password"}
                                     type={"password"}/>
-                        errorField={errors?.password}
+                        <FormErrorMessage errorField={errors?.password}/>
                     </div>
                     <div className={"w-full mt-5"}>
                     <AuthButton text={"Sign in"} disabled={!isValid}/>

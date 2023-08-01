@@ -53,6 +53,7 @@ class ModelsWorker {
 
             if (result){
                 document[this.imageWorker.options.imageFieldName] = result;
+                this.imageWorker.clearOptions();
             }
 
          }
@@ -114,6 +115,7 @@ class ModelsWorker {
             imageFieldName: null,
         }
         goWork = (image_s) =>{
+            console.log(this.options);
             const {operation,imageFieldName} =  this.options;
 
             const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
@@ -126,6 +128,14 @@ class ModelsWorker {
             }
             return operationResult;
         }
+
+        clearOptions = ()=>{
+            this.options.isCanWork = false;
+            this.options.operation = null;
+            this.options.imageFieldName = null;
+
+        }
+
 
         singleImageOperations = {
             replace : (image) => {

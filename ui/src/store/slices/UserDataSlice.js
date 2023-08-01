@@ -17,6 +17,7 @@ const initialState = {
        favoritesUsers: null,
        blockedUsers: null,
        location: null,
+       isDefaultImage: null,
    },
    products : []
 }
@@ -33,9 +34,12 @@ const UserDataSlice = createSlice({
             const image = imageData.length === 0  || !imageData ? '' : imageData;
             const ext = action.payload.userAvatar?.ext || '';
 
-            data.userAvatar = decodeBase64Image(image, ext);
-            state.data = data;
+             const{userImage, isDefaultImage} = decodeBase64Image(image, ext);
+             data.userAvatar = userImage;
+             data.isDefaultImage = isDefaultImage;
 
+
+            state.data = data;
         },
         clearUserData: (state, action) =>{
                 state.data = initialState.data;
@@ -50,6 +54,7 @@ const UserDataSlice = createSlice({
     }
 
 });
+
 
 
 export const setUserDataInLocalStorage = (userData) =>{
