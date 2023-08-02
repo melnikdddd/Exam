@@ -21,21 +21,24 @@ class UserController{
 
     }
     updateUser = async (req, res) =>{
-        const userId = req.params.id;
+        try {
+            const userId = req.params.id;
 
-        const {imageOperation, ...body} = req.body;
+            const {imageOperation, ...body} = req.body;
 
-        console.log(req.body);
+            //создаю объект настроек для дальнейшей работы с файлом
+            const imageData = this.#service.getImagesOptions(req.file, imageOperation);
 
-        //создаю объект настроек для дальнейшей работы с файлом
-        const imageData = this.#service.getImagesOptions(req.file, imageOperation);
+            //задаю эти настройки в ImageWorker
+            modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
 
-        //задаю эти настройки в ImageWorker
-        modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
-
-        //вызвыаю общий для всех моделей метод апдейта, уже с настройками для записи файла
-        const result = await modelWorker.findAndUpdate(userId, body, imageData.image);
-        return res.json({result});
+            //вызвыаю общий для всех моделей метод апдейта, уже с настройками для записи файла
+            const result = await modelWorker.findAndUpdate(userId, body, imageData.image);
+            return res.status(200).json({success : true});
+        }
+        catch (error){
+            res.status(500).send("Try later");
+        }
     }
 
     getUser = async (req, res) =>{
@@ -57,7 +60,6 @@ class UserController{
             res.status(200).json({user: user,products: products});
 
         } catch (error){
-            console.log(error);
             res.status(500).send("Try later");
         }
     }

@@ -152,6 +152,14 @@ export const getAuthResponseValues = (response) =>{
     return {token: response.data.token, userData: response.data.user}
 }
 
+export const validateRepeatPassword = (repeatPassword, password) => {
+    if (repeatPassword === password) {
+        return true;
+    } else {
+        return 'Passwords must match.';
+    }
+};
+
 export const firstEffectEntry = async (dispatch) =>{
     const token = window.localStorage.getItem('token');
     if (token) {

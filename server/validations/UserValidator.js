@@ -1,7 +1,7 @@
 import {body} from "express-validator"
 
 export const userValidation = [
-    body('password','Password must been form 6 to 15 letters.').isLength({min: 6, max: 15}),
+    body('password','Password must been form 6 to 15 letters.').isLength({min: 8, max: 15}),
     body('firstname', 'Min length is 3 letters.').isLength({min: 3}),
     body('lastname', 'Min length is 3 letters.').isLength({min: 3}),
     body("location").isString().isLength({max: 15}),

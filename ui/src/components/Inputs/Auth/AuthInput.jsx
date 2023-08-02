@@ -6,7 +6,7 @@ function AuthInput(props){
     return (
         <input type={props.type} {...props.register}
                placeholder={props.placeholder}
-               className={styles.input}
+               className={`${styles.input} ${props.classname}`}
                value={props.value}
                disabled={props.disabled}
                onBlur={props.onBlur}

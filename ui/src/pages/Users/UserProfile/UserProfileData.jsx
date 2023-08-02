@@ -35,11 +35,10 @@ function UserProfileData(props) {
 
     return (
         <div className={"flex"}>
-            <div className={"flex border rounded-lg flex-col px-6 py-4 bg-white shadow-md items-center justify-center"} style={{maxHeight: "360px"}}>
-                <UserAvatar image={data.user.userAvatar} className={"w-44 h-44 flex items-center justify-center"} isOwner={data.isOwner} />
-                <div className={"w-full flex justify-around items-center p-3 text-center"} style={{minWidth: "190px"}}>
-                    <span className={"text-lg flex-1 mr-0.5"}>{data.user.firstname}</span>
-                    <span className={"text-lg flex-1 ml-0.5"}>{data.user.lastname}</span>
+            <div className={"flex border rounded-lg flex-col px-6 py-2 bg-white shadow-md items-center justify-center"} >
+                <UserAvatar image={data.user.userAvatar} className={"h-44 w-44 mb-3 flex items-center justify-center"} isOwner={data.isOwner} />
+                <div className={"w-full flex items-center p-3 text-center"} style={{minWidth: "190px"}}>
+                    <span className={"text-2xl  flex-1 mr-0.5"}>{data.user.firstname} {data.user.lastname}</span>
                 </div>
                 <div className={"text-center mb-3"}>
                     <span className={"text-base"}>
@@ -47,7 +46,7 @@ function UserProfileData(props) {
                         <FontAwesomeIcon icon={faCircle} className={"text-slate-300 ml-2"}/>
                     </span>
                 </div>
-                <div className={"flex items-center justify-between mt-3"}>
+                <div className={"flex items-center justify-between mt-3 w-full"}>
                     {isOwner ?
                         <>
                         <NavLink to={`/users/${user._id}/setting`} className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>

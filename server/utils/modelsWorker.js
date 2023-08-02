@@ -3,6 +3,10 @@ import UserModel from "../models/UserModel.js";
 import CommentModel from "../models/CommentModel.js";
 import ProductModel from "../models/ProductModel.js";
 
+import bcrypt from "./auth/bcrypt.js";
+import * as constants from "constants";
+import sharp from "sharp";
+
 
 class ModelsWorker {
     constructor(model) {
@@ -22,11 +26,21 @@ class ModelsWorker {
     }
 
     findAndUpdate = async (id ,data, image_s) => {
+        console.log(data);
         const document = await this.model.findById({_id: id});
 
         if (!document){
             return {success: false, message: "document cant find"}
         }
+
+        if (data.password){
+             data.hashPassword = await bcrypt.genPassword(data.password);
+            delete data.password;
+        }
+
+
+
+
 
         if (data.listType === "like" || data.listType === "dislike"){
            const doc =  this.#updateRating(document, data.userId, data.listType, data.operation);
@@ -49,7 +63,7 @@ class ModelsWorker {
 
 
         if (this.imageWorker && this.imageWorker.options.isCanWork){
-            const result = this.imageWorker.goWork(image_s);
+            const result = await this.imageWorker.goWork(image_s);
 
             if (result){
                 document[this.imageWorker.options.imageFieldName] = result;
@@ -114,14 +128,13 @@ class ModelsWorker {
             operation: null,
             imageFieldName: null,
         }
-        goWork = (image_s) =>{
-            console.log(this.options);
+        goWork = async (image_s) =>{
             const {operation,imageFieldName} =  this.options;
 
             const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
                 this.singleImageOperations[operation];
 
-            const operationResult = goOperation(image_s);
+            const operationResult = await goOperation(image_s);
 
             if (!operationResult){
                 return false;
@@ -138,8 +151,13 @@ class ModelsWorker {
 
 
         singleImageOperations = {
-            replace : (image) => {
-               return {data: image.buffer, ext: getFileExtensionFromFilename(image.originalname)}
+            replace : async (image) => {
+                const ext = getFileExtensionFromFilename(image.originalname);
+                const compressedImageBuffer = await this.#compressImage(image.buffer, ext);
+                if (!compressedImageBuffer){
+                    return false;
+                }
+               return {data:compressedImageBuffer, ext: ext}
             },
 
             remove : () => {
@@ -162,6 +180,16 @@ class ModelsWorker {
                 })
             }
         }
+
+        async #compressImage (imageBuffer, ext) {
+            if (ext === "jpeg" || ext === "jpg"){
+               return await sharp(imageBuffer).resize(350,350).jpeg({quality : 90}).toBuffer()
+            }
+            else if (ext === "png"){
+                return await sharp(imageBuffer).resize(350,350).png({quality : 90}).toBuffer()
+            }
+            return false;
+        }
     }
 
     #clearDependency = {
@@ -174,6 +202,7 @@ class ModelsWorker {
             return !await CommentModel.deleteMany({product: productId})
         }
     }
+
 }
 
 export const  _checkDuplicate = async (valueType, value) =>{

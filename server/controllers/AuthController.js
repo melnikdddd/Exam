@@ -1,15 +1,14 @@
 import {validationResult} from "express-validator";
-import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import {_checkDuplicate} from "../utils/modelsWorker.js";
 import EmailWorker from "../utils/contacts/emailWorker.js";
+import bcrypt from "../utils/auth/bcrypt.js";
 import {emailStrings, userLoginString, userString} from "../utils/strings.js";
 
 
 import dotenv from "dotenv"
 import {_genSixDigitCode} from "../utils/someFunctions.js";
 import Jwt from "../utils/auth/jwt.js";
-import userModel from "../models/UserModel.js";
 dotenv.config();
 
 
@@ -41,7 +40,7 @@ class AuthController {
             }
 
             const {password, ...userData} = body;
-            const hash =  await this.#bcrypt.genPassword(password);
+            const hash =  await bcrypt.genPassword(password);
 
 
             const doc = new UserModel(
@@ -77,7 +76,7 @@ class AuthController {
                 })
             }
 
-            const isValidPass = await this.#bcrypt.readHashPassword(password, user.hashPassword);
+            const isValidPass = await bcrypt.readHashPassword(password, user.hashPassword);
 
 
             if (!isValidPass) {
@@ -140,17 +139,7 @@ class AuthController {
 
     }
 
-    #bcrypt ={
-        secretNumber: process.env.BCRYPT_NUMBER,
 
-        genPassword: async (password) => {
-            const salt = await bcrypt.genSalt(+this.#bcrypt.secretNumber);
-            return await bcrypt.hash(password, salt);
-        },
-        readHashPassword: async (password, hashPassword)=>{
-           return await bcrypt.compare(password, hashPassword);
-        }
-    }
 }
 
 

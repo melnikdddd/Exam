@@ -7,7 +7,6 @@ import {useState} from "react";
 import ProfileSetting from "./ProfileSetting";
 import SecuritySetting from "./SecuritySetting";
 import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
-import {selectUserData} from "../../../store/slices/UserDataSlice";
 function UserSetting() {
     const [isProfile, setIsProfile] = useState(true);
 

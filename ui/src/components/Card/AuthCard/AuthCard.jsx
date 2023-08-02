@@ -12,7 +12,7 @@ function AuthCard(props){
 
 export const HelperCard  = (props) => {
         return (
-            <div className={"absolute " + styles.HelperCard} style={{height: props.height}}>
+            <div className={"absolute " + styles.HelperCard} style={{height: props.height, right: props.right}}>
                 {props.children}
             </div>
         )

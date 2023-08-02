@@ -5,6 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import zxcvbn from "zxcvbn"
 
 import textStyles from "../../../styles/textStyles.module.scss"
+import {validateRepeatPassword} from "../../../utils/Auth/authFunctions";
 
 
 import AuthCard, {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
@@ -88,10 +89,11 @@ function Registration(){
         const score = zxcvbn(password).score;
         setPasswordReliability(colors[score]);
     },[password]);
+
+
     useEffect( ()=> {
         setIdentityValue(identityValue, {setRegex, setIdentityType, setMessage});
     },[identityValue]);
-
 
     const onSubmit = async (data) =>{
         const identityT = identityType === "Email" ? "email" : "phoneNumber";
@@ -111,13 +113,6 @@ function Registration(){
         navigate(fromPage);
     }
 
-    const validateRepeatPassword = (value) => {
-        if (value === password) {
-            return true;
-        } else {
-            return 'Passwords must match.';
-        }
-    };
 
     const handleSpanClick = () => {
         setShowTerms(true);
@@ -256,7 +251,7 @@ function Registration(){
                                     <AuthInput register={{
                                         ...register('repPassword',{
                                             required: "Field is required.",
-                                            validate: validateRepeatPassword,
+                                            validate: (repeatPassword) => validateRepeatPassword(repeatPassword, password),
                                         })
                                     }} placeholder={"Repeat password"} type={"password"} />
                                     <FormErrorMessage errorField={errors?.repPassword}/>
