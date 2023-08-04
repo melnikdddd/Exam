@@ -4,7 +4,7 @@ dotenv.config()
 
 const _checkAuth = (req, res, next) =>{
     const authorizationToken = req.headers.authorization;
-
+        console.log(req.headers)
     if (!authorizationToken){
         return res.status(403).json({message: 'You are is not auth'});
     }

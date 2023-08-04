@@ -16,7 +16,6 @@ export const fetchPost = async (path, data) => {
         return {success: false, status: status}
     }
 }
-
 export const fetchGet = async (path) =>{
     try {
         const response = await axios.get(path);
@@ -58,4 +57,16 @@ export const fetchUserByToken = async () =>{
         return false;
     }
 }
+
+export const fetchRemove = async (path, data=null) =>{
+    try {
+        const response = await axios.delete(path, {data: {data}});
+        return {success: true, data: response.data};
+    } catch (error) {
+        const status = error.response?.status || 500;
+
+        return {success: false, status}
+    }
+}
+
 

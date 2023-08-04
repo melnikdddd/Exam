@@ -1,9 +1,8 @@
 import {selectIsAuth} from "../../../store/slices/AuthSlice";
 import {selectProducts, selectUserData} from "../../../store/slices/UserDataSlice";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
-import styles from "./UserPofile.module.scss"
 import Container from "../../../components/Wrapper/Container/Container";
 
 import {useParams} from "react-router";
@@ -67,7 +66,6 @@ function UserProfile(props) {
         }
 
         if (isAuth && owner._id === id){
-
             setIsOwner(true);
             setUser(owner);
             setProducts(ownerProducts);

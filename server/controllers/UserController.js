@@ -2,25 +2,31 @@ import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/strings.js";
 import ModelsWorker from "../utils/modelsWorker.js";
+import bcrypt from "../utils/auth/bcrypt.js";
 import jwt from "jsonwebtoken";
 import Jwt from "../utils/auth/jwt.js";
+import userModel from "../models/UserModel.js";
+
 const modelWorker = new ModelsWorker(UserModel);
 
 
+class UserController {
+    removeUser = async (req, res) => {
+        const userId = req._id;
+        console.log(req)
+        const {password} = req.body;
 
-class UserController{
-    removeUser = async (req, res) =>{
-        const userId = req.params.id;
-        if (userId !== req.userId){
-            return res.status(450).json({message:"You cant do it"})
+        if (!await this.#service.checkPassword(password, userId)){
+            return  res.status(401).json({success: false, message: "Invalid password"});
         }
-        if(await modelWorker.findAndRemove(userId)) {
-           return res.json({success: true,})
+
+        if (await modelWorker.findAndRemove(userId)) {
+            return res.json({success: true,})
         }
         return res.json({success: false})
 
     }
-    updateUser = async (req, res) =>{
+    updateUser = async (req, res) => {
         try {
             const userId = req.params.id;
 
@@ -34,53 +40,52 @@ class UserController{
 
             //вызвыаю общий для всех моделей метод апдейта, уже с настройками для записи файла
             const result = await modelWorker.findAndUpdate(userId, body, imageData.image);
-            return res.status(200).json({success : true});
-        }
-        catch (error){
+            return res.status(200).json({success: true});
+        } catch (error) {
             res.status(500).send("Try later");
         }
     }
 
-    getUser = async (req, res) =>{
+    getUser = async (req, res) => {
         try {
-            const  userId = req.params.id;
-            if (!userId){
+            const userId = req.params.id;
+            if (!userId) {
                 return res.status(400).json({success: 400, message: "Bad request."})
             }
 
             const user = await UserModel.findById(userId).select(userString);
 
-            if(!user){
+            if (!user) {
                 return res.status(404).json({success: false, message: 'User can`t find.'});
             }
 
             const products = await getUserProducts(userId);
 
 
-            res.status(200).json({user: user,products: products});
+            res.status(200).json({user: user, products: products});
 
-        } catch (error){
+        } catch (error) {
             res.status(500).send("Try later");
         }
     }
 
-    getUserByToken = async (req, res) =>{
+    getUserByToken = async (req, res) => {
         const userId = req.userId;
 
         if (!userId) return res.status(400).json({success: false, message: "Bad request."});
 
         const user = await UserModel.findById(userId).select(userString);
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({success: false, message: 'User can`t find.'});
         }
 
-        user.products  = await getUserProducts(userId)
+        user.products = await getUserProducts(userId)
 
-        return res.status(200).json({success: true, userData : user});
+        return res.status(200).json({success: true, userData: user});
     }
 
-    getUserProducts = async (req, res) =>{
+    getUserProducts = async (req, res) => {
         const ownerId = req.body.userId;
         const products = await getUserProducts(ownerId);
 
@@ -88,7 +93,7 @@ class UserController{
     }
 
     #service = {
-        getImagesOptions(file, imageOperation){
+        getImagesOptions(file, imageOperation) {
             return {
                 image: file || null,
                 options: {
@@ -97,6 +102,13 @@ class UserController{
                 },
             }
         },
+
+        async checkPassword(password, userId){
+            const hashPassword =
+                userModel.findById(userId).select("hashPassword");
+
+            return await bcrypt.readHashPassword(password, hashPassword);
+        }
     }
 }
 

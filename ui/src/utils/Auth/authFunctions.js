@@ -1,36 +1,34 @@
 import {setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
 import {setUserData} from "../../store/slices/UserDataSlice";
-import {Navigate} from "react-router-dom";
 
-export function checkIdentityValue(value){
+export function checkIdentityValue(value) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const phoneNumberRegex = /^\+\d{12}$/;
 
 
-   if (!value){
-       return {identityType: 'Email or phone number', regex : /^/, m: ""}
-   }
-   if (value.length > 2){
-       if (phoneNumberRegex.test(value) || /^\+\d{2,12}$/.test(value)){
-           return {identityType: "Phone number", regex : phoneNumberRegex, message: "Invalid phone number"};
-       }
-       else if (emailRegex.test(value) || /^[a-zA-Z0-9]{5}@/){
-           return {identityType: "Email", regex : emailRegex, message: "Invalid email"};
-       }
-   }
-     return {identityType: 'Email or phone number', regex : /^/, message: ""}
+    if (!value) {
+        return {identityType: 'Email or phone number', regex: /^/, m: ""}
+    }
+    if (value.length > 2) {
+        if (phoneNumberRegex.test(value) || /^\+\d{2,12}$/.test(value)) {
+            return {identityType: "Phone number", regex: phoneNumberRegex, message: "Invalid phone number"};
+        } else if (emailRegex.test(value) || /^[a-zA-Z0-9]{5}@/) {
+            return {identityType: "Email", regex: emailRegex, message: "Invalid email"};
+        }
+    }
+    return {identityType: 'Email or phone number', regex: /^/, message: ""}
 
 }
 
 export const initialIdentityValues = {
-        regex: /^/,
-        identityType: "Email or phone number",
-        message: "",
+    regex: /^/,
+    identityType: "Email or phone number",
+    message: "",
 }
 
-export const setIdentityValue = (identityValue, {setRegex, setIdentityType, setMessage}) =>{
-    if (identityValue){
+export const setIdentityValue = (identityValue, {setRegex, setIdentityType, setMessage}) => {
+    if (identityValue) {
         const {identityType, regex, message} = checkIdentityValue(identityValue);
         setIdentityType(identityType);
         setRegex(regex);
@@ -51,20 +49,20 @@ export const colors = {
     white: "bg-white",
 }
 
-export const passwordRegex =  {
+export const passwordRegex = {
     mainRegex: /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/,
     length: /^.{8,15}$/,
     latin: /^[^\u0400-\u04FF]+$/,
 
     checkOnRegex(regex, password) {
-        if (password.length !== 0){
+        if (password.length !== 0) {
             return regex.test(password) ? "text-green-700" : "text-red-700";
         }
         return "text-black";
     },
 }
 
-export const login = (dispatch, {token, setToken}, {setUserData, userData})=>{
+export const login = (dispatch, {token, setToken}, {setUserData, userData}) => {
     dispatch(setToken(token));
     dispatch(setUserData(userData));
 
@@ -79,21 +77,21 @@ export const logout = (dispatch, clearToken, clearUserData) => {
 }
 
 export const loginErrors = {
-    [401]: {
+    401: {
         field: "password",
         options: {
-            message : "Invalid password.",
+            message: "Invalid password.",
             type: "validate",
         }
     },
-    [404]: {
+    404: {
         field: "identity",
         options: {
-            message :  identityType => `Invalid ${identityType.toLowerCase()}.`,
+            message: identityType => `Invalid ${identityType.toLowerCase()}.`,
             type: "validate"
         }
     },
-    [500]: {
+    500: {
         field: "identity",
         options: {
             message: "Something going wrong, try later please.",
@@ -104,28 +102,28 @@ export const loginErrors = {
 }
 
 export const registrationErrors = {
-    [400]:{
-      field: "terms",
-      options: {
-          message: "Wrong fields. Try again please",
-          type: "validation",
-      }
+    400: {
+        field: "terms",
+        options: {
+            message: "Wrong fields. Try again please",
+            type: "validation",
+        }
     },
-    [409]: {
+    409: {
         field: "identity",
         options: {
             message: identityType => `This ${identityType.toLowerCase()} already exists.`,
             type: "validate",
         }
     },
-    [500]: {
+    500: {
         field: "terms",
         options: {
             message: "Something going wrong. Try later please.",
             type: "validate",
         }
     },
-    [404]: {
+    404: {
         field: "terms",
         options: {
             message: "Something going wrong. Try later please.",
@@ -134,13 +132,13 @@ export const registrationErrors = {
     }
 }
 
-export const errorHandler = (errorsType ,status, setError, identityType) => {
+export const errorHandler = (errorsType, status, setError, identityType) => {
     const errorData = errorsType[status];
 
-    if (typeof errorData.options.message === 'function'){
+    if (typeof errorData.options.message === 'function') {
         setError(errorData.field, {
             message: errorData.options.message(identityType),
-            type : errorData.options.type,
+            type: errorData.options.type,
         })
         return;
     }
@@ -148,7 +146,7 @@ export const errorHandler = (errorsType ,status, setError, identityType) => {
     setError(errorData.field, errorData.options)
 }
 
-export const getAuthResponseValues = (response) =>{
+export const getAuthResponseValues = (response) => {
     return {token: response.data.token, userData: response.data.user}
 }
 
@@ -160,11 +158,11 @@ export const validateRepeatPassword = (repeatPassword, password) => {
     }
 };
 
-export const firstEffectEntry = async (dispatch) =>{
+export const firstEffectEntry = async (dispatch) => {
     const token = window.localStorage.getItem('token');
     if (token) {
         const userData = await fetchUserByToken();
-        if (!userData){
+        if (!userData) {
             window.localStorage.removeItem('token');
             return;
         }

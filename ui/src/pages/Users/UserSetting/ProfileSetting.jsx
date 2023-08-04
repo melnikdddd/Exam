@@ -6,12 +6,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
 import {fetchUpdate} from "../../../utils/Axios/axiosFunctions";
-import userAvatar from "../../../components/Images/UserAvatar";
 import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
 import {defaultImage} from "../../../components/Images/utils";
-import {useNavigate} from "react-router-dom";
 
 function ProfileSetting(props) {
     const owner = useSelector(selectUserData);

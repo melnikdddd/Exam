@@ -1,5 +1,6 @@
-import {NavLink, useNavigate, useLocation} from "react-router-dom";
 import {useForm} from "react-hook-form";
+
+import {NavLink, useNavigate, useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 
@@ -34,8 +35,6 @@ import {
 import {setUserData} from "../../../store/slices/UserDataSlice";
 
 
-
-
 function Login() {
 
     const [regex, setRegex] = useState(initialIdentityValues.regex);
@@ -53,118 +52,123 @@ function Login() {
         formState: {
             errors,
             isValid,
-    },
+        },
         handleSubmit,
-        reset,
-        watch,
         setError,
+        watch,
     } = useForm({
         mode: "onChange"
     });
 
+    console.log(isValid)
+
+
     const identityValue = watch('identity');
     const passwordValue = watch('password');
 
-    useEffect(()=>{
+
+    useEffect(() => {
         setIdentityValue(identityValue, {setRegex, setIdentityType, setMessage});
-    },[identityValue])
+    }, [identityValue])
 
 
-
-    const onSubmit = async (data) =>{
+    const onSubmit = async (data) => {
         const identityT = identityType === "Email" ? 'email' : 'phoneNumber';
         const dataForSend = {
-            [identityT] : identityValue,
+            [identityT]: identityValue,
             password: passwordValue,
         }
 
         const responseData = await fetchPost("/auth/login", dataForSend);
 
-        if (responseData.success === false){
+        if (responseData.success === false) {
             errorHandler(loginErrors, responseData.status, setError, identityType);
-               return;
-        }        const {token, userData} = getAuthResponseValues(responseData);
-
+            return;
+        }
+        const {token, userData} = getAuthResponseValues(responseData);
 
 
         login(dispatch, {token, setToken}, {setUserData, userData});
-         navigate(fromPage);
+        navigate(fromPage);
     }
 
     return (
         <BackGround background={"linear-gradient(129deg, #008000, #6c93e8)"}>
-        <Container>
-        <CenterWrapper>
-            <AuthCard height={"590px"}>
-                <h1 className={textStyles.title}>
-                    Sign in to your account.
-                </h1>
-                <form className={"w-full flex flex-col mb-3"}  onSubmit={handleSubmit(onSubmit)}>
-                    <div className={"mt-3 flex-1 flex flex-col"}>
+            <Container>
+                <CenterWrapper>
+                    <AuthCard height={"590px"}>
+                        <h1 className={textStyles.title}>
+                            Sign in to your account.
+                        </h1>
+                        <form className={"w-full flex flex-col mb-3"} onSubmit={handleSubmit(onSubmit)}>
+                            <div className={"mt-3 flex-1 flex flex-col"}>
+                                <label form={"identity"}>{identityType}</label>
+                                <AuthInput register={{
+                                    ...register('identity',
+                                        {
+                                            required: "Field is required.",
+                                            pattern: {value: regex, message: message}
+                                        }
+                                    )
+                                }}
+                                           placeholder={"Email or phone number"}/>
+                                <FormErrorMessage errorField={errors?.identity}/>
+                            </div>
+                            <div className={"mt-3 flex-1 flex flex-col"}>
+                                <label form={"password"}>Password</label>
+                                <AuthInput register={{
+                                    ...register('password',
+                                        {
+                                            required: "Field is required.",
+                                            minLength: {
+                                                value: 8,
+                                                message: "Password too short."
+                                            },
+                                            maxLength: {
+                                                value: 15,
+                                                message: "Password too long."
+                                            }
+                                        })
+                                }}
+                                           placeholder={"Password"}
+                                           type={"password"}/>
+                                <FormErrorMessage errorField={errors?.password}/>
+                            </div>
+                            <div className={"w-full mt-5"}>
+                                <AuthButton text={"Sign in"} disabled={!isValid}/>
+                            </div>
+                        </form>
+                        <p className={"w-full text-center"}>Don’t have an account yet?
+                            <NavLink to={'/auth/registration'}
+                                     className={"text-blue-500 font-bold underline " + styles.registrationLink}>
+                                <span> Sign Up.</span>
+                            </NavLink>
+                        </p>
+                        <p className={"text-center mt-3"}>
+                            <NavLink to={'/forgot'}
+                                     className={"underline text-blue-500 font-bold " + styles.registrationLink}>
+                                Сan't sign in?
+                            </NavLink>
+                        </p>
 
-                        <label form={"identity"}>{identityType}</label>
-                        <AuthInput register={{...register('identity',
-                                {
-                                    required: "Field is required.",
-                                    pattern: {value: regex , message: message}
-                                }
-                            )}}
-                                   placeholder={"Email or phone number"}/>
-                        <FormErrorMessage errorField={errors?.identity}/>
-                    </div>
-                    <div className={"mt-3 flex-1 flex flex-col"}>
-                        <label form={"password"}>Password</label>
-                        <AuthInput register={{
-                            ...register('password',
-                                {
-                                    required: "Field is required.",
-                                    minLength: {
-                                        value: 8,
-                                        message: "Password too short."
-                                    },
-                                    maxLength: {
-                                        value: 15,
-                                        message: "Password too long."
-                                    }
-                                })
-                        }}
-                                   placeholder={"Password"}
-                                    type={"password"}/>
-                        <FormErrorMessage errorField={errors?.password}/>
-                    </div>
-                    <div className={"w-full mt-5"}>
-                    <AuthButton text={"Sign in"} disabled={!isValid}/>
-                    </div>
-                </form>
-                <p className={"w-full text-center"}>Don’t have an account yet?
-                    <NavLink to={'/auth/registration'} className={"text-blue-500 font-bold underline " + styles.registrationLink}>
-                        <span> Sign Up.</span>
-                    </NavLink>
-                </p>
-                <p className={"text-center mt-3"}>
-                    <NavLink to={'/forgot'} className={"underline text-blue-500 font-bold " + styles.registrationLink}>
-                    Сan't sign in?
-                </NavLink>
-                </p>
-
-                <div className={"flex items-center my-3"}>
-                    <hr className={"mx-2 flex-grow bg-gray-200 h-0.5"}/>
-                    <span className={"text-gray-700"}>or</span>
-                    <hr className={"mx-2 flex-grow bg-gray-200 h-0.5"}/>
-                </div>
-                <div className={"flex flex-col w-full"}>
-                    <NavLink to={'/auth/google'} className={"bg-green-600 " + styles.brandLink}>
-                        <FontAwesomeIcon icon={faGoogle} ></FontAwesomeIcon>
-                        <span className={"ml-2"}>Continue with Google</span>
-                    </NavLink>
-                    <NavLink to={'/auth/telegram'} className={"mt-5 bg-blue-400 " + styles.brandLink}>
-                        <FontAwesomeIcon icon={faTelegram} ></FontAwesomeIcon>
-                        <span className={"ml-2"}>Continue with Telegram</span>
-                    </NavLink>
-                </div>
-            </AuthCard>
-         </CenterWrapper>
-        </Container>
+                        <div className={"flex items-center my-3"}>
+                            <hr className={"mx-2 flex-grow bg-gray-200 h-0.5"}/>
+                            <span className={"text-gray-700"}>or</span>
+                            <hr className={"mx-2 flex-grow bg-gray-200 h-0.5"}/>
+                        </div>
+                        <div className={"flex flex-col w-full"}>
+                            <NavLink to={'/auth/google'} className={"bg-green-600 " + styles.brandLink}>
+                                <FontAwesomeIcon icon={faGoogle}></FontAwesomeIcon>
+                                <span className={"ml-2"}>Continue with Google</span>
+                            </NavLink>
+                            <NavLink to={'/auth/telegram'} className={"mt-5 bg-blue-400 " + styles.brandLink}>
+                                <FontAwesomeIcon icon={faTelegram}></FontAwesomeIcon>
+                                <span className={"ml-2"}>Continue with Telegram</span>
+                            </NavLink>
+                        </div>
+                    </AuthCard>
+                </CenterWrapper>
+            </Container>
         </BackGround>
     )
 }

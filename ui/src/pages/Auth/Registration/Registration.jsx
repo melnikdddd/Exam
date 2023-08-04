@@ -70,13 +70,6 @@ function Registration(){
     const identityValue = watch('identity');
     const password = watch('password');
 
-    const setFocus = (set) =>{
-        set(true);
-    }
-    const setBlur = (set) =>{
-        set(false);
-    }
-
     useEffect(() => {
         if (firstEffect){
             setFirstEffect(false);
@@ -138,8 +131,8 @@ function Registration(){
                                         pattern: {value: regex , message: message},
                                     })
                                 }}
-                                           onBlur={()=> setBlur(setIsIdentityFocus)}
-                                           onFocus={() => setFocus(setIsIdentityFocus)}
+                                           onBlur={()=>  setIsIdentityFocus(false)}
+                                           onFocus={() => setIsIdentityFocus(true)}
                                            placeholder={"Email or phone number"} />
                                 <FormErrorMessage errorField={errors?.identity}/>
                                 {isIdentityFocus && <HelperCard  height={"200px"}>
@@ -220,8 +213,8 @@ function Registration(){
                                             }
                                         })
                                     }}
-                                               onFocus={()=> setFocus(setIsPasswordFocus)}
-                                               onBlur={()=> setBlur(setIsPasswordFocus)}
+                                               onFocus={()=> setIsPasswordFocus(true)}
+                                               onBlur={()=> setIsPasswordFocus(false)}
                                                placeholder={"Password"} type={"password"}/>
 
                                     <FormErrorMessage errorField={errors?.password}/>

@@ -1,5 +1,4 @@
-import {useParams} from "react-router";
-import {useSelector} from "react-redux";
+
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import Tabs from "../../../components/Buttons/Tabs/Tabs";
@@ -17,7 +16,7 @@ function UserSetting() {
                     <Tabs boolean={isProfile} setBoolean={setIsProfile} optionA={"Profile"} optionB={"Security"}/>
                     <ProfileCard className={"rounded-none rounded-b-lg w-full border-none bg-white bg-opacity-40"}>
                         {isProfile ?
-                            <ProfileSetting/>  :
+                            <ProfileSetting/> :
                             <SecuritySetting/>
                         }
                     </ProfileCard>

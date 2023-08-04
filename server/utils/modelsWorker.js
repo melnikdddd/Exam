@@ -26,7 +26,6 @@ class ModelsWorker {
     }
 
     findAndUpdate = async (id ,data, image_s) => {
-        console.log(data);
         const document = await this.model.findById({_id: id});
 
         if (!document){
@@ -83,6 +82,7 @@ class ModelsWorker {
 
     findAndRemove = async (id) =>{
         const modelName = this.model.modelName + "Model";
+
         if (modelName !== "CommentModel"){
             if (!await this.#clearDependency[modelName](id)){
                 throw new Error("DEPENDENCY ERROR")

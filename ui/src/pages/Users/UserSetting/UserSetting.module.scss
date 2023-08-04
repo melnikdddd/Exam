@@ -13,3 +13,13 @@
  }
 
 }
+
+.removedButton{
+  &:not([disabled]){
+    @apply hover:bg-red-600 cursor-pointer;
+  }
+
+  &[disabled]{
+    @apply bg-gray-100 text-gray-600 cursor-default;
+  }
+}

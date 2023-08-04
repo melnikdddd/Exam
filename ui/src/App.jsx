@@ -62,7 +62,7 @@ function App (){
         };
 
         fetchData();
-    }, []);
+    }, [dispatch]);
 
     if (!isLoading){
         return <CenterWrapper>

@@ -7,7 +7,6 @@ import moment from "moment";
 import RatingButtons from "../../../components/Buttons/RatingButton/RatingButtons";
 import React, {useEffect, useState} from "react";
 import ProfileOptions from "./ProfileOptions";
-import {useParams} from "react-router";
 
 function UserProfileData(props) {
     const [showProfileOptions, setShowProfileOptions] = useState(false);
