@@ -22,3 +22,12 @@
   margin-left: 390px;
 }
 
+.submit {
+  &:not([disabled]) {
+    @apply hover:bg-blue-600 hover:transition-colors;
+  }
+
+  &[disabled] {
+    @apply bg-gray-100 text-gray-600 cursor-default;
+  }
+}

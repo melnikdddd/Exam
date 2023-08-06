@@ -110,12 +110,17 @@ export const registrationErrors = {
         }
     },
     409: {
-        field: "identity",
         options: {
-            message: identityType => `This ${identityType.toLowerCase()} already exists.`,
+            message: (field, identityType) => {
+                if(field === "identity"){
+                    return `This ${identityType.toLowerCase()} already exists.`
+                }
+                return "This nickname already exists."
+            },
             type: "validate",
         }
     },
+
     500: {
         field: "terms",
         options: {
@@ -132,18 +137,25 @@ export const registrationErrors = {
     }
 }
 
-export const errorHandler = (errorsType, status, setError, identityType) => {
+export const errorHandler = (errorsType, status, setError, identityType, errorsFields = null) => {
+
     const errorData = errorsType[status];
 
-    if (typeof errorData.options.message === 'function') {
-        setError(errorData.field, {
-            message: errorData.options.message(identityType),
-            type: errorData.options.type,
-        })
+    if (errorsFields){
+        for (const field of errorsFields){
+            if (typeof  errorData.options.message === "function"){
+                setError(field, {
+                    message: errorData.options.message(field, identityType),
+                    type: errorData.options.type,
+                })
+            } else {
+                    setError(field, errorData.options);
+            }
+        }
         return;
     }
 
-    setError(errorData.field, errorData.options)
+    setError(errorData.field, errorData.options);
 }
 
 export const getAuthResponseValues = (response) => {

@@ -3,7 +3,6 @@
 }
 
 .submit{
-
   &:not([disabled]){
    @apply hover:bg-blue-600 hover:transition-colors;
   }

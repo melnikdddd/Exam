@@ -12,6 +12,7 @@ function UserProfileData(props) {
     const [showProfileOptions, setShowProfileOptions] = useState(false);
     const {user, owner, isOwner, isAuth, isBlocked, setIsBlocked} = props;
 
+
     const [data, setData] =
         useState({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
 
@@ -32,12 +33,21 @@ function UserProfileData(props) {
         setShowProfileOptions(false);
     }
 
+    const city = data.user.city ? data.user.city : "";
+    const country = city ? ", " + data.user.country : data.user.country;
+
+    const location = city || country ? city + country : "Not indicated.";
+
+
     return (
         <div className={"flex"}>
             <div className={"flex border rounded-lg flex-col px-6 py-2 bg-white shadow-md items-center justify-center"} >
                 <UserAvatar image={data.user.userAvatar} className={"h-44 w-44 mb-3 flex items-center justify-center"} isOwner={data.isOwner} />
-                <div className={"w-full flex items-center p-3 text-center"} style={{minWidth: "190px"}}>
+                <div className={"w-full flex flex-col items-center p-3 text-center"} style={{minWidth: "190px"}}>
                     <span className={"text-2xl  flex-1 mr-0.5"}>{data.user.firstname} {data.user.lastname}</span>
+                    <div>
+                        <p className={"text-lg font-bold"}>{data.user.nickname}</p>
+                    </div>
                 </div>
                 <div className={"text-center mb-3"}>
                     <span className={"text-base"}>
@@ -108,7 +118,7 @@ function UserProfileData(props) {
                         <p className={"text-slate-500"}>
                             Location <FontAwesomeIcon icon={faLocationDot}/>
                         </p>
-                        <span className={"text-lg"}> {user.location ? user.location : "Not indicated."}</span>
+                        <span className={"text-lg"}> {location}</span>
                     </div>
                     <div className={"w-full p-4"}>
                         <p className={"text-slate-500"}>

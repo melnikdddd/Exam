@@ -5,6 +5,7 @@ export const userValidation = [
     body('firstname', 'Min length is 3 letters.').isLength({min: 3}),
     body('lastname', 'Min length is 3 letters.').isLength({min: 3}),
     body("location").isString().isLength({max: 15}),
+    body("nickname").isString().isLength({min: 3,max: 16}),
     body('aboutUser', 'Filed must have form 0 to 700 letters.').isLength({min: 0, max: 700}),
     body('email').
     optional()

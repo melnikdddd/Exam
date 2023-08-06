@@ -20,9 +20,17 @@ const UserSchema = new mongoose.Schema(
             unique: false,
             default: "",
         },
-        location: {
+        nickname: {
+            type: String,
+            default: "",
+        },
+        city: {
           type: String,
           default: "",
+        },
+        country: {
+            type: String,
+            default: "",
         },
         blockedUsers: {
             type: [mongoose.Schema.Types.ObjectId],

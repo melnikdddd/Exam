@@ -46,6 +46,7 @@ function Login() {
 
     const location = useLocation();
     const fromPage = location.state?.from?.pathname || '/home';
+    
 
     const {
         register,

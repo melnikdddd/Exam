@@ -63,12 +63,27 @@ function Registration(){
         handleSubmit,
         watch,
         setError,
+        setValue,
     } = useForm({mode: "onChange"});
 
 
 
     const identityValue = watch('identity');
     const password = watch('password');
+    const nickname = watch("nickname");
+
+    useEffect(() => {
+        if (firstEffect){
+            setFirstEffect(false);
+            return;
+        }
+        if (nickname.length > 0){
+            if (!nickname.startsWith("@")){
+                setValue("nickname", "@" + nickname);
+            }
+        }
+
+    }, [nickname]);
 
     useEffect(() => {
         if (firstEffect){
@@ -83,7 +98,6 @@ function Registration(){
         setPasswordReliability(colors[score]);
     },[password]);
 
-
     useEffect( ()=> {
         setIdentityValue(identityValue, {setRegex, setIdentityType, setMessage});
     },[identityValue]);
@@ -96,7 +110,10 @@ function Registration(){
         const responseData = await fetchPost("/auth/registration", dataForSending);
 
         if (responseData.success === false){
-            errorHandler(registrationErrors, responseData.status, setError, identityType);
+            console.log(responseData);
+            const errorFields = responseData.status === 409 ? responseData.data.errorFields : "";
+
+            errorHandler(registrationErrors, responseData.status, setError, identityType, errorFields);
             return;
         }
 
@@ -120,7 +137,7 @@ function Registration(){
         <BackGround background={"linear-gradient(90deg, #C33764, #1D2671)"}>
             <Container>
                     <CenterWrapper>
-                    <AuthCard height={"790px"}>
+                    <AuthCard>
                         <h1 className={textStyles.title}>Sign up and join to our Marketplace.</h1>
                         <form onSubmit={handleSubmit(onSubmit)} className={"w-full flex flex-col mb-3"}>
                             <div className={"flex flex-col mt-3"}>
@@ -147,6 +164,28 @@ function Registration(){
                                         </div>
                                     </div>
                                 </HelperCard>}
+                            </div>
+                            <hr className={"my-3"}/>
+                            <div className={"mt-3 flex-1 flex flex-col"}>
+                                <label form={"firstname"}>Nickname</label>
+                                <AuthInput register={{
+                                    ...register('nickname', {
+                                        required: "Field is required.",
+                                        minLength: {
+                                            value: 3,
+                                            message: "Nickname too short."
+                                        },
+                                        maxLength:{
+                                            value: 16,
+                                            message: "Nickname too long."
+                                        },
+                                        pattern: {
+                                            value: /^@[a-zA-Z0-9_@.]+$/,
+                                            message: "Invalid nickname"
+                                        }
+                                    })
+                                }} placeholder={"@Nickname"}/>
+                                <FormErrorMessage errorField={errors?.nickname}/>
                             </div>
                             <hr className={"my-3"}/>
                             <div className={"flex-1 flex flex-col"}>

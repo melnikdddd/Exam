@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import AuthInput from "../../../components/Inputs/Auth/AuthInput";
 import styles from "./UserSetting.module.scss"
 import {useForm} from "react-hook-form";
-import {colors, passwordRegex, validateRepeatPassword} from "../../../utils/Auth/authFunctions";
+import {colors, logout, passwordRegex, validateRepeatPassword} from "../../../utils/Auth/authFunctions";
 import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import {fetchRemove, fetchUpdate} from "../../../utils/Axios/axiosFunctions";
 import {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
@@ -10,9 +10,12 @@ import {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
 import zxcvbn from "zxcvbn";
 import UserProfileInput from "../../../components/Inputs/UserPofileInputs/UserProfileInput";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
+import {clearUserData, selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
+import {useNavigate} from "react-router-dom";
+import {clearToken} from "../../../store/slices/AuthSlice";
 
 function SecuritySetting(props) {
+    const navigate = useNavigate()
     const owner = useSelector(selectUserData);
     const dispatch = useDispatch();
     const id = owner._id;
@@ -34,6 +37,7 @@ function SecuritySetting(props) {
         handleSubmit,
         register,
         watch,
+        setError,
         reset,
     }
         = useForm({
@@ -58,6 +62,8 @@ function SecuritySetting(props) {
             return;
         }
 
+        logout(dispatch, clearToken, clearUserData);
+        navigate("home")
     }
 
     const resetData = (data) => {
@@ -85,6 +91,7 @@ function SecuritySetting(props) {
 
     const handleCurrentPasswordChange = (event) => {
         const currentPassword = event.target.value;
+        setRemoveAccMessage("");
 
         if (currentPassword.length >= 8 && currentPassword.length <= 15
             && /^(?=.*[a-z])(?=.*\d)(?=.*[A-Z]).+$/.test(currentPassword)) {
@@ -103,7 +110,9 @@ function SecuritySetting(props) {
         }
 
         for (const [key, value] of Object.entries(data)) {
-            if (value) formData.append(key, value);
+            if (dirtyFields[key]){
+                if (value) formData.append(key, value);
+            }
 
         }
         const response = await fetchUpdate(`/users/${id}`, formData);
@@ -117,6 +126,14 @@ function SecuritySetting(props) {
                     dispatch(updateValue({field, value}));
                 }
                 resetData(data);
+            }
+        }
+
+        if (response.status === 409){
+            const errorFields = response.data.errorsFields;
+
+            for (const field of errorFields){
+               setError(field, {message: `This field already exists`, type: "validate"})
             }
         }
     }
@@ -199,7 +216,7 @@ function SecuritySetting(props) {
                         <UserProfileInput placeholder={owner.email || "Not indicated."} register={{
                             ...register("email", {
                                 pattern: {
-                                    value: /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/,
+                                    value: /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/,
                                     message: "Invalid email.",
                                 }
                             })
@@ -244,11 +261,14 @@ function SecuritySetting(props) {
                     style={{maxWidth: "300px"}}>
                     <h1 className={"text-2xl"}>Remove account</h1>
                     <hr className={"bg-slate-800 w-full my-3"}/>
-                    <div className={"w-full"}>
+                    <div className={"w-full flex flex-col"}>
                         <label>Password</label>
                         <AuthInput id={"currentPassword"} type={"password"} classname={"w-full"}
                                    placeholder={"Current password"}
                                    onChange={handleCurrentPasswordChange}/>
+                        <div className={"text-center"}>
+                            <FormErrorMessage message={removeAccMessage}/>
+                        </div>
                     </div>
 
                     <div className={"flex items-center w-full justify-center mt-4"}>
@@ -257,7 +277,6 @@ function SecuritySetting(props) {
                             onClick={handleRemoveAccountClick} disabled={!isValidCurrentPassword}>
                             Remove account
                         </button>
-                        <FormErrorMessage message={removeAccMessage}/>
                     </div>
                     <ul className={"list-disc text-gray-500"}>
                         <li className={"mt-3"}>All data associated with your account, except for the history of

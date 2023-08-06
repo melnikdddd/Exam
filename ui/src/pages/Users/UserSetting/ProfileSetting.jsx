@@ -3,7 +3,7 @@ import UserProfileInput from "../../../components/Inputs/UserPofileInputs/UserPr
 import styles from './UserSetting.module.scss';
 import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import {faCity, faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
 import {fetchUpdate} from "../../../utils/Axios/axiosFunctions";
 import FormErrorMessage from "../../../components/Message/FormErrorMessage";
@@ -20,6 +20,7 @@ function ProfileSetting(props) {
 
     const [uploadedImage, setUploadedImage] = useState(null);
     const [isDirty, setIsDirty] = useState(false);
+    const [firstEffect, setFirstEffect] = useState(true);
 
 
     const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function ProfileSetting(props) {
         },
         handleSubmit,
         reset,
+        setError,
         setValue,
         watch,
     } = useForm({
@@ -41,17 +43,19 @@ function ProfileSetting(props) {
             firstname: owner.firstname || "",
             lastname: owner.lastname || "",
             userStatus: owner.userStatus || "",
-            location: owner.location || "",
+            nickname: owner.nickname || "",
+            city: owner.city || "",
+            country: owner.country || "",
             aboutUser: owner.aboutUser || "",
             isImageRemoved: isImageRemoved,
         }
     });
-    
-    const resetForm = (newData) =>{
+
+    const resetForm = (newData) => {
         reset(newData);
-        const fileInputValue =  document.querySelector("#fileInput").value;
-        if (fileInputValue){
-            document.querySelector("#fileInput").value= "";
+        const fileInputValue = document.querySelector("#fileInput").value;
+        if (fileInputValue) {
+            document.querySelector("#fileInput").value = "";
         }
         setUploadedImage(null);
     }
@@ -86,16 +90,31 @@ function ProfileSetting(props) {
 
     useEffect(() => {
 
-        if(isImageRemoved){
+        if (isImageRemoved) {
             setUploadedImage(null);
             document.querySelector("#fileInput").value = "";
-            setValue("isImageRemoved", true, { shouldDirty: !isImageClear });
+            setValue("isImageRemoved", true, {shouldDirty: !isImageClear});
             setImage(defaultImage().userImage);
             return;
         }
 
         setValue("isImageRemoved", false);
     }, [isImageRemoved]);
+
+    const nickname = watch("nickname");
+
+    useEffect(() => {
+        if (firstEffect) {
+            setFirstEffect(false);
+            return;
+        }
+        if (nickname.length > 0) {
+            if (!nickname.startsWith("@")) {
+                setValue("nickname", "@" + nickname);
+            }
+        }
+
+    }, [nickname]);
 
     const onSubmit = async (data) => {
         const formData = new FormData();
@@ -106,7 +125,7 @@ function ProfileSetting(props) {
         if (uploadedImage) {
             formData.append("userAvatar", uploadedImage);
             formData.append("imageOperation", "replace");
-        } else if (isImageRemoved){
+        } else if (isImageRemoved) {
             formData.append("imageOperation", "remove");
         }
 
@@ -115,30 +134,28 @@ function ProfileSetting(props) {
             if (value) formData.append(key, value);
         }
 
-
         const response = await fetchUpdate(`/users/${owner._id}`, formData);
 
-        for (const key of formData.keys()) {
-            formData.delete(key);
-        }
 
-        if (response.success === true){
+        if (response.success === true) {
             for (const [field, value] of Object.entries(sendData)) {
-               dispatch(updateValue({field, value}));
+                dispatch(updateValue({field, value}));
             }
             resetForm(sendData);
 
-            if (uploadedImage){
+            if (uploadedImage) {
                 dispatch(updateValue({field: "userAvatar", value: image}))
                 dispatch(updateValue({field: "isDefaultImage", value: false}))
 
-            } else if (isImageRemoved){
+            } else if (isImageRemoved) {
                 dispatch(updateValue({field: "userAvatar", value: defaultImage().userImage}));
                 dispatch(updateValue({field: "isDefaultImage", value: true}));
             }
             return;
         }
-        reset();
+        if (response.status === 409) {
+            setError("nickname", {message: "This nickname already exists.", type: "validate"});
+        }
     }
 
 
@@ -156,10 +173,33 @@ function ProfileSetting(props) {
                            {...register('userAvatar')}/>
 
                     <input type="checkbox" hidden={true} {...register("isImageRemoved")}/>
-
-                    <div className={"w-full flex flex-col py-2"} style={{minWidth: "180px"}}>
+                    <div className={"w-full flex flex-col py-2"}>
+                        <label className={styles.label}>Nickname</label>
+                        <UserProfileInput placeholder={owner.nickname} register={{
+                            ...register("nickname", {
+                                required: {
+                                    value: true,
+                                    message: "Field is required."
+                                },
+                                minLength: {
+                                    value: 4,
+                                    message: "Nickname too short."
+                                },
+                                maxLength: {
+                                    value: 16,
+                                    message: "Nickname too long."
+                                },
+                                pattern: {
+                                    value: /^@[a-zA-Z0-9_@.]+$/,
+                                    message: "Invalid nickname",
+                                }
+                            })
+                        }}/>
+                        <FormErrorMessage errorField={errors?.nickname}/>
+                    </div>
+                    <div className={"w-full flex flex-col py-2"}>
                         <label className={styles.label}>Firstname</label>
-                        <UserProfileInput placeholder={owner.firstname}  register={{
+                        <UserProfileInput placeholder={owner.firstname} register={{
                             ...register("firstname", {
                                 required: {
                                     value: true,
@@ -214,35 +254,50 @@ function ProfileSetting(props) {
                 </div>
             </div>
             <div className={"flex flex-col justify-between w-full ml-2"}>
-                    <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-4 h-3/4 mb-5"} style={{minHeight: "359px"}}>
-                        <div className={"w-full flex flex-col "}>
-                            <label className={styles.label}>Status</label>
-                            <UserProfileInput placeholder={owner.userStatus ? owner.userStatus : "Not indicated"}
-                                              inputType={"text"}  register={{
-                                ...register("userStatus",
-                                    {
-                                        maxLength: {
-                                            value: 30,
-                                            message: "Status too long."
-                                        }
-                                    })
-                            }}/>
-                            <FormErrorMessage errorField={errors?.userStatus}/>
-                        </div>
-                        <div className={"w-full flex flex-col "}>
-                            <label className={styles.label}>Location <FontAwesomeIcon icon={faLocationDot}/></label>
-                            <UserProfileInput placeholder={owner.location ? owner.location : "Not indicated"}
-                                              inputType={"text"} register={{
-                                ...register("location", {
+                <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-4 h-3/4 mb-5"}
+                     style={{minHeight: "359px"}}>
+                    <div className={"w-full flex flex-col "}>
+                        <label className={styles.label}>Status</label>
+                        <UserProfileInput placeholder={owner.userStatus ? owner.userStatus : "Not indicated"}
+                                          inputType={"text"} register={{
+                            ...register("userStatus",
+                                {
                                     maxLength: {
-                                        value: "30",
-                                        message: "Field name too long."
+                                        value: 30,
+                                        message: "Status too long."
                                     }
                                 })
-                            }}/>
-                            <FormErrorMessage errorField={errors?.location}/>
-                        </div>
+                        }}/>
+                        <FormErrorMessage errorField={errors?.userStatus}/>
                     </div>
+
+                    <div className={"w-full flex flex-col "}>
+                        <label className={styles.label}>Country<FontAwesomeIcon icon={faLocationDot}/></label>
+                        <UserProfileInput placeholder={owner.country ? owner.country : "Not indicated"}
+                                          inputType={"text"} register={{
+                            ...register("country", {
+                                maxLength: {
+                                    value: "30",
+                                    message: "Field name too long."
+                                }
+                            })
+                        }}/>
+                        <FormErrorMessage errorField={errors?.country}/>
+                    </div>
+                    <div className={"w-full flex flex-col "}>
+                        <label className={styles.label}>City <FontAwesomeIcon icon={faCity}/></label>
+                        <UserProfileInput placeholder={owner.city ? owner.city : "Not indicated"}
+                                          inputType={"text"} register={{
+                            ...register("city", {
+                                maxLength: {
+                                    value: "30",
+                                    message: "Field name too long."
+                                }
+                            })
+                        }}/>
+                        <FormErrorMessage errorField={errors?.city}/>
+                    </div>
+                </div>
                 <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-4"}>
                     <div className={"w-full flex flex-col"}>
                         <label className={styles.label}>About me</label>

@@ -11,8 +11,11 @@ import {faBagShopping} from "@fortawesome/free-solid-svg-icons";
 
 function Header() {
     const location = useLocation()
+
     const isAuth = useSelector(selectIsAuth);
     const userData = useSelector(selectUserData);
+
+
 
     return (
         <header className={styles.header} >

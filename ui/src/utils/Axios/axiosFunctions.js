@@ -13,7 +13,8 @@ export const fetchPost = async (path, data) => {
         if (status === 500){
             return {success: false, status: 500}
         }
-        return {success: false, status: status}
+
+        return {success: false, status: status, data: error.response.data }
     }
 }
 export const fetchGet = async (path) =>{
@@ -43,7 +44,7 @@ export const fetchUpdate = async (path, data) =>{
         if (status === 500){
             return {success: false, status: 500}
         }
-        return {success: false, status: status}
+        return {success: false, status: status, data: error.response.data};
     }
 }
 export const fetchUserByToken = async () =>{
@@ -60,7 +61,7 @@ export const fetchUserByToken = async () =>{
 
 export const fetchRemove = async (path, data=null) =>{
     try {
-        const response = await axios.delete(path, {data: {data}});
+        const response = await axios.delete(path, {data});
         return {success: true, data: response.data};
     } catch (error) {
         const status = error.response?.status || 500;
@@ -69,4 +70,14 @@ export const fetchRemove = async (path, data=null) =>{
     }
 }
 
+export const fetchCheckPassword = async (password) =>{
+    try {
+        const response = await axios.post("auth/checkPassword", {password});
+        return response.data.success === true;
+
+    } catch (error) {
+        return false;
+    }
+
+}
 

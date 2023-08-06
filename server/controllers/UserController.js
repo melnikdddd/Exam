@@ -1,22 +1,22 @@
 import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/strings.js";
-import ModelsWorker from "../utils/modelsWorker.js";
+import ModelsWorker, {_checkDuplicate} from "../utils/modelsWorker.js";
 import bcrypt from "../utils/auth/bcrypt.js";
 import jwt from "jsonwebtoken";
 import Jwt from "../utils/auth/jwt.js";
 import userModel from "../models/UserModel.js";
+import {checkPassword} from "../utils/auth/utils.js";
 
 const modelWorker = new ModelsWorker(UserModel);
 
 
 class UserController {
     removeUser = async (req, res) => {
-        const userId = req._id;
-        console.log(req)
+        const userId = req.userId;
         const {password} = req.body;
 
-        if (!await this.#service.checkPassword(password, userId)){
+        if (!await checkPassword(password, userId)){
             return  res.status(401).json({success: false, message: "Invalid password"});
         }
 
@@ -28,9 +28,29 @@ class UserController {
     }
     updateUser = async (req, res) => {
         try {
-            const userId = req.params.id;
+            const userId = req.userId;
+            const errorsFields = [];
 
             const {imageOperation, ...body} = req.body;
+
+            if (body.nickname){
+                if (await _checkDuplicate(["nickname"], body.nickname)){
+                    errorsFields.push("nickname");
+                }
+            }
+            if (body.email){
+                if (await _checkDuplicate(["email"], body.email)){
+                    errorsFields.push("email");
+                }
+            }
+            if (body.phoneNumber){
+                if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)){
+                    errorsFields.push("phoneNumber");
+                }
+            }
+            if (errorsFields.length > 0){
+                return res.status(409).json({success: false, errorsFields: errorsFields});
+            }
 
             //создаю объект настроек для дальнейшей работы с файлом
             const imageData = this.#service.getImagesOptions(req.file, imageOperation);
@@ -101,13 +121,6 @@ class UserController {
                     imageFieldName: "userAvatar",
                 },
             }
-        },
-
-        async checkPassword(password, userId){
-            const hashPassword =
-                userModel.findById(userId).select("hashPassword");
-
-            return await bcrypt.readHashPassword(password, hashPassword);
         }
     }
 }

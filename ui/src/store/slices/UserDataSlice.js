@@ -16,7 +16,9 @@ const initialState = {
        deals: null,
        favoritesUsers: null,
        blockedUsers: null,
-       location: null,
+       city: null,
+       country: null,
+       nickname: null,
        isDefaultImage: null,
    },
    products : []
