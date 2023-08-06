@@ -131,7 +131,9 @@ function ProfileSetting(props) {
 
 
         for (const [key, value] of Object.entries(sendData)) {
-            if (value) formData.append(key, value);
+            if (dirtyFields[key]){
+                if (value) formData.append(key, value);
+            }
         }
 
         const response = await fetchUpdate(`/users/${owner._id}`, formData);

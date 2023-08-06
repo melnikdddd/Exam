@@ -1,0 +1,19 @@
+.container{
+  @apply right-0 h-full absolute w-72 bg-gray-500 bg-opacity-60 overflow-hidden rounded-lg shadow-2xl p-10
+  flex flex-col;
+  backdrop-filter: blur(7px);
+}
+.button {
+  @apply text-gray-200 text-lg p-2 rounded-lg text-center;
+
+  &:not(.activeFilter):hover{
+    @apply cursor-pointer bg-gray-400;
+  }
+
+  border: solid 1px gray;
+  width: 50px;
+}
+
+.activeFilter{
+  @apply bg-gray-500 text-slate-400;
+}

@@ -46,7 +46,7 @@ function UserProfileData(props) {
                 <div className={"w-full flex flex-col items-center p-3 text-center"} style={{minWidth: "190px"}}>
                     <span className={"text-2xl  flex-1 mr-0.5"}>{data.user.firstname} {data.user.lastname}</span>
                     <div>
-                        <p className={"text-lg font-bold"}>{data.user.nickname}</p>
+                        <p className={"text-lg"}>{data.user.nickname}</p>
                     </div>
                 </div>
                 <div className={"text-center mb-3"}>

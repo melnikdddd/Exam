@@ -9,7 +9,7 @@ import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 import {faBagShopping} from "@fortawesome/free-solid-svg-icons";
 
-function Header() {
+function Header(props) {
     const location = useLocation()
 
     const isAuth = useSelector(selectIsAuth);
@@ -45,7 +45,8 @@ function Header() {
                                        )
 
                                    }
-                                   <FontAwesomeIcon icon={faBell} id={"notificationButton"} className={styles.navigationIcon}/>
+                                   <FontAwesomeIcon icon={faBell} className={`${styles.navigationIcon} ${props.isNotificationEnabled ? styles.active :""}`}
+                                                    onClick={props.toggleNotification} />
                                </div>
                                :  <Link to={"/auth/login"} className={styles.login}>Login</Link>
                        }

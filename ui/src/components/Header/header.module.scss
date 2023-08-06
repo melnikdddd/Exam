@@ -27,5 +27,11 @@
 
 
 .navigationIcon {
-  @apply h-6 mx-0.5 hover:bg-blue-500 hover:text-white transition-colors p-2 rounded-lg cursor-pointer;
+  @apply h-6 mx-0.5 p-2 rounded-lg cursor-pointer;
+  &:not(.active):hover{
+    @apply text-white transition-colors bg-blue-500;
+  }
+}
+.active{
+  @apply bg-gray-500;
 }
