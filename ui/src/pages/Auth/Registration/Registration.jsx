@@ -35,6 +35,7 @@ import {useDispatch} from "react-redux";
 
 import {setToken} from "../../../store/slices/AuthSlice";
 import {setUserData} from "../../../store/slices/UserDataSlice";
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 
 function Registration(){
 
@@ -45,6 +46,7 @@ function Registration(){
     const [passwordReliability, setPasswordReliability] = useState("");
     const [firstEffect, setFirstEffect] = useState(true);
 
+    const [isLoading, setIsLoading] = useState(false);
 
     const [isIdentityFocus, setIsIdentityFocus] = useState(false);
     const [isPasswordFocus, setIsPasswordFocus] = useState(false);
@@ -103,6 +105,7 @@ function Registration(){
     },[identityValue]);
 
     const onSubmit = async (data) =>{
+        setIsLoading(true);
         const identityT = identityType === "Email" ? "email" : "phoneNumber";
         const {identity, repeatPassword, terms, ...dataForSending} = data;
         dataForSending[identityT] = identity;
@@ -114,11 +117,12 @@ function Registration(){
             const errorFields = responseData.status === 409 ? responseData.data.errorFields : "";
 
             errorHandler(registrationErrors, responseData.status, setError, identityType, errorFields);
+            setIsLoading(false);
             return;
         }
 
+        setIsLoading(false);
         const {token, userData} = getAuthResponseValues(responseData);
-
         login(dispatch, {token, setToken}, {setUserData, userData});
         navigate(fromPage);
     }
@@ -299,7 +303,11 @@ function Registration(){
                                 <FormErrorMessage errorField={errors?.terms}/>
                             </div>
                             <div className={"w-full mt-5"}>
-                                <AuthButton text={"Sign up"} disabled={!isValid}/>
+                                {isLoading ?
+                                    <LoadingButton/>
+                                    :
+                                    <AuthButton text={"Sign up"} disabled={!isValid}/>
+                                }
                             </div>
                         </form>
                     </AuthCard>

@@ -13,6 +13,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {clearUserData, selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
 import {useNavigate} from "react-router-dom";
 import {clearToken} from "../../../store/slices/AuthSlice";
+import {pushNotification} from "../../../store/slices/NotificationSlice";
+import moment from "moment/moment";
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 
 function SecuritySetting(props) {
     const navigate = useNavigate()
@@ -24,6 +27,7 @@ function SecuritySetting(props) {
     const [passwordReliability, setPasswordReliability] = useState("");
     const [firstEffect, setFirstEffect] = useState(true);
     const [isDirty, setIsDirty] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [removeAccMessage, setRemoveAccMessage] = useState("");
     const [isValidCurrentPassword, setIsValidCurrentPassword] = useState(false);
@@ -67,6 +71,13 @@ function SecuritySetting(props) {
     }
 
     const resetData = (data) => {
+        setIsLoading(false);
+        dispatch(pushNotification({
+            value: {
+                title: "Success", type: "done", text: "Your data has been updated.", createdAt: moment()
+            },
+            field: "appNotifications"
+        }))
         setFirstEffect(true);
         reset({password: "", repPassword: "", data});
     }
@@ -103,6 +114,7 @@ function SecuritySetting(props) {
 
 
     const onSubmit = async (data) => {
+        setIsLoading(true);
         const formData = new FormData();
 
         if (data.repPassword) {
@@ -130,11 +142,13 @@ function SecuritySetting(props) {
         }
 
         if (response.status === 409){
+            setIsLoading(false);
             const errorFields = response.data.errorsFields;
 
             for (const field of errorFields){
                setError(field, {message: `This field already exists`, type: "validate"})
             }
+
         }
     }
 
@@ -288,10 +302,14 @@ function SecuritySetting(props) {
             </div>
             <div className={"w-full flex items-center justify-center mt-3"}>
                 <div className={"border rounded-lg flex p-3 bg-white shadow-md items-center justify-center ml-2 w-1/5"}>
-                    <button className={`rounded-lg bg-blue-500 text-white  cursor-pointer py-2 px-7 ${styles.submit}`}
-                            disabled={!(isDirty && isValid)}>
-                        Save
-                    </button>
+                    {isLoading ?
+                        <LoadingButton/>
+                        :
+                        <button className={`rounded-lg bg-blue-500 text-white  cursor-pointer py-2 px-7 ${styles.submit}`}
+                                disabled={!(isDirty && isValid)}>
+                            Save
+                        </button>
+                    }
                 </div>
             </div>
         </form>

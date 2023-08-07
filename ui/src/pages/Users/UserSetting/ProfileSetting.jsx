@@ -10,6 +10,9 @@ import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
 import {defaultImage} from "../../../components/Images/utils";
+import {pushNotification} from "../../../store/slices/NotificationSlice";
+import moment from "moment";
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 
 function ProfileSetting(props) {
     const owner = useSelector(selectUserData);
@@ -21,6 +24,8 @@ function ProfileSetting(props) {
     const [uploadedImage, setUploadedImage] = useState(null);
     const [isDirty, setIsDirty] = useState(false);
     const [firstEffect, setFirstEffect] = useState(true);
+
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const dispatch = useDispatch();
@@ -52,6 +57,14 @@ function ProfileSetting(props) {
     });
 
     const resetForm = (newData) => {
+        setIsLoading(false);
+        dispatch(pushNotification({
+            value: {
+                title: "Success", type: "done", text: "Your data has been updated.", createdAt: moment()
+            },
+            field: "appNotifications"
+        }))
+
         reset(newData);
         const fileInputValue = document.querySelector("#fileInput").value;
         if (fileInputValue) {
@@ -117,6 +130,7 @@ function ProfileSetting(props) {
     }, [nickname]);
 
     const onSubmit = async (data) => {
+        setIsLoading(true);
         const formData = new FormData();
 
         const {userAvatar, isImageRemoved, ...sendData} = data;
@@ -131,7 +145,7 @@ function ProfileSetting(props) {
 
 
         for (const [key, value] of Object.entries(sendData)) {
-            if (dirtyFields[key]){
+            if (dirtyFields[key]) {
                 if (value) formData.append(key, value);
             }
         }
@@ -153,10 +167,10 @@ function ProfileSetting(props) {
                 dispatch(updateValue({field: "userAvatar", value: defaultImage().userImage}));
                 dispatch(updateValue({field: "isDefaultImage", value: true}));
             }
-            return;
         }
         if (response.status === 409) {
-            setError("nickname", {message: "This nickname already exists.", type: "validate"});
+            setIsLoading(false);
+            setError("nickname", {message: "This already exists.", type: "validate"});
         }
     }
 
@@ -249,10 +263,15 @@ function ProfileSetting(props) {
                     </div>
                 </div>
                 <div className={"bg-white shadow-md mt-3 p-3 rounded-lg w-full text-center"}>
-                    <button className={`rounded-lg bg-blue-500 text-white  cursor-pointer py-2 px-7 ${styles.submit}`}
-                            type={"submit"} disabled={!(isDirty && isValid)}>
-                        Save
-                    </button>
+                    {isLoading ?
+                        <LoadingButton/>
+                        :
+                        <button className={`rounded-lg bg-blue-500 text-white  cursor-pointer py-2 px-7 ${styles.submit}`}
+                                type={"submit"} disabled={!(isDirty && isValid)}>
+                            Save
+                        </button>
+                    }
+
                 </div>
             </div>
             <div className={"flex flex-col justify-between w-full ml-2"}>

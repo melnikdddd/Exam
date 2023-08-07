@@ -1,6 +1,7 @@
 import {setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
 import {setUserData} from "../../store/slices/UserDataSlice";
+import {clearAll, clearNotifications} from "../../store/slices/NotificationSlice";
 
 export function checkIdentityValue(value) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -72,6 +73,7 @@ export const login = (dispatch, {token, setToken}, {setUserData, userData}) => {
 export const logout = (dispatch, clearToken, clearUserData) => {
     window.localStorage.removeItem("token");
 
+    dispatch(clearAll());
     dispatch(clearToken());
     dispatch(clearUserData());
 }
