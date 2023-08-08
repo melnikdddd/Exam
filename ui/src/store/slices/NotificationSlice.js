@@ -5,22 +5,41 @@ const initialState = {
     usersNotifications: [],
 }
 
+const localStorage = window.localStorage;
+
 const NotificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
         pushNotification: (state, action) => {
-            state[action.payload.field].push(action.payload.value)
+            const { field, value } = action.payload;
+            state[field].push(value);
+            localStorage.setItem(field, JSON.stringify(state[field]));
         },
         removeNotification: (state, action) => {
-            state[action.payload.field].splice(action.payload.value, 1);
+            const { field, value } = action.payload;
+            state[field].splice(value, 1);
+
+            localStorage.setItem(field, JSON.stringify(state[field]));
         },
         clearNotifications: (state, action) => {
-            state[action.payload.field] = [];
+            const {field} =  action.payload;
+            state[field] = [];
+            localStorage.setItem(field, JSON.stringify("[]"));
         },
         clearAll: state => (state) => {
-            state.notification.appNotifications = [];
-            state.notification.usersNotifications = [];
+            state.appNotifications = [];
+            state.usersNotifications = [];
+
+            localStorage.removeItem("appNotifications");
+            localStorage.removeItem("usersNotifications");
+        },
+        setAppNotifications: (state, action) => {
+
+            state.appNotifications = action.payload.app;
+        },
+        setUsersNotifications: (state, action) => {
+            state.usersNotifications = action.payload.users;
         }
     },
 })
@@ -31,7 +50,8 @@ export const selectUsersNotifications = state => state.notification.usersNotific
 
 export const {
     pushNotification, removeNotification,
-    clearNotifications, clearAll
+    clearNotifications, clearAll,
+    setAppNotifications, setUsersNotifications,
 } = NotificationSlice.actions;
 
 

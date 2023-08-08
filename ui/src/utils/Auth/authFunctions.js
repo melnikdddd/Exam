@@ -1,7 +1,12 @@
 import {setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
 import {setUserData} from "../../store/slices/UserDataSlice";
-import {clearAll, clearNotifications} from "../../store/slices/NotificationSlice";
+import {
+    clearAll,
+    clearNotifications,
+    setAppNotifications,
+    setUsersNotifications
+} from "../../store/slices/NotificationSlice";
 
 export function checkIdentityValue(value) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -73,6 +78,7 @@ export const login = (dispatch, {token, setToken}, {setUserData, userData}) => {
 export const logout = (dispatch, clearToken, clearUserData) => {
     window.localStorage.removeItem("token");
 
+
     dispatch(clearAll());
     dispatch(clearToken());
     dispatch(clearUserData());
@@ -114,7 +120,7 @@ export const registrationErrors = {
     409: {
         options: {
             message: (field, identityType) => {
-                if(field === "identity"){
+                if (field === "identity") {
                     return `This ${identityType.toLowerCase()} already exists.`
                 }
                 return "This nickname already exists."
@@ -143,15 +149,15 @@ export const errorHandler = (errorsType, status, setError, identityType, errorsF
 
     const errorData = errorsType[status];
 
-    if (errorsFields){
-        for (const field of errorsFields){
-            if (typeof  errorData.options.message === "function"){
+    if (errorsFields) {
+        for (const field of errorsFields) {
+            if (typeof errorData.options.message === "function") {
                 setError(field, {
                     message: errorData.options.message(field, identityType),
                     type: errorData.options.type,
                 })
             } else {
-                    setError(field, errorData.options);
+                setError(field, errorData.options);
             }
         }
         return;
@@ -173,14 +179,23 @@ export const validateRepeatPassword = (repeatPassword, password) => {
 };
 
 export const firstEffectEntry = async (dispatch) => {
-    const token = window.localStorage.getItem('token');
+    const localStorage = window.localStorage;
+    const token = localStorage.getItem('token');
     if (token) {
         const userData = await fetchUserByToken();
         if (!userData) {
-            window.localStorage.removeItem('token');
+            localStorage.removeItem('token');
             return;
         }
+        const appNotifications = localStorage.getItem("appNotifications");
+        const usersNotifications = localStorage.getItem("usersNotifications");
 
+        if (appNotifications) {
+            dispatch(setAppNotifications({app: JSON.parse(appNotifications)}));
+        }
+        if (usersNotifications) {
+            dispatch(setUsersNotifications({users: JSON.parse(usersNotifications)}));
+        }
 
         dispatch(setUserData(userData))
         dispatch(setToken(token));

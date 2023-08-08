@@ -33,6 +33,7 @@ import {
     setIdentityValue, getAuthResponseValues
 } from "../../../utils/Auth/authFunctions";
 import {setUserData} from "../../../store/slices/UserDataSlice";
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 
 
 function Login() {
@@ -40,6 +41,7 @@ function Login() {
     const [regex, setRegex] = useState(initialIdentityValues.regex);
     const [identityType, setIdentityType] = useState(initialIdentityValues.identityType);
     const [message, setMessage] = useState(initialIdentityValues.message);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -61,7 +63,6 @@ function Login() {
         mode: "onChange"
     });
 
-    console.log(isValid)
 
 
     const identityValue = watch('identity');
@@ -74,6 +75,7 @@ function Login() {
 
 
     const onSubmit = async (data) => {
+        setIsLoading(true);
         const identityT = identityType === "Email" ? 'email' : 'phoneNumber';
         const dataForSend = {
             [identityT]: identityValue,
@@ -83,14 +85,16 @@ function Login() {
         const responseData = await fetchPost("/auth/login", dataForSend);
 
         if (responseData.success === false) {
+            setIsLoading(false);
             errorHandler(loginErrors, responseData.status, setError, identityType);
             return;
         }
         const {token, userData} = getAuthResponseValues(responseData);
 
-
+        setIsLoading(false);
         login(dispatch, {token, setToken}, {setUserData, userData});
         navigate(fromPage);
+
     }
 
     return (
@@ -136,7 +140,12 @@ function Login() {
                                 <FormErrorMessage errorField={errors?.password}/>
                             </div>
                             <div className={"w-full mt-5"}>
-                                <AuthButton text={"Sign in"} disabled={!isValid}/>
+                                {isLoading ?
+                                    <LoadingButton className={"w-full px-0 text-center"}/>
+                                    :
+                                    <AuthButton text={"Sign in"} disabled={!isValid}/>
+                                }
+
                             </div>
                         </form>
                         <p className={"w-full text-center"}>Don’t have an account yet?

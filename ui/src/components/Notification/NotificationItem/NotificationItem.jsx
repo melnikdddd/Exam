@@ -28,7 +28,7 @@ function NotificationItem(props) {
         }
     });
 
-    const currentDate = createdAt.calendar();
+    const currentDate = moment(createdAt).calendar();
 
     const icons = {
         warning : {

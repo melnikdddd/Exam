@@ -59,10 +59,10 @@ function ProfileSetting(props) {
     const resetForm = (newData) => {
         setIsLoading(false);
         dispatch(pushNotification({
+            field: "appNotifications",
             value: {
                 title: "Success", type: "done", text: "Your data has been updated.", createdAt: moment()
             },
-            field: "appNotifications"
         }))
 
         reset(newData);
