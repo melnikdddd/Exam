@@ -12,7 +12,7 @@ import Container from "../../Wrapper/Container/Container";
 
 function Notification(props) {
     const dispatch = useDispatch();
-    const [isAppActive, setIsAppActive] = useState(true);
+    const [isAppActive, setIsAppActive] = useState(false);
 
     const appNotifications = useSelector(selectAppNotifications);
     const usersNotifications = useSelector(selectUsersNotifications);
@@ -29,22 +29,20 @@ function Notification(props) {
             return;
         }
         dispatch(clearNotifications({field: notifications}))
-
     }
 
     return (
-        <Container className={"flex justify-end"}>
-            <div className={`${styles.container}`}>
+            <div className={`${styles.notifications}`}>
                 <div className={"w-full flex items-center justify-around"}>
-                    <button className={`${styles.button} ${isAppActive ? styles.activeFilter : ""}`} onClick={
-                        () => setIsAppActive(true)}>
-                        App
-                    </button>
-                    <span className={"border-r border-slate-600 rounded-lg h-10"}>
-                </span>
                     <button className={`${styles.button} ${!isAppActive ? styles.activeFilter : ""}`} onClick={() =>
                         setIsAppActive(false)}>
                         Users
+                    </button>
+                    <span className={"border-r border-slate-600 rounded-lg h-10"}>
+                </span>
+                    <button className={`${styles.button} ${isAppActive ? styles.activeFilter : ""}`} onClick={
+                        () => setIsAppActive(true)}>
+                        App
                     </button>
                 </div>
                 <div className={"w-full text-center py-3"}>
@@ -61,7 +59,7 @@ function Notification(props) {
                                     <NotificationItem
                                         key={index}
                                         createdAt={notification.createdAt}
-                                        notifications={notifications}
+                                        notifications={notification.notificationType}
                                         index={index}
                                         text={notification.text}
                                         title={notification.title}
@@ -93,8 +91,6 @@ function Notification(props) {
                     }
                 </div>
             </div>
-
-        </Container>
     );
 }
 

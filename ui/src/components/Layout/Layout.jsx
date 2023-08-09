@@ -1,32 +1,28 @@
 import Header from "../Header/Header";
 import {Outlet} from "react-router";
 import Footer from "../Footer/Footer";
-import {useLocation} from "react-router-dom";
 import styles from "./Layout.module.scss"
 import Notification from "../Notification/NotificatrionContainer/Notification";
-import {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {
+    selectIsShowedNotifications,
+} from "../../store/slices/NotificationSlice";
+import PopupNotification from "../Notification/PopupNotification/PopupNotification";
+import Container from "../Wrapper/Container/Container";
 function Layout(){
-    const location = useLocation();
-
-    const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
-
-    const toggleNotification = () =>{
-        setIsNotificationEnabled(!isNotificationEnabled)
-    }
-
-    useEffect(() => {
-        setIsNotificationEnabled(false);
-
-    }, [location]);
-
+    const isShowedNotifications = useSelector(selectIsShowedNotifications);
 
     return (
         <div className={styles.wrapper}>
-            <Header toggleNotification={toggleNotification} isNotificationEnabled={isNotificationEnabled}/>
-            <main>
-                {isNotificationEnabled &&
+            <Header/>
+            <main className={styles.main}>
+                <Container className={"flex justify-end"}>
+                {isShowedNotifications ?
                     <Notification/>
+                    :
+                    <PopupNotification/>
                 }
+                </Container>
                 <Outlet/>
             </main>
             <Footer/>

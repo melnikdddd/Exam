@@ -5,7 +5,7 @@ export const emailStrings = {
     <head>
       <title>HTML Email Example</title>
       <style>
-      .container{
+      .notifications{
         max-width: 768px;
       };
       h1{
@@ -37,7 +37,7 @@ export const emailStrings = {
       h1{
       text-align: center;
       }
-      .container{
+      .notifications{
         max-width: 768px;
       };
       </style>

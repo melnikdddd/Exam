@@ -8,7 +8,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
 import {firstEffectEntry} from "./utils/Auth/authFunctions";
-import LoadingBlock from "./components/Loading/LoadingBlock";
+import LoadingBlock from "./components/Loading/LoadingBlock/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
 import UserProfile from "./pages/Users/UserProfile/UserProfile";
 import UserSetting from "./pages/Users/UserSetting/UserSetting";

@@ -11,10 +11,14 @@ import {
 import moment from "moment";
 import styles from "./NotifiactionItem.module.scss"
 import {useDispatch} from "react-redux";
-import {removeNotification} from "../../../store/slices/NotificationSlice";
+import {removeNotification, removePopupNotification} from "../../../store/slices/NotificationSlice";
+import LoadingBar from "../../Loading/LoadingBar/LoadingBar";
+import {useEffect, useState} from "react";
 function NotificationItem(props) {
     const dispatch = useDispatch();
-    const {text, type, title, index, notifications, createdAt} = props;
+    const {text, type, title, index, notificationType, createdAt, isPopup} = props;
+
+    const totalDuration = 5000;
 
 
     moment.updateLocale('en', {
@@ -29,6 +33,29 @@ function NotificationItem(props) {
     });
 
     const currentDate = moment(createdAt).calendar();
+
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        if (isPopup){
+            const step = (100 / totalDuration) * 100;
+            const interval = setInterval(() => {
+                if (progress < 100) {
+                    setProgress(progress + step);
+                    return;
+                }
+                clearInterval(interval);
+                dispatch(removePopupNotification({value: index}))
+            }, totalDuration / 100);
+
+            return () => {
+
+                clearInterval(interval);
+            };
+        }
+
+    }, [progress]);
+
 
     const icons = {
         warning : {
@@ -54,13 +81,17 @@ function NotificationItem(props) {
     }
 
     const handleRemoveClick = (event) =>{
-        dispatch(removeNotification({field:notifications, value : index}));
+        console.log(notificationType)
+        dispatch(removeNotification({field:notificationType, value : index}));
+        if (isPopup){
+            dispatch(removePopupNotification({field: "popupNotifications", value: index}))
+        }
     }
 
     return (
-        <div className={styles.notificationItem}>
+        <div className={`${styles.notificationItem} ${isPopup && styles.popup}`}>
             <div className={"right-0 top-0 w-full flex justify-end"}>
-                <FontAwesomeIcon icon={faXmark} className={`${styles.closeButton}`} onClick={handleRemoveClick}/>
+                <FontAwesomeIcon icon={faXmark} className={`${styles.closeButton} ${isPopup && styles.popupButton}`} onClick={handleRemoveClick}/>
             </div>
             <div className={'flex flex-col justify-between pb-5 px-4'}>
                 <div className={"w-full flex justify-center"}>
@@ -71,9 +102,14 @@ function NotificationItem(props) {
                 {text &&
                     <p className={"mt-3 text-center pb-3"}>{text}</p>
                 }
-                {<span className={"w-full text-right text-gray-400"}>{currentDate}</span>}
-            </div>
 
+                {createdAt &&
+                    <span className={"w-full text-right text-gray-400"}>{currentDate}</span>
+                }
+            </div>
+            {isPopup &&
+                <LoadingBar progress={progress}/>
+            }
         </div>
     );
 }

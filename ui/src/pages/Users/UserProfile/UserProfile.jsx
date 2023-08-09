@@ -9,7 +9,7 @@ import {useParams} from "react-router";
 import {useEffect, useState} from "react";
 import {fetchGet} from "../../../utils/Axios/axiosFunctions";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
-import LoadingBlock from "../../../components/Loading/LoadingBlock";
+import LoadingBlock from "../../../components/Loading/LoadingBlock/LoadingBlock";
 import {decodeBase64Image} from "../../../components/Images/utils";
 
 import UserProfileData from "./UserProfileData";

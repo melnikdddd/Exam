@@ -11,3 +11,11 @@
   @apply bg-white shadow-md w-full rounded-lg  mt-4 mb-2;
   direction: ltr;
 }
+
+.popup{
+  @apply shadow-2xl bg-slate-50;
+}
+
+.popupButton{
+  @apply bg-opacity-50 border-gray-400;
+}

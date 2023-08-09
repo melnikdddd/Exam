@@ -191,7 +191,7 @@ export const firstEffectEntry = async (dispatch) => {
         const usersNotifications = localStorage.getItem("usersNotifications");
 
         if (appNotifications) {
-            dispatch(setAppNotifications({app: JSON.parse(appNotifications)}));
+
         }
         if (usersNotifications) {
             dispatch(setUsersNotifications({users: JSON.parse(usersNotifications)}));

@@ -1,20 +1,30 @@
 import {Link, NavLink, useLocation} from "react-router-dom";
 import styles from "./header.module.scss"
 import Container from "../Wrapper/Container/Container";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 import {faBagShopping} from "@fortawesome/free-solid-svg-icons";
+import {selectIsShowedNotifications, setIsShowedNotification} from "../../store/slices/NotificationSlice";
+import {useEffect} from "react";
 
 function Header(props) {
+
     const location = useLocation()
 
     const isAuth = useSelector(selectIsAuth);
     const userData = useSelector(selectUserData);
 
+    const dispatch = useDispatch();
+    const isShowedNotifications = useSelector(selectIsShowedNotifications);
+
+
+    useEffect(() => {
+        dispatch(setIsShowedNotification({set:false}));
+    }, [location]);
 
 
     return (
@@ -45,8 +55,9 @@ function Header(props) {
                                        )
 
                                    }
-                                   <FontAwesomeIcon icon={faBell} className={`${styles.navigationIcon} ${props.isNotificationEnabled ? styles.active :""}`}
-                                                    onClick={props.toggleNotification} />
+                                   <FontAwesomeIcon icon={faBell} className={`${styles.navigationIcon} ${isShowedNotifications? styles.active :""}`}
+                                                    onClick={()=>
+                                                        dispatch(setIsShowedNotification({set: !isShowedNotifications}))} />
                                </div>
                                :  <Link to={"/auth/login"} className={styles.login}>Login</Link>
                        }
