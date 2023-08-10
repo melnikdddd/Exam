@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import AuthInput from "../../../components/Inputs/Auth/AuthInput";
-import styles from "./UserSetting.module.scss"
+import AuthInput from "../../../Inputs/Auth/AuthInput";
+import styles from "./SecuritySetting.module.scss"
 import {useForm} from "react-hook-form";
-import {colors, logout, passwordRegex, validateRepeatPassword} from "../../../utils/Auth/authFunctions";
-import FormErrorMessage from "../../../components/Message/FormErrorMessage";
-import {fetchRemove, fetchUpdate} from "../../../utils/Axios/axiosFunctions";
-import {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
+import {colors, logout, passwordRegex, validateRepeatPassword} from "../../../../utils/Auth/authFunctions";
+import FormErrorMessage from "../../../Message/FormErrorMessage";
+import {fetchRemove, fetchUpdate} from "../../../../utils/Axios/axiosFunctions";
+import {HelperCard} from "../../../Card/AuthCard/AuthCard";
 
 import zxcvbn from "zxcvbn";
-import UserProfileInput from "../../../components/Inputs/UserPofileInputs/UserProfileInput";
+import UserProfileInput from "../../../Inputs/UserPofileInputs/UserProfileInput";
 import {useDispatch, useSelector} from "react-redux";
-import {clearUserData, selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
+import {clearUserData, selectUserData, updateValue} from "../../../../store/slices/UserDataSlice";
 import {useNavigate} from "react-router-dom";
-import {clearToken} from "../../../store/slices/AuthSlice";
-import {pushNotification} from "../../../store/slices/NotificationSlice";
+import {clearToken} from "../../../../store/slices/AuthSlice";
+import {clearAllNotifications, pushNotification} from "../../../../store/slices/NotificationSlice";
 import moment from "moment/moment";
-import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
+import LoadingButton from "../../../Buttons/LoadingButton/LoadingButton";
 
 function SecuritySetting(props) {
     const navigate = useNavigate()
@@ -66,7 +66,7 @@ function SecuritySetting(props) {
             return;
         }
 
-        logout(dispatch, clearToken, clearUserData);
+        logout(dispatch);
         navigate("home")
     }
 

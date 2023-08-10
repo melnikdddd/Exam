@@ -180,7 +180,7 @@ class ProductController {
 
 export const getUserProducts = async (ownerId) => {
     try {
-        return await ProductModel.find({owner: ownerId}).populate('User').exec();
+        return await ProductModel.find({owner: ownerId}).populate('UserProfile').exec();
     } catch (e) {
         return false;
     }

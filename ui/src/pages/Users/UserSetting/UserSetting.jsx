@@ -2,8 +2,8 @@ import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import Tabs from "../../../components/Buttons/Tabs/Tabs";
 import {useEffect, useState} from "react";
-import ProfileSetting from "./ProfileSetting";
-import SecuritySetting from "./SecuritySetting";
+import ProfileSetting from "../../../components/User/UserSetting/ProfileSetting/ProfileSetting";
+import SecuritySetting from "../../../components/User/UserSetting/SecuritySetting/SecuritySetting";
 import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
 import PasswordCard from "../../../components/Card/PasswordCard/PasswordCard";
 

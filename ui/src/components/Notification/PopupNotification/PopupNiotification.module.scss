@@ -1,4 +1,5 @@
 .popupContainer{
   @apply absolute w-72 rounded-lg p-8 flex flex-col;
+  visibility: hidden;
   height: 800px;
 }

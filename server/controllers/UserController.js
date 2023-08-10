@@ -75,8 +75,10 @@ class UserController {
 
             const user = await UserModel.findById(userId).select(userString);
 
+
+
             if (!user) {
-                return res.status(404).json({success: false, message: 'User can`t find.'});
+                return res.status(404).json({success: false, message: 'UserProfile can`t find.'});
             }
 
             const products = await getUserProducts(userId);
@@ -97,7 +99,7 @@ class UserController {
         const user = await UserModel.findById(userId).select(userString);
 
         if (!user) {
-            return res.status(404).json({success: false, message: 'User can`t find.'});
+            return res.status(404).json({success: false, message: 'UserProfile can`t find.'});
         }
 
         user.products = await getUserProducts(userId)

@@ -1,10 +1,8 @@
-import {setToken} from "../../store/slices/AuthSlice";
+import {clearToken, setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
-import {setUserData} from "../../store/slices/UserDataSlice";
+import {clearUserData, setUserData} from "../../store/slices/UserDataSlice";
 import {
-    clearAll,
-    clearNotifications,
-    setAppNotifications,
+    clearAllNotifications,
     setUsersNotifications
 } from "../../store/slices/NotificationSlice";
 
@@ -75,13 +73,14 @@ export const login = (dispatch, {token, setToken}, {setUserData, userData}) => {
     //setUserDataInLocalStorage(userData);
     window.localStorage.setItem('token', token);
 }
-export const logout = (dispatch, clearToken, clearUserData) => {
+export const logout = (dispatch) => {
     window.localStorage.removeItem("token");
 
-
-    dispatch(clearAll());
     dispatch(clearToken());
     dispatch(clearUserData());
+
+    dispatch(clearAllNotifications());
+
 }
 
 export const loginErrors = {

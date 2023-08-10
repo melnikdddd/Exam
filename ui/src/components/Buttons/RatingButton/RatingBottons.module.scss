@@ -4,14 +4,25 @@
   cursor: pointer;
   min-width: 100px;
 
+
   &:not([disabled]):hover{
     @apply bg-slate-300 transition-colors;
   }
 
+  @media (max-width: 500px) {
+    @apply p-2;
+  }
 
   &[disabled]{
     cursor: default;
     background: white;
+  }
+}
+
+.wrap{
+ @apply flex;
+  @media (max-width: 500px){
+    @apply order-last justify-center basis-full mt-2;
   }
 }
 .left{

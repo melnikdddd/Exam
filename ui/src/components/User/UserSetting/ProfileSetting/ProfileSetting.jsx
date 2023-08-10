@@ -1,18 +1,18 @@
-import UserAvatar from "../../../components/Images/UserAvatar";
-import UserProfileInput from "../../../components/Inputs/UserPofileInputs/UserProfileInput";
-import styles from './UserSetting.module.scss';
+import UserAvatar from "../../../Images/UserAvatar";
+import UserProfileInput from "../../../Inputs/UserPofileInputs/UserProfileInput";
+import styles from "./ProfileSetting.module.scss"
 import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCity, faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
-import {fetchUpdate} from "../../../utils/Axios/axiosFunctions";
-import FormErrorMessage from "../../../components/Message/FormErrorMessage";
+import {fetchUpdate} from "../../../../utils/Axios/axiosFunctions";
+import FormErrorMessage from "../../../Message/FormErrorMessage";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserData, updateValue} from "../../../store/slices/UserDataSlice";
-import {defaultImage} from "../../../components/Images/utils";
-import {pushNotification} from "../../../store/slices/NotificationSlice";
+import {selectUserData, updateValue} from "../../../../store/slices/UserDataSlice";
+import {defaultImage} from "../../../Images/utils";
+import {pushNotification} from "../../../../store/slices/NotificationSlice";
 import moment from "moment";
-import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
+import LoadingButton from "../../../Buttons/LoadingButton/LoadingButton";
 
 function ProfileSetting(props) {
     const owner = useSelector(selectUserData);

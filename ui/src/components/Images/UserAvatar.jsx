@@ -17,10 +17,10 @@ const UserAvatar = (props) => {
     },[image])
 
 
-    return <div className={`rounded-full ${props.className}`}>
+    return <div className={`rounded-full ${props.className} w-44 h-44`}>
         {isChanged && <RemoveImageButton setIsClicked={setIsClicked} isClicked={isClicked}/> }
         <img src={thisImage} alt={"userImage"} onClick={props.onClick}
-             className={`w-44 h-44 rounded-full ${isChanged ? ' cursor-pointer' : ''}`}/>
+             className={`w-full h-full rounded-full ${isChanged ? ' cursor-pointer' : ''}`}/>
     </div>
 
 

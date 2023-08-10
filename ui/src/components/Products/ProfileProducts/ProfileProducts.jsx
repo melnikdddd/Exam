@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from "../ProductCard/ProductCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBan, faBookmark, faCircle, faCircleExclamation, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ProfileProducts.module.scss"
 
 function ProfileProducts(props) {

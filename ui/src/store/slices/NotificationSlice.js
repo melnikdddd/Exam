@@ -40,15 +40,12 @@ const NotificationSlice = createSlice({
             state[field] = [];
             localStorage.removeItem(field);
         },
-        clearAll: state => (state) => {
-            state.appNotifications = [];
-            state.usersNotifications = [];
-
+        clearAllNotifications: (state, action) => {
+            state = initialState;
             localStorage.removeItem("appNotifications");
             localStorage.removeItem("usersNotifications");
         },
         setAppNotifications: (state, action) => {
-
             state.appNotifications = action.payload.app;
         },
         setUsersNotifications: (state, action) => {
@@ -73,7 +70,7 @@ export const selectPopupNotifications = state => state.notification.popupNotific
 
 export const {
     pushNotification, removeNotification,
-    clearNotifications, clearAll,
+    clearNotifications, clearAllNotifications,
     setAppNotifications, setUsersNotifications,
     setIsShowedNotification,removePopupNotification,
     clearPopupNotification

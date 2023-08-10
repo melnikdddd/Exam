@@ -11,7 +11,7 @@ function PopupNotification(props) {
     return (
         <div className={styles.popupContainer}>
             <div className={"flex flex-col h-full items-center w-full justify-end"}>
-                {popupNotifications.length !== 0 && (
+                {popupNotifications.length > 0 && (
                     popupNotifications.map((notification, index) => (
                         <NotificationItem
                             key={index}

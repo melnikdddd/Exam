@@ -1,4 +1,4 @@
 .backGround{
-  height: 100%;
-  width: 100%;
+  @apply w-full h-full;
+  min-height: 900px;
 }

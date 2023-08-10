@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema(
         },
         blockedUsers: {
             type: [mongoose.Schema.Types.ObjectId],
-            ref: 'User',
+            ref: 'UserProfile',
             default: [],
             set: function(users) {
                 return Array.from(new Set(users));
@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema(
         },
         favoritesUsers: {
             type: [mongoose.Schema.Types.ObjectId],
-            ref: 'User',
+            ref: 'UserProfile',
             default: [],
             set: function(users) {
                 return Array.from(new Set(users));
@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema(
         },
         reports: {
             type: [mongoose.Schema.Types.ObjectId],
-            ref: 'User',
+            ref: 'UserProfile',
             default: [],
             set: function(users) {
                 return Array.from(new Set(users));
@@ -63,7 +63,7 @@ const UserSchema = new mongoose.Schema(
         rating: {
             likes: {
                 type: [mongoose.Schema.Types.ObjectId],
-                ref: 'User',
+                ref: 'UserProfile',
                 default: [],
                 set: function(users) {
                     return Array.from(new Set(users));
@@ -71,7 +71,7 @@ const UserSchema = new mongoose.Schema(
             },
             dislikes: {
                 type: [mongoose.Schema.Types.ObjectId],
-                ref: 'User',
+                ref: 'UserProfile',
                 default: [],
                 set: function(users) {
                     return Array.from(new Set(users));

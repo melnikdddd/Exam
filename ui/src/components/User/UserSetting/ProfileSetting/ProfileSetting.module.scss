@@ -1,0 +1,14 @@
+.label{
+  @apply text-gray-600 text-base;
+}
+.submit{
+  &:not([disabled]){
+    @apply hover:bg-blue-600 hover:transition-colors;
+  }
+
+  &[disabled]{
+    @apply bg-gray-100 text-gray-600 cursor-default;
+  }
+
+}
+

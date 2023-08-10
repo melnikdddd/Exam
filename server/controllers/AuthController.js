@@ -81,7 +81,7 @@ class AuthController {
 
             if (!user) {
                 return res.status(404).json({
-                    success: "User cant find",
+                    success: "UserProfile cant find",
                 })
             }
 

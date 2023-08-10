@@ -12,7 +12,7 @@ import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapp
 import LoadingBlock from "../../../components/Loading/LoadingBlock/LoadingBlock";
 import {decodeBase64Image} from "../../../components/Images/utils";
 
-import UserProfileData from "./UserProfileData";
+import UserProfileData from "../../../components/User/UserProfile/UserProfileData/UserProfileData";
 import ProfileProducts from "../../../components/Products/ProfileProducts/ProfileProducts";
 import {useNavigate, useLocation} from "react-router-dom";
 import Tabs from "../../../components/Buttons/Tabs/Tabs";
@@ -43,7 +43,6 @@ function UserProfile(props) {
     useEffect(()=>{
         const getUserData = async (id) =>{
             const {data} = await fetchGet(`users/${id}`);
-
             if (!data){
                 navigate("/error");
                 return;

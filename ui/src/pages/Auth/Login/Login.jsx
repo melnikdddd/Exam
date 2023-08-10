@@ -141,7 +141,7 @@ function Login() {
                             </div>
                             <div className={"w-full mt-5"}>
                                 {isLoading ?
-                                    <LoadingButton className={"w-full px-0 text-center"}/>
+                                    <LoadingButton className={"px-0 w-full py-2 text-center"}/>
                                     :
                                     <AuthButton text={"Sign in"} disabled={!isValid}/>
                                 }

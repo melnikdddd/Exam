@@ -1,4 +1,4 @@
-import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import {createBrowserRouter, createRoutesFromElements, Link, Route, RouterProvider} from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import Login from "./pages/Auth/Login/Login";
 import Registration from "./pages/Auth/Registration/Registration";
@@ -12,6 +12,10 @@ import LoadingBlock from "./components/Loading/LoadingBlock/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
 import UserProfile from "./pages/Users/UserProfile/UserProfile";
 import UserSetting from "./pages/Users/UserSetting/UserSetting";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBagShopping} from "@fortawesome/free-solid-svg-icons";
+import styles from "./components/Header/header.module.scss";
+import ChatPage from "./pages/Chat/ChatPage";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -36,12 +40,17 @@ const routes = createBrowserRouter(createRoutesFromElements(
         </Route>
         <Route path={"/users"}>
             <Route path={":id"} element={<UserProfile/>} />
-
             <Route path={':id/setting'} element={
                 <PrivateRoute isAuthNeed={true}>
                 <UserSetting/>
                 </PrivateRoute>
             }/>
+            <Route path={":id/chats"} element={
+                <PrivateRoute isAuthNeed={true}>
+                    <ChatPage/>
+                </PrivateRoute>
+            }>
+            </Route>
         </Route>
         <Route path={"/terms"}/>
         <Route path={"/contacts"}/>

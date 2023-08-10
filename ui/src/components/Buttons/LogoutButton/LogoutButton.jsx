@@ -10,7 +10,7 @@ import {NavLink} from "react-router-dom";
 function LogoutButton(props) {
     const dispatch = useDispatch();
     const handleLogoutClick  = () =>{
-        logout(dispatch, clearToken, clearUserData);
+        logout(dispatch);
     }
 
     return (
