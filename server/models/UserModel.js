@@ -78,7 +78,7 @@ const UserSchema = new mongoose.Schema(
                 }
             },
         },
-        latestOnline : {type: Date, default: null},
+        lastOnline : {type: Date, default: null},
         deals : {
             purchase:{type: Number, default: 0},
             sales:{type: Number, default: 0},

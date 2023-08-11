@@ -275,9 +275,9 @@ function ProfileSetting(props) {
                 </div>
             </div>
             <div className={"flex flex-col justify-between w-full ml-2"}>
-                <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-4 h-3/4 mb-5"}
+                <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-16 h-3/4 mb-5"}
                      style={{minHeight: "359px"}}>
-                    <div className={"w-full flex flex-col "}>
+                    <div className={"w-full flex flex-col"}>
                         <label className={styles.label}>Status</label>
                         <UserProfileInput placeholder={owner.userStatus ? owner.userStatus : "Not indicated"}
                                           inputType={"text"} register={{
@@ -291,7 +291,6 @@ function ProfileSetting(props) {
                         }}/>
                         <FormErrorMessage errorField={errors?.userStatus}/>
                     </div>
-
                     <div className={"w-full flex flex-col "}>
                         <label className={styles.label}>Country<FontAwesomeIcon icon={faLocationDot}/></label>
                         <UserProfileInput placeholder={owner.country ? owner.country : "Not indicated"}

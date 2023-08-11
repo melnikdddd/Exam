@@ -1,9 +1,9 @@
-import { getFileExtensionFromFilename} from "./fsWorker.js";
-import UserModel from "../models/UserModel.js";
-import CommentModel from "../models/CommentModel.js";
-import ProductModel from "../models/ProductModel.js";
+import { getFileExtensionFromFilename} from "../SomeUtils/fsWorker.js";
+import UserModel from "../../models/UserModel.js";
+import CommentModel from "../../models/CommentModel.js";
+import ProductModel from "../../models/ProductModel.js";
 
-import bcrypt from "./auth/bcrypt.js";
+import bcrypt from "../auth/bcrypt.js";
 import * as constants from "constants";
 import sharp from "sharp";
 

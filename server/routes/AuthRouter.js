@@ -2,7 +2,7 @@ import express from "express"
 import {userValidation, loginValidation} from "../validations/UserValidator.js";
 import AuthController from "../controllers/AuthController.js";
 import multer from "multer";
-import {_checkDuplicate} from "../utils/modelsWorker.js";
+import {_checkDuplicate} from "../utils/Model/modelsWorker.js";
 import {registrationValidation} from "../validations/RegistrationValidator.js";
 import CheckAuth from "../utils/auth/checkAuth.js";
 const AuthRouter = express.Router();

@@ -1,6 +1,6 @@
 import CommentModel from "../models/CommentModel.js";
 import {validationResult} from "express-validator";
-import ModelsWorker from "../utils/modelsWorker.js";
+import ModelsWorker from "../utils/Model/modelsWorker.js";
 
 const modelWorker = new ModelsWorker(CommentModel);
 

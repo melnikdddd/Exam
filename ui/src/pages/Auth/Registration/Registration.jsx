@@ -123,7 +123,7 @@ function Registration(){
 
         setIsLoading(false);
         const {token, userData} = getAuthResponseValues(responseData);
-        login(dispatch, {token, setToken}, {setUserData, userData});
+        login(dispatch, token, userData);
         navigate(fromPage);
     }
 

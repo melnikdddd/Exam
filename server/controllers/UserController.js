@@ -1,7 +1,7 @@
 import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
-import {userString} from "../utils/strings.js";
-import ModelsWorker, {_checkDuplicate} from "../utils/modelsWorker.js";
+import {userString} from "../utils/SomeUtils/strings.js";
+import ModelsWorker, {_checkDuplicate} from "../utils/Model/modelsWorker.js";
 import bcrypt from "../utils/auth/bcrypt.js";
 import jwt from "jsonwebtoken";
 import Jwt from "../utils/auth/jwt.js";

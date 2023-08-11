@@ -1,5 +1,5 @@
-import {_decodingImagesFromArray} from "../utils/fsWorker.js";
-import ModelsWorker from "../utils/modelsWorker.js";
+import {_decodingImagesFromArray} from "../utils/SomeUtils/fsWorker.js";
+import ModelsWorker from "../utils/Model/modelsWorker.js";
 import ProductModel from "../models/ProductModel.js";
 const modelsWorker = new ModelsWorker(ProductModel);
 

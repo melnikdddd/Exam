@@ -10,7 +10,7 @@
   }
 
   @media (max-width: 500px) {
-    @apply p-2;
+    @apply p-2 mt-4;
   }
 
   &[disabled]{
@@ -22,7 +22,7 @@
 .wrap{
  @apply flex;
   @media (max-width: 500px){
-    @apply order-last justify-center basis-full mt-2;
+    @apply order-last justify-center basis-full mt-4 border-t border-gray-300 w-full;
   }
 }
 .left{

@@ -43,13 +43,19 @@ function Header(props) {
                                 {
                                     location.pathname !== `/users/${userData._id}` &&
                                     (
-                                        <>
-                                            <Link to={`users/${userData._id}`} state={{isProfile: true}}>
-                                                <FontAwesomeIcon icon={faUser} className={styles.navigationIcon}/>
-                                            </Link>
-                                        </>
+                                        <Link to={`users/${userData._id}`} state={{isProfile: true}}>
+                                            <FontAwesomeIcon icon={faUser} className={styles.navigationIcon}/>
+                                        </Link>
                                     )
 
+                                }
+                                {
+                                    location.pathname !== `/users/${userData._id}/chats` &&
+                                    (
+                                        <Link to={`users/${userData._id}/chats`}>
+                                            <FontAwesomeIcon icon={faComments} className={styles.navigationIcon}/>
+                                        </Link>
+                                    )
                                 }
                                 <Link to={`users/${userData._id}`} state={{isProfile: false}}>
                                     <FontAwesomeIcon icon={faBagShopping}
@@ -60,10 +66,6 @@ function Header(props) {
                                                  onClick={() =>
                                                      dispatch(setIsShowedNotification({set: !isShowedNotifications}))}
                                 />
-
-                                <Link to={`users/${userData._id}/chats`}>
-                                    <FontAwesomeIcon icon={faComments} className={styles.navigationIcon}/>
-                                </Link>
                             </div>
                             : <Link to={"/auth/login"} className={styles.login}>Login</Link>
                     }

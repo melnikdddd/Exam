@@ -92,7 +92,7 @@ function Login() {
         const {token, userData} = getAuthResponseValues(responseData);
 
         setIsLoading(false);
-        login(dispatch, {token, setToken}, {setUserData, userData});
+        login(dispatch, token, userData);
         navigate(fromPage);
 
     }

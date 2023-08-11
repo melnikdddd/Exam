@@ -12,9 +12,6 @@ import LoadingBlock from "./components/Loading/LoadingBlock/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
 import UserProfile from "./pages/Users/UserProfile/UserProfile";
 import UserSetting from "./pages/Users/UserSetting/UserSetting";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBagShopping} from "@fortawesome/free-solid-svg-icons";
-import styles from "./components/Header/header.module.scss";
 import ChatPage from "./pages/Chat/ChatPage";
 
 

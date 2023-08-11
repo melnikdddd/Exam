@@ -36,7 +36,7 @@
   .buttons{
     @apply flex items-center justify-between mt-3 w-full;
     @media (max-width: 706px) {
-      @apply basis-full justify-center
+      @apply basis-full justify-center mt-5;
     }
   }
   .userText{
@@ -66,11 +66,24 @@
   }
 
 }
+.createdAtWrap{
+  @media (max-width: 500px) {
+    @apply ml-4;
+  }
+}
+
+.sinceWrap{
+  @media (max-width: 500px) {
+    @apply mr-4;
+
+  }
+}
+
 
 .inform{
   @apply w-full border-t border-gray-300 p-4 flex justify-between;
   @media (max-width: 500px) {
-    @apply w-full flex-wrap;
+    @apply w-full flex-wrap px-0;
   }
 }
 
