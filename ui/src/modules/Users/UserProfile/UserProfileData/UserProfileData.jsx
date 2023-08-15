@@ -1,11 +1,11 @@
-import UserAvatar from "../../../Images/UserAvatar";
+import UserAvatar from "../../../../components/Images/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faEllipsisVertical, faGear, faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {Link, NavLink} from "react-router-dom";
-import LogoutButton from "../../../Buttons/LogoutButton/LogoutButton";
+import LogoutButton from "../../../../components/Buttons/LogoutButton/LogoutButton";
 import moment from "moment";
 import styles from "./UserProfile.module.scss"
-import RatingButtons from "../../../Buttons/RatingButton/RatingButtons";
+import RatingButtons from "../../../../components/Buttons/RatingButton/RatingButtons";
 import {useEffect, useState} from "react";
 import ProfileOptions from "../ProfileOptions/ProfileOptions";
 

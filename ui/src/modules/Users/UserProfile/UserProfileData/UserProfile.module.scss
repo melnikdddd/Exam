@@ -7,7 +7,7 @@
 }
 
 .userAvatar{
-  @apply mb-3 flex items-center justify-center;
+  @apply mb-3 flex items-center justify-center w-44 h-44;
 
   @media (max-width: 850px){
     @apply flex-shrink-0

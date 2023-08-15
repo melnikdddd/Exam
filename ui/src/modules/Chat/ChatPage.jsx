@@ -1,8 +1,8 @@
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
 import Container from "../../components/Wrapper/Container/Container";
 import {useEffect, useState} from "react";
-import ChatsList from "../../components/Chat/Chats/ChatsList";
-import Chat from "../../components/Chat/Chat/Chat";
+import ChatsList from "./Chats/ChatsList";
+import Chat from "./Chat/Chat";
 import {useLocation} from "react-router-dom";
 
 
