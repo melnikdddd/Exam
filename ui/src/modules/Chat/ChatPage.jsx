@@ -11,7 +11,8 @@ function ChatPage(props) {
     const chatInitialState = location.state?.isChatSelected || false;
 
     const [isChatSelected, setIsChatSelected] = useState(true);
-    const [selectedUser, setSelectedUser] = useState(isChatSelected && location.state.user || null)
+
+    const [selectedUser, setSelectedUser] = useState(isChatSelected && location.state?.user || null)
 
     const [isShowBoth, setIsShowBoth] = useState(false)
 
@@ -27,19 +28,7 @@ function ChatPage(props) {
         <BackGround background={"linear-gradient(111deg, rgba(27,102,122,1) 39%, rgba(112,201,119,1) 91%)"}>
             <Container className={"pt-6"}>
                 <div className={" w-full h-full"}>
-                    <Chat />
-                    {/*{isShowBoth ?*/}
-                    {/*    <>*/}
-                    {/*        <div>*/}
-                    {/*            <ChatsList/>*/}
-                    {/*        </div>*/}
-                    {/*        <div>*/}
-                    {/*            <Chat/>*/}
-                    {/*        </div>*/}
-                    {/*    </>*/}
-                    {/*    :*/}
-                    {/*    isChatSelected ? <Chat user={selectedUser}/> : <ChatsList/>*/}
-                    {/*}*/}
+                    <ChatsList/>
                 </div>
             </Container>
         </BackGround>

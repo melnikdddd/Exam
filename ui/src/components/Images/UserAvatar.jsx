@@ -3,6 +3,7 @@ import {selectUserImage} from "../../store/slices/UserDataSlice";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
 import {useEffect, useState} from "react";
 import RemoveImageButton from "../Buttons/RemoveImageButton/RemoveImage";
+import {decodeBase64Image} from "./utils";
 
 
 const UserAvatar = (props) => {
@@ -10,11 +11,17 @@ const UserAvatar = (props) => {
     const {isChanged, image} = props;
     const {setIsClicked, isClicked} = props;
 
+    const {isImageNeedDecoding} = props;
+
     const [thisImage, setThisImage] = useState(image);
 
     useEffect(()=>{
         setThisImage(image)
     },[image])
+
+    if (isImageNeedDecoding){
+        setThisImage(decodeBase64Image(image).userImage)
+    }
 
 
     return <div className={`rounded-full  ${props.className}`}>

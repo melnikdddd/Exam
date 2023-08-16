@@ -10,6 +10,7 @@ import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane, faFaceSmile} from "@fortawesome/free-solid-svg-icons";
 import useWindowDimensions from "../../../components/hooks/useWindowDimensions";
+import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
@@ -25,9 +26,7 @@ function Chat(props) {
     } = useForm({mode: "onChange"})
 
     const innerWidth = useWindowDimensions().width;
-
-
-    const inputValue = watch("input")
+    const inputValue = watch("input");
 
     const handleEmojiSelect = emoji =>{
 
@@ -44,16 +43,30 @@ function Chat(props) {
 
     const [isEmojiShow, setIsEmojiShow] = useState(false);
 
+    if (!user){
+        return <CenterWrapper>
+            <div className={"bg-white rounded-lg shadow-md p-10"}>
+                <h1 className={"text-xl2"}>
+                    Select a user to start chatting.
+                </h1>
+            </div>
+        </CenterWrapper>
+    }
+
     return (
         <div className={"h-full"}>
             <div className={"h-20 p-5 rounded-lg rounded-b-none border-b border-slate-400 w-full flex flex-row py-12 bg-slate-100"}>
                 <div className={"flex items-center w-full"}>
                     <div className="col">
-                        <UserAvatar image={owner.userAvatar} className={"h-20 w-20"}/>
+                        <UserAvatar image={user.userAvatar} className={"h-20 w-20"}/>
                     </div>
                     <div className="col ml-3">
-                            <p>{owner.lastname} {owner.firstname}</p>
-                            <span className={"text-slate-400"}>{moment(owner.lastOnline).calendar()}</span>
+                            <p>{user.lastname} {user.firstname}</p>
+                            <span className={"text-slate-400"}>
+                                {
+                                    user.isOnline ? "Online" : moment(user.lastOnline).calendar()
+                                }
+                            </span>
                     </div>
                 </div>
             </div>

@@ -8,9 +8,6 @@ function EmojiPicker(props) {
     const innerWidth = useWindowDimensions().width;
     const [selectedEmoji, setSelectedEmoji] = useState(null);
 
-    console.log(innerWidth)
-
-
     return (
         <div className={"absolute"} style={{top: props.top, left: props.left}} onMouseLeave={props.onMouseLeave}>
             <Picker data={data}

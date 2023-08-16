@@ -1,0 +1,9 @@
+import express from "express";
+import checkAuth from "../utils/auth/checkAuth.js";
+import ChatController from "../controllers/ChatController.js";
+
+const ChatRouter = express.Router();
+
+ChatRouter.get('/:userId', checkAuth, ChatController.getUsersChat);
+
+export default ChatRouter;

@@ -58,7 +58,6 @@ export const fetchUserByToken = async () =>{
         return false;
     }
 }
-
 export const fetchRemove = async (path, data=null) =>{
     try {
         const response = await axios.delete(path, {data});
@@ -69,7 +68,6 @@ export const fetchRemove = async (path, data=null) =>{
         return {success: false, status}
     }
 }
-
 export const fetchCheckPassword = async (password) =>{
     try {
         const response = await axios.post("auth/checkPassword", {password});
