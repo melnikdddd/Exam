@@ -8,7 +8,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPaperPlane, faFaceSmile} from "@fortawesome/free-solid-svg-icons";
+import {faPaperPlane, faFaceSmile, faList} from "@fortawesome/free-solid-svg-icons";
 import useWindowDimensions from "../../../components/hooks/useWindowDimensions";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import {Link} from "react-router-dom";
@@ -29,6 +29,7 @@ function Chat(props) {
 
     const innerWidth = useWindowDimensions().width;
     const adaptiveWidth = props.isShowBoth ? 950 : 525;
+    const {isShowBoth} = props;
 
     const inputValue = watch("input");
 
@@ -61,9 +62,15 @@ function Chat(props) {
     }
 
     return (
-        <div className={"h-full flex-1"}>
-            <div className={`h-20 p-5 rounded-lg rounded-b-none border-b border-slate-400 w-full flex flex-row py-12 bg-slate-100 ${props.className}`}>
-                <div className={"flex items-center w-full"}>
+        <div className={"h-full flex-1 max-h-[678px] overflow-auto "}>
+            <div className={`h-20 p-5  rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
+                {!isShowBoth &&
+                    <FontAwesomeIcon icon={faList}
+                                     onClick={()=> props.setIsChatSelected(false)}
+                                     className={"h-6 text-slate-600 p-2 border border-gray-400 rounded-lg cursor-pointer bg-slate-200 transition-colors hover:bg-slate-300"}
+                    />
+                }
+                <div className={`flex items-center`}>
                     <Link to={`/users/${user._id}`} className="col">
                         <UserAvatar image={user.userAvatar} className={"h-20 w-20"}/>
                     </Link>
@@ -76,6 +83,7 @@ function Chat(props) {
                             </span>
                     </div>
                 </div>
+
             </div>
             <div className={"bg-slate-100 bg-opacity-40 min-h-[62vh]"}>
 

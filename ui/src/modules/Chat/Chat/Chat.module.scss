@@ -18,7 +18,7 @@
 }
 
 .inputBlock{
-  @apply border-t border-slate-400 w-full bg-slate-100 rounded-b-lg min-h-[50px] p-6;
+  @apply border-t border-slate-400 w-full bg-slate-100 rounded-b-lg min-h-[50px] p-6 items-end;
 
 
   @media (max-width: 525px) {

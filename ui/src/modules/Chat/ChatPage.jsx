@@ -49,10 +49,11 @@ function ChatPage(props) {
             <Container className={"pt-6"}>
                 <div className={`w-full flex `}>
                     <ChatsList
-                        className={isShowBoth ? `${styles.showBoth} rounded-r-none border border-r-slate-400` :
+                        className={isShowBoth ? `${styles.showBoth} rounded-r-none border-r border-r-slate-400` :
                             `${isChatSelected && `hidden`}`}/>
                     <Chat
                         user={selectedUser} chatId={chatId} isShowBoth={isShowBoth}
+                        setIsChatSelected={setIsChatSelected}
                         className={isShowBoth ? `${styles.showBoth} rounded-l-none` :
                             `${!isChatSelected && `hidden`}`}/>
                 </div>
