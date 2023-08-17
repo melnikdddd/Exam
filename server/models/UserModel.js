@@ -96,6 +96,26 @@ const UserSchema = new mongoose.Schema(
             required: false,
             default: '',
         },
+        chatsInfo: [{
+            chatId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Chat",
+                required: true,
+            },
+            userId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                required: true,
+            },
+            read: {
+                type: Boolean,
+                default: false,
+            },
+            lastMessageId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "messages",
+            }
+        }],
     },
     {
         timestamps: true,

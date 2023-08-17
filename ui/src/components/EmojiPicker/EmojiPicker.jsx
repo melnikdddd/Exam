@@ -14,7 +14,7 @@ function EmojiPicker(props) {
                     onEmojiSelect={props.handleEmojiSelect}
                     previewPosition={"none"}
                     skinTonePosition={"none"}
-                    dynamicWidth={!(innerWidth > 525)}
+                    dynamicWidth={!(innerWidth > props.adaptiveWidth)}
             />
         </div>
     );

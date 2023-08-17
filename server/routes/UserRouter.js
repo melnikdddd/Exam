@@ -22,4 +22,6 @@ UserRouter.route('/:id')
 
 UserRouter.get('/:id/products', UserController.getUserProducts);
 
+UserRouter.post("/:id/chats", checkAuth, UserController.getUsersInChat)
+
 export default UserRouter;

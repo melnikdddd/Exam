@@ -2,10 +2,6 @@ import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker, {_checkDuplicate} from "../utils/Model/modelsWorker.js";
-import bcrypt from "../utils/auth/bcrypt.js";
-import jwt from "jsonwebtoken";
-import Jwt from "../utils/auth/jwt.js";
-import userModel from "../models/UserModel.js";
 import {checkPassword} from "../utils/auth/utils.js";
 
 const modelWorker = new ModelsWorker(UserModel);
@@ -112,6 +108,20 @@ class UserController {
         const products = await getUserProducts(ownerId);
 
         res.status(200).json(products);
+    }
+
+    getUsersInChat = async (req, res) =>{
+        try {
+            const {usersIds} = req.body;
+
+            const users = await UserModel.find({_id : {$in: usersIds}}).populate("firstname lastname userAvatar nickname")
+
+            return users ? res.status(200).json({success: true, users: users}) :
+                res.status(404).json({success: false, message: "Users cannot find"});
+
+        } catch (e){
+            return res.status(500).json({success: false, message: "Server error"})
+        }
     }
 
     #service = {

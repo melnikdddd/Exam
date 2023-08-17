@@ -1,47 +1,26 @@
 import ChatModel from "../models/ChatModel.js";
-import {chat} from "googleapis/build/src/apis/chat/index.js";
-import * as constants from "constants";
-import UserModel from "../models/UserModel.js";
+
 
 class ChatController {
-    getUsersChat = async (req, res) => {
+    getMessages = async (req, res) => {
         try {
-            const userId = req.userId;
-            const chats = await ChatModel.find({users: userId});
+            const ownerId = req.userId;
+            const {usersId} = req.params;
 
-            if (!chats){
-               return res.status(200).json({success: true, chats: []})
-            }
+            const messages = ChatModel.findOne({
+                users: {$all: [ownerId, usersId]}
+            }).select("messages");
 
-           const chatsWithUsers = await this.#service.getChatsWithUsers(chats,  userId);
 
-           return res.status(200).json({success: true, chats: chatsWithUsers});
+            return messages ? res.status(200).json({success: false, messages: messages})
+                : res.status(404).json({success: false, messages: "Chat does`not exists."})
 
-        } catch (error) {
-            return res.status(500).json({
-                success: false,
-                message: "Server error.",
-            })
+        } catch (e) {
+            return res.status(500).json({success: false, messages: "Server error"});
         }
+
     }
 
-    #service = {
-        getChatsWithUsers : async (chats, userId)=>{
-            const userIds = [];
-
-            chats.map(chat => {
-                users.push(chat.users.filter(id => id === userId)[0])
-            })
-
-            const users = await UserModel.find({_id: {$in: userIds}})
-                .select("id userAvatar firstname lastname isOnline lastOnline");
-
-            return chats.map((chat, index) => ({
-                user: users[index],
-                messages: chat.messages
-            }));
-        }
-    }
 }
 
 

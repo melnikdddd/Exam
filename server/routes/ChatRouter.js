@@ -4,6 +4,6 @@ import ChatController from "../controllers/ChatController.js";
 
 const ChatRouter = express.Router();
 
-ChatRouter.get('/:userId', checkAuth, ChatController.getUsersChat);
+ChatRouter.get('/:userId', checkAuth, ChatController.getMessages);
 
 export default ChatRouter;

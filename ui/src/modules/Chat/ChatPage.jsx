@@ -4,31 +4,57 @@ import {useEffect, useState} from "react";
 import ChatsList from "./Chats/ChatsList";
 import Chat from "./Chat/Chat";
 import {useLocation} from "react-router-dom";
-
+import useWindowDimensions from "../../components/hooks/useWindowDimensions";
+import styles from "./ChatPage.module.scss"
+import {useSelector} from "react-redux";
+import {selectUserData} from "../../store/slices/UserDataSlice";
 
 function ChatPage(props) {
+    const owner = useSelector(selectUserData);
     const location = useLocation();
-    const chatInitialState = location.state?.isChatSelected || false;
 
-    const [isChatSelected, setIsChatSelected] = useState(true);
+    const innerWidth = useWindowDimensions().width;
 
-    const [selectedUser, setSelectedUser] = useState(isChatSelected && location.state?.user || null)
+    const [isChatSelected, setIsChatSelected] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null)
 
+    const [chatId, setChatId] = useState(null);
     const [isShowBoth, setIsShowBoth] = useState(false)
 
-    useEffect(()=>{
-        if (window.innerWidth < 800){
-            setIsShowBoth(false);
-            return;
+
+    useEffect(() => {
+        if (location.state?.user) {
+            const user = location.state.user;
+            const userId = user._id;
+            if (owner.chatsInfo) {
+                const chat = owner.chatsInfo.find(chatInfo => chatInfo.userId === userId)?.chatId;
+                if (chat) {
+                    setChatId(chat);
+                }
+            }
+            setIsChatSelected(true);
+            setSelectedUser(user);
         }
-        setIsShowBoth(true);
-    }, [window.innerWidth])
+    }, []);
+
+
+
+    useEffect(() => {
+        setIsShowBoth(innerWidth > 736);
+    }, [innerWidth]);
+
 
     return (
         <BackGround background={"linear-gradient(111deg, rgba(27,102,122,1) 39%, rgba(112,201,119,1) 91%)"}>
             <Container className={"pt-6"}>
-                <div className={" w-full h-full"}>
-                    <ChatsList/>
+                <div className={`w-full flex `}>
+                    <ChatsList
+                        className={isShowBoth ? `${styles.showBoth} rounded-r-none border border-r-slate-400` :
+                            `${isChatSelected && `hidden`}`}/>
+                    <Chat
+                        user={selectedUser} chatId={chatId} isShowBoth={isShowBoth}
+                        className={isShowBoth ? `${styles.showBoth} rounded-l-none` :
+                            `${!isChatSelected && `hidden`}`}/>
                 </div>
             </Container>
         </BackGround>
