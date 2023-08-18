@@ -6,7 +6,7 @@
 }
 
 .submitButton{
-  @apply transition-colors py-2 px-4 rounded-lg;
+  @apply transition-colors py-2 h-[29px] px-4 rounded-lg;
 
   &:not([disabled]){
     @apply bg-blue-500 text-white hover:bg-blue-600 cursor-pointer;

@@ -44,7 +44,7 @@ function UserProfileData(props) {
     moment.updateLocale('en', {
         calendar: {
             lastDay: '[Yesterday at] HH:mm',
-            sameDay: '[Today at] HH:mm',
+            sameDay: 'HH:mm',
             nextDay: '[Tomorrow at] LT',
             lastWeek: '[last] dddd  LT',
             nextWeek: 'dddd [at] LT',

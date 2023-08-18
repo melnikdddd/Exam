@@ -1,5 +1,5 @@
 
-import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
+import CenterWrapper from "../../../../components/Wrapper/CenterWrapper/CenterWrapper";
 
 
 function ChatsList(props) {

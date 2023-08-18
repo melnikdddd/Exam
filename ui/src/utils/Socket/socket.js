@@ -15,6 +15,9 @@ const Socket = class {
     closeConnect = () => {
         this.socket.disconnect();
     }
+    sendMessage = (messageData) =>{
+        this.socket.emit("sendMessage", messageData);
+    }
 }
 
 export default new Socket;

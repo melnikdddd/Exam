@@ -1,4 +1,4 @@
-import UserAvatar from "../../../components/Images/UserAvatar";
+import UserAvatar from "../../../../../components/Images/UserAvatar";
 
 function ChatListItem(props) {
     const {firstName, lastname, userAvatar, nickname} = props;

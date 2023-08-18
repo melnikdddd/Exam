@@ -1,22 +1,26 @@
 import {useSelector} from "react-redux";
-import {selectUserData} from "../../../store/slices/UserDataSlice";
-import UserAvatar from "../../../components/Images/UserAvatar";
+import {selectUserData} from "../../../../store/slices/UserDataSlice";
+import UserAvatar from "../../../../components/Images/UserAvatar";
 import moment from "moment";
 import styles from "./Chat.module.scss"
-import EmojiPicker from "../../../components/EmojiPicker/EmojiPicker";
-import {useState} from "react";
+import EmojiPicker from "../../../../components/EmojiPicker/EmojiPicker";
+import {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane, faFaceSmile, faList} from "@fortawesome/free-solid-svg-icons";
-import useWindowDimensions from "../../../components/hooks/useWindowDimensions";
-import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
+import useWindowDimensions from "../../../../components/hooks/useWindowDimensions";
+import CenterWrapper from "../../../../components/Wrapper/CenterWrapper/CenterWrapper";
 import {Link} from "react-router-dom";
+import {fetchGet} from "../../../../utils/Axios/axiosFunctions";
+import ChatWindow from "./ChatWindow/ChatWindow";
+import LoadingBlock from "../../../../components/Loading/LoadingBlock/LoadingBlock";
+
+import Socket from "../../../../utils/Socket/socket";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
-    const {user} = props;
-
+    const {user, chatId} = props;
 
     const {
         formState: {
@@ -24,29 +28,77 @@ function Chat(props) {
         },
         register,
         setValue,
+        reset,
         watch,
+        handleSubmit,
     } = useForm({mode: "onChange"})
+
+    const [isEmojiShow, setIsEmojiShow] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const innerWidth = useWindowDimensions().width;
     const adaptiveWidth = props.isShowBoth ? 950 : 525;
     const {isShowBoth} = props;
-
     const inputValue = watch("input");
+    const chatInput = document.querySelector("#chatInput");
+
+    useEffect(() => {
+        if(chatId){
+            const getMessages = async () => {
+                const response = await fetchGet(`chats/${owner._id}/${chatId}`);
+                if (response.success){
+                    setMessages(response.messages);
+                }
+            }
+            getMessages();
+        }
+        setIsLoading(true);
+    }, []);
+
+    moment.updateLocale('en', {
+        calendar: {
+            lastDay: '[Yesterday at] HH:mm',
+            sameDay: '[Today at] HH:mm',
+            nextDay: '[Tomorrow at] LT',
+            lastWeek: '[last] dddd  LT',
+            nextWeek: 'dddd [at] LT',
+            sameElse: 'L'
+        }
+    });
+
 
     const handleEmojiSelect = emoji =>{
-
         setValue("input", inputValue + emoji.native, {shouldValidate: true})
     }
     const handleInputChange = (event) => {
         const textarea = event.target;
         textarea.style.height = 'auto';
         textarea.style.height = `${textarea.scrollHeight}px`;
+
+        const parentBlock = document.querySelector("#chatWrap");
+
+        parentBlock.scrollTop = parentBlock.scrollHeight - parentBlock.clientHeight;
     }
     const handleEmojiSmileLeave = () =>{
         setIsEmojiShow(false);
     }
 
-    const [isEmojiShow, setIsEmojiShow] = useState(false);
+    const resetInput = () => {
+        chatInput.style.height = "24px";
+        reset();
+    }
+
+    const onSubmit = (data) => {
+        const message = {
+            user: owner._id,
+            text: data.input,
+            timestamp: Date.now()
+        };
+        Socket.sendMessage({chatId: chatId, userId: user._id, message : message});
+        setMessages((prevMessages) => [...prevMessages, message]);
+        resetInput();
+    }
 
     if (!user){
         return <div className={`bg-opacity-40 bg-white rounded-lg min-h-[300px] shadow-md w-full h-full ${props.className}`} >
@@ -62,7 +114,7 @@ function Chat(props) {
     }
 
     return (
-        <div className={"h-full flex-1 max-h-[678px] overflow-auto "}>
+        <div className={"h-full flex-1 max-h-[678px] overflow-auto "} id={"chatWrap"}>
             <div className={`h-20 p-5  rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
                 {!isShowBoth &&
                     <FontAwesomeIcon icon={faList}
@@ -85,9 +137,15 @@ function Chat(props) {
                 </div>
 
             </div>
-            <div className={"bg-slate-100 bg-opacity-40 min-h-[62vh]"}>
-
-            </div>
+            {isLoading ?
+                <ChatWindow messages={messages} ownerId={owner._id}/>
+                :
+                <div className={"bg-slate-100 bg-opacity-40 min-h-[50vh]"}>
+                    <CenterWrapper>
+                        <LoadingBlock/>
+                    </CenterWrapper>
+                </div>
+            }
             <div className={`${styles.inputBlock} ${props.className}`}>
 
                 {owner.blockedUsers.includes(user._id)
@@ -96,11 +154,12 @@ function Chat(props) {
                         <h1>User is blocked</h1>
                     </CenterWrapper>
                     :
-                    <form className={"flex"}>
-                        <div className={"w-3/4 rounded-xl border border-gray-300 p-2 flex items-end"}>
+                    <form className={"flex items-end"} onSubmit={handleSubmit(onSubmit)}>
+                        <div className={`w-3/4 rounded-xl border border-gray-300 p-2 flex items-end rounded-b-xl`}>
                         <textarea  placeholder={"Enter text..."}
                                    className={styles.chatInput}
                                    rows={1}
+                                   id={"chatInput"}
                                    onInput={handleInputChange}
                                    {...register("input", {required: true})}
                         />
