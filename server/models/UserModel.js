@@ -111,9 +111,15 @@ const UserSchema = new mongoose.Schema(
                 type: Boolean,
                 default: false,
             },
-            lastMessageId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "messages",
+            lastMessage: {
+                text: {
+                    type: String,
+                    required: true,
+                },
+                timestamp: {
+                    type: Date,
+                    default: Date.now,
+                },
             }
         }],
     },

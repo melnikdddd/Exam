@@ -3,6 +3,7 @@ import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker, {_checkDuplicate} from "../utils/Model/modelsWorker.js";
 import {checkPassword} from "../utils/auth/utils.js";
+import userModel from "../models/UserModel.js";
 
 const modelWorker = new ModelsWorker(UserModel);
 
@@ -12,8 +13,8 @@ class UserController {
         const userId = req.userId;
         const {password} = req.body;
 
-        if (!await checkPassword(password, userId)){
-            return  res.status(401).json({success: false, message: "Invalid password"});
+        if (!await checkPassword(password, userId)) {
+            return res.status(401).json({success: false, message: "Invalid password"});
         }
 
         if (await modelWorker.findAndRemove(userId)) {
@@ -29,22 +30,22 @@ class UserController {
 
             const {imageOperation, ...body} = req.body;
 
-            if (body.nickname){
-                if (await _checkDuplicate(["nickname"], body.nickname)){
+            if (body.nickname) {
+                if (await _checkDuplicate(["nickname"], body.nickname)) {
                     errorsFields.push("nickname");
                 }
             }
-            if (body.email){
-                if (await _checkDuplicate(["email"], body.email)){
+            if (body.email) {
+                if (await _checkDuplicate(["email"], body.email)) {
                     errorsFields.push("email");
                 }
             }
-            if (body.phoneNumber){
-                if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)){
+            if (body.phoneNumber) {
+                if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)) {
                     errorsFields.push("phoneNumber");
                 }
             }
-            if (errorsFields.length > 0){
+            if (errorsFields.length > 0) {
                 return res.status(409).json({success: false, errorsFields: errorsFields});
             }
 
@@ -70,7 +71,6 @@ class UserController {
             }
 
             const user = await UserModel.findById(userId).select(userString);
-
 
 
             if (!user) {
@@ -110,16 +110,16 @@ class UserController {
         res.status(200).json(products);
     }
 
-    getUsersInChat = async (req, res) =>{
+    getUsersInChat = async (req, res) => {
         try {
             const {usersIds} = req.body;
 
-            const users = await UserModel.find({_id : {$in: usersIds}}).populate("firstname lastname userAvatar nickname")
+            const users = await UserModel.find({_id: {$in: usersIds}}).populate("firstname lastname userAvatar nickname")
 
             return users ? res.status(200).json({success: true, users: users}) :
                 res.status(404).json({success: false, message: "Users cannot find"});
 
-        } catch (e){
+        } catch (e) {
             return res.status(500).json({success: false, message: "Server error"})
         }
     }
@@ -137,4 +137,51 @@ class UserController {
     }
 }
 
+export const updateChatsInfo = async (ownId, data) => {
+    const {chatId, userId, message, isRead} = data;
+    const {text, timestamp} = message;
+
+    const user = await UserModel.find({_id: ownId});
+    if (!user) {
+        return false;
+    }
+
+    const chatInfo = {
+        chatId: chatId,
+        userId: userId,
+        read: isRead,
+        lastMessage: {text, timestamp}
+    }
+
+    const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId === chatId);
+
+    if (chatIndex !== -1) {
+        user.chatsInfo[chatIndex] = chatInfo;
+    } else {
+        user.chatsInfo.push(chatInfo)
+    }
+
+    await user.save();
+    return true;
+}
+export const setOnline = async (userId) => {
+    await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
+
+}
+export const setOffline = async (userId) =>{
+    await UserModel.findOneAndUpdate({_id: userId}, {isOnline: false, lastOnline: new Date()});
+}
+
+export const readChat = async (userId, chatId) => {
+    const user = await userModel.find({_id: userId});
+
+    const updatedChatsInfo = user.chatsInfo.map(elem => {
+        if (elem.chatId === chatId){
+            elem.read = true;
+        }
+    })
+    user.chatsInfo = updatedChatsInfo;
+    user.save();
+    return true;
+}
 export default new UserController;

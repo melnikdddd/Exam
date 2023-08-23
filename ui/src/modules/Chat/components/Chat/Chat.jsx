@@ -1,5 +1,5 @@
-import {useSelector} from "react-redux";
-import {selectUserData} from "../../../../store/slices/UserDataSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {readMessage, selectUserData} from "../../../../store/slices/UserDataSlice";
 import UserAvatar from "../../../../components/Images/UserAvatar";
 import moment from "moment";
 import styles from "./Chat.module.scss"
@@ -17,6 +17,7 @@ import ChatWindow from "./ChatWindow/ChatWindow";
 import LoadingBlock from "../../../../components/Loading/LoadingBlock/LoadingBlock";
 
 import Socket from "../../../../utils/Socket/socket";
+import {clearMessages, loadMessages, selectMessages} from "../../../../store/slices/ActiveChatSlice";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
@@ -32,9 +33,10 @@ function Chat(props) {
         watch,
         handleSubmit,
     } = useForm({mode: "onChange"})
+    const dispatch = useDispatch();
 
     const [isEmojiShow, setIsEmojiShow] = useState(false);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useSelector(selectMessages);
     const [isLoading, setIsLoading] = useState(false);
 
     const innerWidth = useWindowDimensions().width;
@@ -48,12 +50,21 @@ function Chat(props) {
             const getMessages = async () => {
                 const response = await fetchGet(`chats/${owner._id}/${chatId}`);
                 if (response.success){
-                    setMessages(response.messages);
+                    dispatch(loadMessages({messages: response.messages}))
                 }
             }
+
             getMessages();
+            Socket.readMessage(owner._id, chatId);
+            dispatch(readMessage({chatId: chatId}));
         }
+
         setIsLoading(true);
+
+        return () => {
+            dispatch(clearMessages())
+        }
+
     }, []);
 
     moment.updateLocale('en', {

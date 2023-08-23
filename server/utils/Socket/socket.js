@@ -1,13 +1,7 @@
 import {Server} from "socket.io";
-import cors from "cors";
-import dotenv from "dotenv";
-import UserModel from "../../models/UserModel.js";
-import ChatController from "../../controllers/ChatController.js";
-import ChatModel from "../../models/ChatModel.js";
+import {readChat, setOffline, setOnline, updateChatsInfo} from "../../controllers/UserController.js";
+import {createChat, updateMessages} from "../../controllers/ChatController.js";
 
-dotenv.config();
-
-const PORT = process.env.SOCKET_PORT;
 
 const socket = (server) => {
 
@@ -27,33 +21,36 @@ const socket = (server) => {
         socket.on("userLoggedIn", async (userId) => {
             socket.userId = userId;
             onlineUsers.set(userId, socket.id);
-            await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
+            await setOnline(userId);
         });
         socket.on("disconnect", async () => {
+            await setOffline(socket.userId);
             onlineUsers.delete(socket.userId);
-            await UserModel.findOneAndUpdate({_id: socket.userId}, {isOnline: false, lastOnline: new Date()});
         });
         socket.on("sendMessage", async (data) => {
-            const {chatId, user, message} = data;
+            const {chatId, userId, message} = data;
 
-            if (!chatId) {
-                const chat = await new ChatModel(message);
-                await chat.save();
-            } else {
-                await ChatModel.findOneAndUpdate(
-                    {id: chatId},
-                    {$push: {messages: message}})
-            }
+            //обновляем базу данных сообщений
+            chatId ? await updateMessages(chatId, message) : await createChat(message);
+
+            //обновляем бд пользователей (chatsInfo)
+            await updateChatsInfo(socket.userId, {chatId, userId: userId, message, isRead: true});
+            await updateChatsInfo(userId, {chatId, userId: socket.userId, message, isRead: false});
 
             //отправялем сообщение второму пользователю
-            const userSocket = onlineUsers.get(user._id);
+            const userSocket = onlineUsers.get(userId);
+
             if (userSocket) {
-                io.to(userSocket).emit("newMessage", data);
+                io.to(userSocket).emit("newMessage", {chatId, userId, message});
             }
+        })
+
+        socket.on("readChat", async (data) => {
+            await readChat(data)
         })
     })
 
-
 }
+
 
 export default socket;

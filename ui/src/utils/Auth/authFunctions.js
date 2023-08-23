@@ -70,7 +70,7 @@ export const passwordRegex = {
 export const login = (dispatch, token, userData) => {
     dispatch(setToken(token));
     dispatch(setUserData(userData));
-    Socket.createConnect(userData._id);
+    Socket.createConnect(userData._id, dispatch);
 
 
     //setUserDataInLocalStorage(userData);

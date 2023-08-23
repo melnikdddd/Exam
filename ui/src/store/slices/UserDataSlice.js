@@ -53,9 +53,37 @@ const UserDataSlice = createSlice({
         },
         clearValue : (state, action) =>{
             state.data[action.payload.field] = null;
+        },
+        updateChatsInfo : (state, action) => {
+            const {chatId, userId, message} = action.payload.data;
+            const chatsInfo = [...state.data.chatsInfo];
+
+            const chatInfo = {
+                chatId: chatId,
+                userId: userId,
+                lastMessage: {text: message.text, timestamp: message.timestamp}
+            };
+
+            const chatIndex = chatsInfo.findIndex(elem => elem.chatId === chatId);
+
+            if (chatIndex !== -1) {
+                state.data.chatsInfo[chatIndex] = chatInfo;
+                return;
+            }
+
+            state.data.chatsInfo.push(chatsInfo);
+        },
+        readMessage: (state, action) => {
+            const {chatId} = action.payload;
+            const updatedChatInfo = state.data.chatsInfo.map(elem => {
+                if (elem === chatId){
+                    elem.read = true;
+                }
+            })
+
+            state.data.chatsInfo = updatedChatInfo;
         }
     }
-
 });
 
 
@@ -73,7 +101,13 @@ export const selectUserImage = state => state.userData.data.userAvatar;
 
 export const selectProducts = state => state.userData.products;
 
-export const {setUserData,updateValue, clearValue, clearUserData} = UserDataSlice.actions;
+export const {setUserData,
+    updateValue,
+    clearValue,
+    clearUserData,
+    updateChatsInfo,
+    readMessage,
+} = UserDataSlice.actions;
 
 export default UserDataSlice.reducer;
 
