@@ -1,8 +1,8 @@
 import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
 import {userString} from "../utils/SomeUtils/strings.js";
-import ModelsWorker, {_checkDuplicate} from "../utils/Model/modelsWorker.js";
-import {checkPassword} from "../utils/auth/utils.js";
+import ModelsWorker from "../utils/Model/modelsWorker.js";
+import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
 
 const modelWorker = new ModelsWorker(UserModel);
@@ -25,26 +25,17 @@ class UserController {
     }
     updateUser = async (req, res) => {
         try {
-            const userId = req.userId;
-            const errorsFields = [];
+
+            const userId = req.params.id;
+
 
             const {imageOperation, ...body} = req.body;
 
-            if (body.nickname) {
-                if (await _checkDuplicate(["nickname"], body.nickname)) {
-                    errorsFields.push("nickname");
-                }
-            }
-            if (body.email) {
-                if (await _checkDuplicate(["email"], body.email)) {
-                    errorsFields.push("email");
-                }
-            }
-            if (body.phoneNumber) {
-                if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)) {
-                    errorsFields.push("phoneNumber");
-                }
-            }
+
+            const errorsFields =
+                await _checkFieldsOnDuplicate(["nickname", "email", "phoneNumber"], body);
+
+
             if (errorsFields.length > 0) {
                 return res.status(409).json({success: false, errorsFields: errorsFields});
             }
@@ -58,7 +49,9 @@ class UserController {
             //вызвыаю общий для всех моделей метод апдейта, уже с настройками для записи файла
             const result = await modelWorker.findAndUpdate(userId, body, imageData.image);
             return res.status(200).json({success: true});
+
         } catch (error) {
+
             res.status(500).send("Try later");
         }
     }
@@ -137,11 +130,11 @@ class UserController {
     }
 }
 
+
 export const updateChatsInfo = async (ownId, data) => {
     const {chatId, userId, message, isRead} = data;
-    const {text, timestamp} = message;
 
-    const user = await UserModel.find({_id: ownId});
+    const user = await UserModel.findOne({_id: ownId});
     if (!user) {
         return false;
     }
@@ -150,7 +143,7 @@ export const updateChatsInfo = async (ownId, data) => {
         chatId: chatId,
         userId: userId,
         read: isRead,
-        lastMessage: {text, timestamp}
+        lastMessage: message
     }
 
     const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId === chatId);
@@ -164,11 +157,12 @@ export const updateChatsInfo = async (ownId, data) => {
     await user.save();
     return true;
 }
+
 export const setOnline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
 
 }
-export const setOffline = async (userId) =>{
+export const setOffline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: false, lastOnline: new Date()});
 }
 
@@ -176,7 +170,7 @@ export const readChat = async (userId, chatId) => {
     const user = await userModel.find({_id: userId});
 
     const updatedChatsInfo = user.chatsInfo.map(elem => {
-        if (elem.chatId === chatId){
+        if (elem.chatId === chatId) {
             elem.read = true;
         }
     })

@@ -30,14 +30,12 @@ class AuthController {
                     errorFields.push("nickname")
                 }
             }
-
-
             if (body.email) {
                 if (await _checkDuplicate(["email"], body.email)) {
                     errorFields.push("identity")
                 }
             }
-            if (body.phoneNumber) {
+            else if (body.phoneNumber) {
                 if (await _checkDuplicate(["phoneNumber"], body.phoneNumber)) {
                     errorFields.push("identity")
                 }

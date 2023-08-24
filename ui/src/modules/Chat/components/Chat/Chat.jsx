@@ -18,6 +18,7 @@ import LoadingBlock from "../../../../components/Loading/LoadingBlock/LoadingBlo
 
 import Socket from "../../../../utils/Socket/socket";
 import {clearMessages, loadMessages, selectMessages} from "../../../../store/slices/ActiveChatSlice";
+import {arrayBufferToBase64} from "../../../../components/Images/utils";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
@@ -33,39 +34,43 @@ function Chat(props) {
         watch,
         handleSubmit,
     } = useForm({mode: "onChange"})
+
     const dispatch = useDispatch();
 
     const [isEmojiShow, setIsEmojiShow] = useState(false);
-    const [messages, setMessages] = useSelector(selectMessages);
+
+    const messages = useSelector(selectMessages);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const innerWidth = useWindowDimensions().width;
-    const adaptiveWidth = props.isShowBoth ? 950 : 525;
+    const adaptiveWidth = props.isShowBoth ? 1015 : 525;
     const {isShowBoth} = props;
     const inputValue = watch("input");
     const chatInput = document.querySelector("#chatInput");
 
-    useEffect(() => {
-        if(chatId){
-            const getMessages = async () => {
-                const response = await fetchGet(`chats/${owner._id}/${chatId}`);
-                if (response.success){
-                    dispatch(loadMessages({messages: response.messages}))
-                }
-            }
 
+    useEffect(() => {
+        const getMessages = async () => {
+            console.log(chatId)
+            const response = await fetchGet(`chats/${owner._id}/${chatId}`);
+            if (response.success) {
+                dispatch(loadMessages({messages: response.data.messages.messages}))
+            }
+        }
+
+        if (chatId){
             getMessages();
             Socket.readMessage(owner._id, chatId);
             dispatch(readMessage({chatId: chatId}));
         }
-
         setIsLoading(true);
 
         return () => {
             dispatch(clearMessages())
         }
 
-    }, []);
+    }, [chatId]);
 
     moment.updateLocale('en', {
         calendar: {
@@ -79,7 +84,8 @@ function Chat(props) {
     });
 
 
-    const handleEmojiSelect = emoji =>{
+
+    const handleEmojiSelect = emoji => {
         setValue("input", inputValue + emoji.native, {shouldValidate: true})
     }
     const handleInputChange = (event) => {
@@ -91,7 +97,7 @@ function Chat(props) {
 
         parentBlock.scrollTop = parentBlock.scrollHeight - parentBlock.clientHeight;
     }
-    const handleEmojiSmileLeave = () =>{
+    const handleEmojiSmileLeave = () => {
         setIsEmojiShow(false);
     }
 
@@ -102,17 +108,17 @@ function Chat(props) {
 
     const onSubmit = (data) => {
         const message = {
-            user: owner._id,
+            sender: owner._id,
             text: data.input,
             timestamp: Date.now()
         };
-        Socket.sendMessage({chatId: chatId, userId: user._id, message : message});
-        setMessages((prevMessages) => [...prevMessages, message]);
+        Socket.sendMessage({chatId: chatId, userId: user._id, message: message});
         resetInput();
     }
 
-    if (!user){
-        return <div className={`bg-opacity-40 bg-white rounded-lg min-h-[300px] shadow-md w-full h-full ${props.className}`} >
+    if (!user) {
+        return <div
+            className={`bg-opacity-40 bg-white rounded-lg min-h-[300px] shadow-md w-full h-full ${props.className}`}>
             <CenterWrapper>
                 <div className={"bg-white rounded-lg shadow-md p-10"}>
                     <h1 className={"text-xl2"}>
@@ -126,10 +132,11 @@ function Chat(props) {
 
     return (
         <div className={"h-full flex-1 max-h-[678px] overflow-auto "} id={"chatWrap"}>
-            <div className={`h-20 p-5  rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
+            <div
+                className={`h-20 p-5  rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
                 {!isShowBoth &&
                     <FontAwesomeIcon icon={faList}
-                                     onClick={()=> props.setIsChatSelected(false)}
+                                     onClick={() => props.setIsChatSelected(false)}
                                      className={"h-6 text-slate-600 p-2 border border-gray-400 rounded-lg cursor-pointer bg-slate-200 transition-colors hover:bg-slate-300"}
                     />
                 }
@@ -138,8 +145,8 @@ function Chat(props) {
                         <UserAvatar image={user.userAvatar} className={"h-20 w-20"}/>
                     </Link>
                     <div className="col ml-3">
-                            <p>{user.lastname} {user.firstname}</p>
-                            <span className={"text-slate-400"}>
+                        <p>{user.lastname} {user.firstname}</p>
+                        <span className={"text-slate-400"}>
                                 {
                                     user.isOnline ? "Online" : moment(user.lastOnline).calendar()
                                 }
@@ -153,7 +160,7 @@ function Chat(props) {
                 :
                 <div className={"bg-slate-100 bg-opacity-40 min-h-[50vh]"}>
                     <CenterWrapper>
-                        <LoadingBlock/>
+                        <LoadingBlock className={"h-10 text-slate-200"}/>
                     </CenterWrapper>
                 </div>
             }
@@ -167,17 +174,17 @@ function Chat(props) {
                     :
                     <form className={"flex items-end"} onSubmit={handleSubmit(onSubmit)}>
                         <div className={`w-3/4 rounded-xl border border-gray-300 p-2 flex items-end rounded-b-xl`}>
-                        <textarea  placeholder={"Enter text..."}
-                                   className={styles.chatInput}
-                                   rows={1}
-                                   id={"chatInput"}
-                                   onInput={handleInputChange}
-                                   {...register("input", {required: true})}
+                        <textarea placeholder={"Enter text..."}
+                                  className={styles.chatInput}
+                                  rows={1}
+                                  id={"chatInput"}
+                                  onInput={handleInputChange}
+                                  {...register("input", {required: true})}
                         />
                             <div className={"relative"}>
                                 <FontAwesomeIcon icon={faFaceSmile}
                                                  className={`h-6 cursor-pointer ${isEmojiShow ? 'text-blue-500' : 'text-gray-400'}`}
-                                                 onClick={()=> setIsEmojiShow(!isEmojiShow)}
+                                                 onClick={() => setIsEmojiShow(!isEmojiShow)}
                                 />
                                 {
                                     isEmojiShow && <EmojiPicker
@@ -194,7 +201,7 @@ function Chat(props) {
                                 {innerWidth > adaptiveWidth ?
                                     <span>Message</span>
                                     :
-                                    <FontAwesomeIcon icon={faPaperPlane} />
+                                    <FontAwesomeIcon icon={faPaperPlane}/>
                                 }
                             </button>
                         </div>

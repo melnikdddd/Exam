@@ -148,8 +148,8 @@ export const registrationErrors = {
 }
 
 export const errorHandler = (errorsType, status, setError, identityType, errorsFields = null) => {
-
     const errorData = errorsType[status];
+
 
     if (errorsFields) {
         for (const field of errorsFields) {
@@ -162,6 +162,14 @@ export const errorHandler = (errorsType, status, setError, identityType, errorsF
                 setError(field, errorData.options);
             }
         }
+        return;
+    }
+
+    if (typeof errorData.options.message === "function") {
+        setError(errorData.field, {
+            message: errorData.options.message(identityType),
+            type: errorData.options.type,
+        })
         return;
     }
 
@@ -199,7 +207,7 @@ export const firstEffectEntry = async (dispatch) => {
             dispatch(setUsersNotifications({users: JSON.parse(usersNotifications)}));
         }
 
-        Socket.createConnect(userData._id);
+        Socket.createConnect(userData._id, dispatch);
 
 
         dispatch(setUserData(userData))

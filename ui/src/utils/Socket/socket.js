@@ -15,7 +15,7 @@ const Socket = class {
 
             this.socket.on("newMessage", data => {
                 dispatch(addMessage({message: data.message}));
-                dispatch(updateChatsInfo({data: data}))
+                dispatch(updateChatsInfo({data: data}));
             })
         }
     }

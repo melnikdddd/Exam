@@ -3,6 +3,8 @@ import {readChat, setOffline, setOnline, updateChatsInfo} from "../../controller
 import {createChat, updateMessages} from "../../controllers/ChatController.js";
 
 
+
+
 const socket = (server) => {
 
     const onlineUsers = new Map;
@@ -22,26 +24,34 @@ const socket = (server) => {
             socket.userId = userId;
             onlineUsers.set(userId, socket.id);
             await setOnline(userId);
+
+            console.log("socket Id login " + socket.id)
+
         });
         socket.on("disconnect", async () => {
-            await setOffline(socket.userId);
-            onlineUsers.delete(socket.userId);
+                await setOffline(socket.userId);
+                onlineUsers.delete(socket.userId);
         });
         socket.on("sendMessage", async (data) => {
             const {chatId, userId, message} = data;
 
+            console.log(message);
+
+            const ownId = socket.userId;
+
             //обновляем базу данных сообщений
-            chatId ? await updateMessages(chatId, message) : await createChat(message);
+            const chat = chatId ?
+                await updateMessages(chatId, message) : await createChat(message);
 
-            //обновляем бд пользователей (chatsInfo)
-            await updateChatsInfo(socket.userId, {chatId, userId: userId, message, isRead: true});
-            await updateChatsInfo(userId, {chatId, userId: socket.userId, message, isRead: false});
+            data.chatId = chat._id;
 
+            await updateBoth(ownId, data);
             //отправялем сообщение второму пользователю
             const userSocket = onlineUsers.get(userId);
+            socket.emit("newMessage", data)
 
             if (userSocket) {
-                io.to(userSocket).emit("newMessage", {chatId, userId, message});
+                io.to(userSocket).emit("newMessage", data);
             }
         })
 
@@ -52,5 +62,11 @@ const socket = (server) => {
 
 }
 
+const updateBoth = async (currentUserId, data) => {
+    const {chatId, userId, message} = data;
+    await updateChatsInfo(currentUserId, {chatId, userId: userId, message, isRead: true});
+    await updateChatsInfo(userId, {chatId, userId: currentUserId, message, isRead: false});
+
+}
 
 export default socket;

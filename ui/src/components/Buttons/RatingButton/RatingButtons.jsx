@@ -38,7 +38,6 @@ function RatingButtons(props) {
             setDislikesLength(isDisliked ? dislikesLength - 1 : dislikesLength);
             setIsDisliked(false);
             const response = await updateRating('like', isLiked);
-            console.log(response);
             return;
         }
         navigate("/auth/login", { state: {from: `${window.location.pathname}`}});
@@ -52,10 +51,6 @@ function RatingButtons(props) {
             setIstLiked(false);
 
             const response = await updateRating('dislike', isDisliked);
-            console.log(response);
-
-            if (response.success){
-            }
             return;
         }
         navigate("/auth/login", { state: {from: `${window.location.pathname}`}});

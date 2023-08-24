@@ -101,7 +101,8 @@ export const selectUserImage = state => state.userData.data.userAvatar;
 
 export const selectProducts = state => state.userData.products;
 
-export const {setUserData,
+export const {
+    setUserData,
     updateValue,
     clearValue,
     clearUserData,

@@ -26,6 +26,6 @@ export const {
     addMessage
 } = ActiveChatSlice.actions;
 
-export const selectMessages = state => state.messages;
+export const selectMessages = state => state.activeChat.messages;
 
 export default ActiveChatSlice.reducer;

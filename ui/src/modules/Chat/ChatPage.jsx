@@ -26,16 +26,16 @@ function ChatPage(props) {
         if (location.state?.user) {
             const user = location.state.user;
             const userId = user._id;
-            if (owner.chatsInfo) {
-                const chat = owner.chatsInfo.find(chatInfo => chatInfo.userId === userId)?.chatId;
+            if (owner.chatsInfo.length > 0) {
+                const chat = owner.chatsInfo.find(chatInfo => chatInfo.userId === userId)
                 if (chat) {
-                    setChatId(chat);
+                    setChatId(chat.chatId);
                 }
             }
             setIsChatSelected(true);
             setSelectedUser(user);
         }
-    }, []);
+    }, [chatId]);
 
 
 

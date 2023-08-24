@@ -304,7 +304,7 @@ function Registration(){
                             </div>
                             <div className={"w-full mt-5"}>
                                 {isLoading ?
-                                    <LoadingButton/>
+                                    <LoadingButton className={"w-full py-2 text-center text-white rounded"}/>
                                     :
                                     <AuthButton text={"Sign up"} disabled={!isValid}/>
                                 }

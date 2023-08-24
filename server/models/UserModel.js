@@ -25,8 +25,8 @@ const UserSchema = new mongoose.Schema(
             default: "",
         },
         city: {
-          type: String,
-          default: "",
+            type: String,
+            default: "",
         },
         country: {
             type: String,
@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema(
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'UserProfile',
             default: [],
-            set: function(users) {
+            set: function (users) {
                 return Array.from(new Set(users));
             }
         },
@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema(
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'UserProfile',
             default: [],
-            set: function(users) {
+            set: function (users) {
                 return Array.from(new Set(users));
             }
         },
@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema(
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'UserProfile',
             default: [],
-            set: function(users) {
+            set: function (users) {
                 return Array.from(new Set(users));
             }
         },
@@ -65,7 +65,7 @@ const UserSchema = new mongoose.Schema(
                 type: [mongoose.Schema.Types.ObjectId],
                 ref: 'UserProfile',
                 default: [],
-                set: function(users) {
+                set: function (users) {
                     return Array.from(new Set(users));
                 }
             },
@@ -73,23 +73,23 @@ const UserSchema = new mongoose.Schema(
                 type: [mongoose.Schema.Types.ObjectId],
                 ref: 'UserProfile',
                 default: [],
-                set: function(users) {
+                set: function (users) {
                     return Array.from(new Set(users));
                 }
             },
         },
-        lastOnline : {type: Date, default: null},
-        deals : {
-            purchase:{type: Number, default: 0},
-            sales:{type: Number, default: 0},
+        lastOnline: {type: Date, default: null},
+        deals: {
+            purchase: {type: Number, default: 0},
+            sales: {type: Number, default: 0},
         },
         userStatus: {type: String, default: ''},
-        userAvatar:{
+        userAvatar: {
             data: {
                 type: Buffer,
                 default: '',
             },
-            ext:{type: String, default: ''}
+            ext: {type: String, default: ''}
         },
         aboutUser: {
             type: String,
@@ -112,14 +112,19 @@ const UserSchema = new mongoose.Schema(
                 default: false,
             },
             lastMessage: {
+                sender: {
+                    required: true,
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User"
+                },
                 text: {
                     type: String,
-                    required: true,
+                    required: true
                 },
                 timestamp: {
                     type: Date,
-                    default: Date.now,
-                },
+                    default: Date.now()
+                }
             }
         }],
     },
@@ -128,8 +133,6 @@ const UserSchema = new mongoose.Schema(
         strictPopulate: false,
     }
 );
-
-
 
 
 export default mongoose.model('User', UserSchema);

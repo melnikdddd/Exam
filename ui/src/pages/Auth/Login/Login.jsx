@@ -87,6 +87,8 @@ function Login() {
         if (responseData.success === false) {
             setIsLoading(false);
             errorHandler(loginErrors, responseData.status, setError, identityType);
+            // errorHandler(loginErrors, responseData.status, setError, );
+            console.log(errors)
             return;
         }
         const {token, userData} = getAuthResponseValues(responseData);
