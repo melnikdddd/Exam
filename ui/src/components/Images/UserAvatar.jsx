@@ -15,13 +15,16 @@ const UserAvatar = (props) => {
 
     const [thisImage, setThisImage] = useState(image);
 
+
     useEffect(()=>{
         setThisImage(image)
     },[image])
 
-    if (isImageNeedDecoding){
-        setThisImage(decodeBase64Image(image).userImage)
-    }
+    useEffect(()=>{
+        if (isImageNeedDecoding){
+            setThisImage(decodeBase64Image(image.data, image.ext).userImage)
+        }
+    },[image])
 
 
     return <div className={`rounded-full  ${props.className}`}>

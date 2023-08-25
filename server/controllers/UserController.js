@@ -106,13 +106,13 @@ class UserController {
     getUsersInChat = async (req, res) => {
         try {
             const {usersIds} = req.body;
+            console.log(usersIds);
 
-            const users = await UserModel.find({_id: {$in: usersIds}}).populate("firstname lastname userAvatar nickname")
-
+            const users = await UserModel.find({_id: {$in: usersIds}}).select("firstname lastname userAvatar nickname")
             return users ? res.status(200).json({success: true, users: users}) :
                 res.status(404).json({success: false, message: "Users cannot find"});
 
-        } catch (e) {
+        } catch (error) {
             return res.status(500).json({success: false, message: "Server error"})
         }
     }
@@ -146,7 +146,8 @@ export const updateChatsInfo = async (ownId, data) => {
         lastMessage: message
     }
 
-    const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId === chatId);
+    const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId.toString() === chatId.toString());
+    console.log("chat index " + chatIndex, "chatId " + chatId);
 
     if (chatIndex !== -1) {
         user.chatsInfo[chatIndex] = chatInfo;

@@ -18,11 +18,13 @@ class ChatController {
 }
 
 export const createChat = async (message) => {
+    console.log("Create chat")
     const chat = await new ChatModel({messages: [message]});
     await chat.save();
     return chat;
 }
 export const updateMessages = async (chatId, message) => {
+    console.log("Update Message")
     const chat = await ChatModel.findOne({_id: chatId});
     chat.messages.push(message);
     await chat.save();

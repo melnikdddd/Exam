@@ -10,10 +10,9 @@ import {HelperCard} from "../../../../components/Card/AuthCard/AuthCard";
 import zxcvbn from "zxcvbn";
 import UserProfileInput from "../../../../components/Inputs/UserPofileInputs/UserProfileInput";
 import {useDispatch, useSelector} from "react-redux";
-import {clearUserData, selectUserData, updateValue} from "../../../../store/slices/UserDataSlice";
+import {selectUserData, updateValue} from "../../../../store/slices/UserDataSlice";
 import {useNavigate} from "react-router-dom";
-import {clearToken} from "../../../../store/slices/AuthSlice";
-import {clearAllNotifications, pushNotification} from "../../../../store/slices/NotificationSlice";
+import {pushNotification} from "../../../../store/slices/NotificationSlice";
 import moment from "moment/moment";
 import LoadingButton from "../../../../components/Buttons/LoadingButton/LoadingButton";
 
@@ -65,6 +64,12 @@ function SecuritySetting(props) {
             setRemoveAccMessage("Invalid password");
             return;
         }
+        dispatch(pushNotification({
+            value: {
+                title: "Success", type: "Warning", text: "Your profile has been removed.", createdAt: moment()
+            },
+            field: "appNotifications"
+        }))
 
         logout(dispatch);
         navigate("home")
@@ -130,9 +135,7 @@ function SecuritySetting(props) {
         const response = await fetchUpdate(`/users/${id}`, formData);
 
         if (response.success) {
-
             if (data.password) delete data.password;
-
             if (Object.entries(data).length > 0) {
                 for (const [field, value] of Object.entries(data)) {
                     dispatch(updateValue({field, value}));

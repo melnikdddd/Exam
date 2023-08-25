@@ -1,9 +1,13 @@
 import styles from "./ChatWindow.module.scss";
 import moment from "moment";
 import {useEffect, useRef} from "react";
+import {useSelector} from "react-redux";
+import {selectMessages} from "../../../../../store/slices/ActiveChatSlice";
 
 function ChatWindow(props) {
-    const {messages, ownerId} = props;
+    const {ownerId} = props;
+    const messages = useSelector(selectMessages);
+
 
     const windowChatRef = useRef(null);
 

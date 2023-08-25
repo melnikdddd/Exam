@@ -1,6 +1,6 @@
 
 export function decodeBase64Image(data, ext) {
-    if (!data){
+    if (!data || !ext){
         return  {userImage: process.env.PUBLIC_URL + "/user-avatar.png", isDefaultImage: true}
     }
 

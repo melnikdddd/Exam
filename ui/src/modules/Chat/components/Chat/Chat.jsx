@@ -4,7 +4,7 @@ import UserAvatar from "../../../../components/Images/UserAvatar";
 import moment from "moment";
 import styles from "./Chat.module.scss"
 import EmojiPicker from "../../../../components/EmojiPicker/EmojiPicker";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,12 +17,12 @@ import ChatWindow from "./ChatWindow/ChatWindow";
 import LoadingBlock from "../../../../components/Loading/LoadingBlock/LoadingBlock";
 
 import Socket from "../../../../utils/Socket/socket";
-import {clearMessages, loadMessages, selectMessages} from "../../../../store/slices/ActiveChatSlice";
-import {arrayBufferToBase64} from "../../../../components/Images/utils";
+import {loadMessages, selectChatId, selectChatUser, selectMessages} from "../../../../store/slices/ActiveChatSlice";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
-    const {user, chatId} = props;
+    const chatId = useSelector(selectChatId);
+    const user = useSelector(selectChatUser);
 
     const {
         formState: {
@@ -65,10 +65,6 @@ function Chat(props) {
             dispatch(readMessage({chatId: chatId}));
         }
         setIsLoading(true);
-
-        return () => {
-            dispatch(clearMessages())
-        }
 
     }, [chatId]);
 
@@ -142,7 +138,7 @@ function Chat(props) {
                 }
                 <div className={`flex items-center`}>
                     <Link to={`/users/${user._id}`} className="col">
-                        <UserAvatar image={user.userAvatar} className={"h-20 w-20"}/>
+                        <UserAvatar image={user.userAvatar} className={"h-20 w-20"} isImageNeedDecoding={true}/>
                     </Link>
                     <div className="col ml-3">
                         <p>{user.lastname} {user.firstname}</p>

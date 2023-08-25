@@ -4,14 +4,13 @@ export const fetchPost = async (path, data) => {
     try {
         const response = await axios.post(path, data);
 
-        if (!response.data.token) return {success: false, status: 500};
         return {success: true, data: response.data};
 
     } catch (error) {
         const status = error.response?.status || 500;
 
         if (status === 500){
-            return {success: false, status: 500}
+            return {success: false, status}
         }
 
         return {success: false, status: status, data: error.response.data }
@@ -79,3 +78,10 @@ export const fetchCheckPassword = async (password) =>{
 
 }
 
+export const fetchUsersInChat = async (ownerId, usersIds) => {
+   const response = await fetchPost(`users/${ownerId}/chats`, {usersIds:usersIds});
+   if (response.success){
+        return response.data.users;
+   }
+   else return false;
+}

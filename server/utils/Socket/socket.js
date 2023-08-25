@@ -35,7 +35,7 @@ const socket = (server) => {
         socket.on("sendMessage", async (data) => {
             const {chatId, userId, message} = data;
 
-            console.log(message);
+            console.log(chatId);
 
             const ownId = socket.userId;
 
@@ -45,9 +45,12 @@ const socket = (server) => {
 
             data.chatId = chat._id;
 
+            console.log(data.chatId);
+
             await updateBoth(ownId, data);
             //отправялем сообщение второму пользователю
             const userSocket = onlineUsers.get(userId);
+            console.log(data);
             socket.emit("newMessage", data)
 
             if (userSocket) {

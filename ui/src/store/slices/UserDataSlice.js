@@ -74,12 +74,16 @@ const UserDataSlice = createSlice({
             state.data.chatsInfo.push(chatsInfo);
         },
         readMessage: (state, action) => {
-            const {chatId} = action.payload;
-            const updatedChatInfo = state.data.chatsInfo.map(elem => {
-                if (elem === chatId){
-                    elem.read = true;
+            const { chatId } = action.payload;
+            const updatedChatInfo = state.data.chatsInfo.map(chat => {
+                if (chat.chatId === chatId) {
+                    return {
+                        ...chat,
+                        read: true
+                    };
                 }
-            })
+                return chat; // Возвращаем оригинальный объект, если условие не выполнено
+            });
 
             state.data.chatsInfo = updatedChatInfo;
         }
@@ -94,6 +98,7 @@ export const setUserDataInLocalStorage = (userData) =>{
 export const getUserDataFromLocalStorage = () =>{
     return  window.localStorage.getItem(JSON.parse('userData'));
 }
+
 
 export const selectUserData = state => state.userData.data;
 
