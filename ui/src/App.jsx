@@ -63,11 +63,11 @@ function App (){
 
     useEffect(() => {
         const fetchData = async () => {
-            await firstEffectEntry(dispatch);
-            setIsLoading(true);
+            await firstEffectEntry(dispatch, setIsLoading);
         };
-
-        fetchData();
+        if (!isLoading){
+            fetchData();
+        }
     }, [dispatch]);
 
     if (!isLoading){

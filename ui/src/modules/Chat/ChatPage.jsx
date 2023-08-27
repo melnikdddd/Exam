@@ -7,18 +7,17 @@ import {useLocation} from "react-router-dom";
 import useWindowDimensions from "../../components/hooks/useWindowDimensions";
 import styles from "./ChatPage.module.scss"
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserData} from "../../store/slices/UserDataSlice";
-import {fetchUsersInChat} from "../../utils/Axios/axiosFunctions";
-import {extractProperties} from "../../utils/ArrayFunctions";
+import {selectUserData, setUsersToChatInfo} from "../../store/slices/UserDataSlice";
 import {useNavigate} from "react-router-dom";
-import {pushNotification} from "../../store/slices/NotificationSlice";
-import moment from "moment";
 import {clearChat, setSelectedChat} from "../../store/slices/ActiveChatSlice";
 import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper";
 import LoadingBlock from "../../components/Loading/LoadingBlock/LoadingBlock";
+import {fetchUsersInChat} from "../../utils/Axios/axiosFunctions";
+import {extractProperties} from "../../utils/ArrayFunctions";
 
 function ChatPage(props) {
     const owner = useSelector(selectUserData);
+    const chatsInfo = owner.chatsInfo;
     const location = useLocation();
 
     const navigate = useNavigate();
@@ -29,32 +28,18 @@ function ChatPage(props) {
     const [isChatSelected, setIsChatSelected] = useState(false);
     const [isShowBoth, setIsShowBoth] = useState(false)
 
-    const [users, setUsers] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const getUsers = async () => {
+        if (chatsInfo.length > 0) {
+            const users = await fetchUsersInChat(owner._id, extractProperties(chatsInfo, ["userId"]));
+            dispatch(setUsersToChatInfo({users: users}));
+        }
+        setIsLoading(true);
+    }
 
     useEffect(() => {
-        const getUsers = async () => {
-            if (owner.chatsInfo.length > 0) {
-                const users = await fetchUsersInChat(owner._id, extractProperties(owner.chatsInfo, ["userId"]));
-
-                if (!users) {
-                    dispatch(pushNotification({
-                        value: {
-                            title: "Warning", type: "Warning", text: "Error, try later please.", createdAt: moment()
-                        },
-                        field: "appNotifications"
-                    }))
-                    navigate("/home");
-                    return;
-                }
-
-                setUsers(users);
-                console.log(users);
-            }
-            setIsLoading(true);
-        }
         getUsers();
         if (location.state?.user) {
             loadingSelectChat(location.state?.user);
@@ -68,7 +53,7 @@ function ChatPage(props) {
             return;
         }
 
-        const chat = owner.chatsInfo.find(chatInfo => chatInfo.userId === user._id);
+        const chat = owner.chatsInfo.find(chatInfo => chatInfo.user._id === user._id);
         const chatId = chat?.chatId || null;
 
         dispatch(setSelectedChat({chatId, user}));
@@ -79,6 +64,10 @@ function ChatPage(props) {
     useEffect(() => {
         setIsShowBoth(innerWidth > 736);
     }, [innerWidth]);
+
+    useEffect(()=>{
+        getUsers();
+    },[chatsInfo])
 
 
     if (!isLoading) {
@@ -99,7 +88,7 @@ function ChatPage(props) {
             <Container className={"pt-6"}>
                 <div className={`w-full flex `}>
                     <ChatsList
-                        users={users} setIsChatSelected={setIsChatSelected}
+                        setIsChatSelected={setIsChatSelected} chatsInfo={owner.chatsInfo}
                         className={isShowBoth ? `${styles.showBoth} rounded-r-none border-r border-r-slate-400` :
                             `${isChatSelected && `hidden`}`}/>
                     <Chat

@@ -6,7 +6,6 @@ import {faCircle} from "@fortawesome/free-solid-svg-icons";
 
 function ChatListItem(props) {
     const {user, chatInfo, isSelected} = props;
-    console.log(user);
 
     const lastMessageText = chatInfo.lastMessage.text;
 

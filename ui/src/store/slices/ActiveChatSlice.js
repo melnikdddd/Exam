@@ -13,15 +13,17 @@ const ActiveChatSlice = createSlice({
         clearChat: (state, action) => {
             state = initialState;
         },
+        clearMessage: (state, action) => {
+            state.messages = [];
+        },
         loadMessages: (state, action) => {
             state.messages = action.payload.messages;
         },
         addMessage: (state, action) => {
-            const {userId, message, chatId} = action.payload.data;
-            console.log(userId);
+            const {user, message, chatId} = action.payload.data;
 
 
-            if (state.user._id === userId){
+            if (state.user._id === user._id){
                 state.messages.push(message);
                 if (state.chatId === null){
                     state.chatId = chatId;
@@ -39,7 +41,8 @@ export const {
     clearChat,
     loadMessages,
     setSelectedChat,
-    addMessage
+    addMessage,
+    clearMessage,
 } = ActiveChatSlice.actions;
 
 export const selectMessages = state => state.activeChat.messages;

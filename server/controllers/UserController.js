@@ -106,7 +106,6 @@ class UserController {
     getUsersInChat = async (req, res) => {
         try {
             const {usersIds} = req.body;
-            console.log(usersIds);
 
             const users = await UserModel.find({_id: {$in: usersIds}}).select("firstname lastname userAvatar nickname")
             return users ? res.status(200).json({success: true, users: users}) :
@@ -132,7 +131,7 @@ class UserController {
 
 
 export const updateChatsInfo = async (ownId, data) => {
-    const {chatId, userId, message, isRead} = data;
+    const {chatId, userId, message} = data;
 
     const user = await UserModel.findOne({_id: ownId});
     if (!user) {
@@ -142,12 +141,11 @@ export const updateChatsInfo = async (ownId, data) => {
     const chatInfo = {
         chatId: chatId,
         userId: userId,
-        read: isRead,
+        read: false,
         lastMessage: message
     }
 
     const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId.toString() === chatId.toString());
-    console.log("chat index " + chatIndex, "chatId " + chatId);
 
     if (chatIndex !== -1) {
         user.chatsInfo[chatIndex] = chatInfo;

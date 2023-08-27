@@ -14,8 +14,9 @@ const Socket = class {
             });
 
             this.socket.on("newMessage", data => {
-                dispatch(addMessage({data: data}));
+                console.log(data);
                 dispatch(updateChatsInfo({data: data}));
+                dispatch(addMessage({data: data}));
             })
         }
     }

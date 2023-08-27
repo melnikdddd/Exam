@@ -17,7 +17,13 @@ import ChatWindow from "./ChatWindow/ChatWindow";
 import LoadingBlock from "../../../../components/Loading/LoadingBlock/LoadingBlock";
 
 import Socket from "../../../../utils/Socket/socket";
-import {loadMessages, selectChatId, selectChatUser, selectMessages} from "../../../../store/slices/ActiveChatSlice";
+import {
+    clearMessage,
+    loadMessages,
+    selectChatId,
+    selectChatUser,
+    selectMessages
+} from "../../../../store/slices/ActiveChatSlice";
 
 function Chat(props) {
     const owner = useSelector(selectUserData);
@@ -68,6 +74,13 @@ function Chat(props) {
 
     }, [chatId]);
 
+    useEffect(() => {
+        return () => {
+            dispatch(clearMessage())
+        };
+    }, []);
+
+
     moment.updateLocale('en', {
         calendar: {
             lastDay: '[Yesterday at] HH:mm',
@@ -78,8 +91,6 @@ function Chat(props) {
             sameElse: 'L'
         }
     });
-
-
 
     const handleEmojiSelect = emoji => {
         setValue("input", inputValue + emoji.native, {shouldValidate: true})
@@ -108,7 +119,8 @@ function Chat(props) {
             text: data.input,
             timestamp: Date.now()
         };
-        Socket.sendMessage({chatId: chatId, userId: user._id, message: message});
+        console.log(message);
+        Socket.sendMessage({chatId: chatId, user: user, message: message});
         resetInput();
     }
 

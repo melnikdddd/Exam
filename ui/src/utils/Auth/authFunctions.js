@@ -72,7 +72,6 @@ export const login = (dispatch, token, userData) => {
     dispatch(setUserData(userData));
     Socket.createConnect(userData._id, dispatch);
 
-
     //setUserDataInLocalStorage(userData);
     window.localStorage.setItem('token', token);
 }
@@ -188,10 +187,19 @@ export const validateRepeatPassword = (repeatPassword, password) => {
     }
 };
 
-export const firstEffectEntry = async (dispatch) => {
-    const localStorage = window.localStorage;
-    const token = localStorage.getItem('token');
-    if (token) {
+
+let firstEffectFlag = true;
+export const firstEffectEntry = async (dispatch, setIsLoading) => {
+    const firstEffect = async () => {
+        firstEffectFlag = false;
+        const localStorage = window.localStorage;
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            window.localStorage.removeItem('token');
+            return;
+        }
+
         const userData = await fetchUserByToken();
         if (!userData) {
             localStorage.removeItem('token');
@@ -209,11 +217,13 @@ export const firstEffectEntry = async (dispatch) => {
 
         Socket.createConnect(userData._id, dispatch);
 
-
         dispatch(setUserData(userData))
         dispatch(setToken(token));
-        return;
+        setIsLoading(true);
     }
-    window.localStorage.removeItem('token');
+
+    if (firstEffectFlag){
+       await firstEffect()
+    }
 
 }
