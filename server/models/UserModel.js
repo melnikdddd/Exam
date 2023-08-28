@@ -78,6 +78,10 @@ const UserSchema = new mongoose.Schema(
                 }
             },
         },
+        isOnline: {
+            type: Boolean,
+            default: false,
+        },
         lastOnline: {type: Date, default: null},
         deals: {
             purchase: {type: Number, default: 0},

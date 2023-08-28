@@ -39,7 +39,7 @@ function UserProfileData(props) {
 
     const location = city || country ? city + country : "Not indicated.";
 
-    const isOnline = isOwner ? true : !!data.user.isOnline
+    const isOnline = isOwner ? true : !!data.user.isOnline;
 
     moment.updateLocale('en', {
         calendar: {

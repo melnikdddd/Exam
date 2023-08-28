@@ -108,7 +108,7 @@ function Registration(){
         setIsLoading(true);
         const identityT = identityType === "Email" ? "email" : "phoneNumber";
         const {identity, repeatPassword, terms, ...dataForSending} = data;
-        dataForSending[identityT] = identity;
+        dataForSending[identityT] = identity.toLowerCase();
 
         const responseData = await fetchPost("/auth/registration", dataForSending);
 

@@ -78,7 +78,7 @@ function Login() {
         setIsLoading(true);
         const identityT = identityType === "Email" ? 'email' : 'phoneNumber';
         const dataForSend = {
-            [identityT]: identityValue,
+            [identityT]: identityValue.toLowerCase(),
             password: passwordValue,
         }
 

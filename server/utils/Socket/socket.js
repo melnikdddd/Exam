@@ -18,20 +18,26 @@ const socket = (server) => {
         console.log(`connect_error due to ${err.message}`);
     });
     io.on("connection", socket => {
-        socket.on("userLoggedIn", async (userId) => {
-            socket.userId = userId;
-            onlineUsers.set(userId, socket.id);
-            await setOnline(userId);
+        socket.on("userLoggedIn", async (user) => {
+            socket.currentUser = user;
+            onlineUsers.set(user._id, socket.id);
+            await setOnline(user._id);
 
 
         });
         socket.on("disconnect", async () => {
-            await setOffline(socket.userId);
-            onlineUsers.delete(socket.userId);
+            const currentId = socket?.currentUser?._id || null;
+            if (!currentId){
+                return;
+            }
+            await setOffline(currentId);
+            onlineUsers.delete(currentId);
         });
         socket.on("sendMessage", async (data) => {
             const {chatId, user, message} = data;
-            const ownId = socket.userId;
+            const ownId = socket.currentUser._id;
+
+            console.log(user);
 
             //обновляем базу данных сообщений
             const chat = chatId ?
@@ -42,10 +48,13 @@ const socket = (server) => {
 
             await updateBoth(ownId, data);
             //отправялем сообщение второму пользователю
+            console.log(onlineUsers);
             const userSocket = onlineUsers.get(user._id);
+
             socket.emit("newMessage", data)
 
             if (userSocket) {
+                data.user = socket.currentUser;
                 io.to(userSocket).emit("newMessage", data);
             }
         })

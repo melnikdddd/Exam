@@ -63,20 +63,31 @@ const UserDataSlice = createSlice({
             const {chatId, user, message} = action.payload.data;
             const chatsInfo = [...state.data.chatsInfo];
 
+
+
             const chatInfo = {
                 chatId: chatId,
                 user: user,
                 lastMessage: {text: message.text, timestamp: message.timestamp}
             };
+            console.log(chatInfo);
 
-            const chatIndex = chatsInfo.findIndex(elem => elem.chatId === chatId);
 
-            if (chatIndex !== -1) {
-                state.data.chatsInfo[chatIndex] = chatInfo;
+            if (chatsInfo.length > 0){
+                const chatIndex = chatsInfo.findIndex(chat => chat.chatId === chatId);
+
+                if (chatIndex !== -1) {
+                    console.log("updateChat")
+                    state.data.chatsInfo[chatIndex].lastMessage = chatInfo.lastMessage;
+                    return;
+                }
+                console.log("newChat")
+
+                state.data.chatsInfo.push(chatInfo);
                 return;
             }
-
-            state.data.chatsInfo.push(chatsInfo);
+            console.log("newChat from empty chatList")
+            state.data.chatsInfo.push(chatInfo);
         },
 
         setUsersToChatInfo: (state, action)=> {
@@ -89,6 +100,9 @@ const UserDataSlice = createSlice({
         },
         readMessage: (state, action) => {
             const {chatId} = action.payload;
+            if (!chatId){
+                return;
+            }
             const updatedChatInfo = state.data.chatsInfo.map(chat => {
                 if (chat.chatId === chatId) {
                     return {
@@ -98,7 +112,6 @@ const UserDataSlice = createSlice({
                 }
                 return chat;
             });
-            Socket.readMessage(state.data._id,  chatId);
             state.data.chatsInfo = updatedChatInfo;
         }
     }
@@ -114,6 +127,11 @@ export const getUserDataFromLocalStorage = () => {
 
 const replaceUserIdToUser = (chatsInfo, users) => {
     return chatsInfo.map(chatInfo => {
+
+        if (chatInfo.hasOwnProperty("user")) {
+            return chatInfo;
+        }
+
         const user = users.find(user => user._id === chatInfo.userId);
         const {userId, ...restChatInfo} = chatInfo;
         return {

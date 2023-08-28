@@ -13,7 +13,7 @@ function ChatListItem(props) {
 
     return (
         <div
-            className={`flex justify-between items-start border-b py-2 px-3 cursor-pointer border-slate-400 w-full transition-colors ${isSelected && 'bg-cyan-600'}`}
+            className={`flex justify-between items-start border-b py-2 px-3 cursor-pointer border-slate-400 w-full transition-colors ${isSelected && 'bg-slate-200'}`}
             onClick={props.onClick}>
             <div className={"flex"}>
                 <UserAvatar image={user.userAvatar} className={"w-20 h-20"} isImageNeedDecoding={true}/>
@@ -26,7 +26,7 @@ function ChatListItem(props) {
                  </span>
                 </div>
             </div>
-            <div className={"flex justify-center items-center h-full"}>
+            <div className={"flex flex-col h-full justify-center items-center"}>
                 {!chatInfo.read &&
                     <FontAwesomeIcon icon={faCircle} className={"h-5 text-blue-400"}/>
                 }

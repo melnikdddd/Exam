@@ -56,6 +56,7 @@ function Chat(props) {
     const chatInput = document.querySelector("#chatInput");
 
 
+
     useEffect(() => {
         const getMessages = async () => {
             console.log(chatId)

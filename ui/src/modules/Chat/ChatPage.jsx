@@ -20,7 +20,6 @@ function ChatPage(props) {
     const chatsInfo = owner.chatsInfo;
     const location = useLocation();
 
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const innerWidth = useWindowDimensions().width;
@@ -48,12 +47,16 @@ function ChatPage(props) {
             dispatch(clearChat());
         }
     }, []);
+
     const loadingSelectChat = (user) => {
         if (!user) {
             return;
         }
 
-        const chat = owner.chatsInfo.find(chatInfo => chatInfo.user._id === user._id);
+
+        const chat = owner.isChatsUsersSet ? owner.chatsInfo.find(chatInfo => chatInfo?.user._id === user._id)
+            : owner.chatsInfo.find(chatInfo => chatInfo?.userId === user._id)
+
         const chatId = chat?.chatId || null;
 
         dispatch(setSelectedChat({chatId, user}));
@@ -68,6 +71,8 @@ function ChatPage(props) {
     useEffect(()=>{
         getUsers();
     },[chatsInfo])
+
+
 
 
     if (!isLoading) {

@@ -70,7 +70,7 @@ export const passwordRegex = {
 export const login = (dispatch, token, userData) => {
     dispatch(setToken(token));
     dispatch(setUserData(userData));
-    Socket.createConnect(userData._id, dispatch);
+    Socket.createConnect(userData, dispatch);
 
     //setUserDataInLocalStorage(userData);
     window.localStorage.setItem('token', token);
@@ -191,18 +191,21 @@ export const validateRepeatPassword = (repeatPassword, password) => {
 let firstEffectFlag = true;
 export const firstEffectEntry = async (dispatch, setIsLoading) => {
     const firstEffect = async () => {
+        console.log("firstEffect")
         firstEffectFlag = false;
         const localStorage = window.localStorage;
         const token = localStorage.getItem('token');
 
         if (!token) {
             window.localStorage.removeItem('token');
+            setIsLoading(true);
             return;
         }
 
         const userData = await fetchUserByToken();
         if (!userData) {
             localStorage.removeItem('token');
+            setIsLoading(true);
             return;
         }
         const appNotifications = localStorage.getItem("appNotifications");
@@ -214,8 +217,7 @@ export const firstEffectEntry = async (dispatch, setIsLoading) => {
         if (usersNotifications) {
             dispatch(setUsersNotifications({users: JSON.parse(usersNotifications)}));
         }
-
-        Socket.createConnect(userData._id, dispatch);
+        Socket.createConnect(userData, dispatch);
 
         dispatch(setUserData(userData))
         dispatch(setToken(token));

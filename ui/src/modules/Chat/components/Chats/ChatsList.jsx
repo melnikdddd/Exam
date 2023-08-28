@@ -6,6 +6,7 @@ import {selectChatId, setSelectedChat} from "../../../../store/slices/ActiveChat
 function ChatsList(props) {
     const selectedChatId = useSelector(selectChatId);
     const {chatsInfo} = props;
+    console.log(chatsInfo);
     const dispatch = useDispatch();
 
     const selectChat = (user, chatId)=>{
@@ -15,10 +16,10 @@ function ChatsList(props) {
 
 
     return (
-        <div className={`bg-slate-100 rounded-lg  w-full ${props.className}`}>
+        <div className={`bg-slate-100 rounded-lg  w-full ${props.className} overflow-hidden`}>
             {
                 chatsInfo.length > 0 ?
-                    <div className={"flex flex-col"}>
+                    <div className={"flex flex-col "}>
                         {
                             [...chatsInfo].sort((a,b)=>{
                                 const timestampA = new Date(a.lastMessage.timestamp).getTime();

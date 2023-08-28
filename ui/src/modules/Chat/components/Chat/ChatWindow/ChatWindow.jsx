@@ -21,7 +21,6 @@ function ChatWindow(props) {
     }
 
     useEffect(() => {
-        dispatch(readMessage({chatId: chatId}))
         scrollToBottom();
     }, [messages.length]);
 

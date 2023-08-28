@@ -4,6 +4,7 @@ import {userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
+import {chat} from "googleapis/build/src/apis/chat/index.js";
 
 const modelWorker = new ModelsWorker(UserModel);
 
@@ -133,6 +134,8 @@ class UserController {
 export const updateChatsInfo = async (ownId, data) => {
     const {chatId, userId, message} = data;
 
+    console.log(data);
+
     const user = await UserModel.findOne({_id: ownId});
     if (!user) {
         return false;
@@ -145,7 +148,7 @@ export const updateChatsInfo = async (ownId, data) => {
         lastMessage: message
     }
 
-    const chatIndex = user.chatsInfo.findIndex(elem => elem.chatId.toString() === chatId.toString());
+    const chatIndex = user.chatsInfo.findIndex(chat => chat.chatId.toString() === chatId.toString());
 
     if (chatIndex !== -1) {
         user.chatsInfo[chatIndex] = chatInfo;
@@ -159,22 +162,41 @@ export const updateChatsInfo = async (ownId, data) => {
 
 export const setOnline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
-
 }
+
 export const setOffline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: false, lastOnline: new Date()});
 }
 
-export const readChat = async (userId, chatId) => {
-    const user = await userModel.find({_id: userId});
+export const readChat = async (data) => {
+    const { userId, chatId } = data;
+    console.log(chatId,  userId)
 
-    const updatedChatsInfo = user.chatsInfo.map(elem => {
-        if (elem.chatId === chatId) {
-            elem.read = true;
+    try {
+        const user = await userModel.findOne({ _id: userId });
+
+        if (!user) {
+            console.log("User not found");
+            return false;
         }
-    })
-    user.chatsInfo = updatedChatsInfo;
-    user.save();
-    return true;
+
+        const updatedChatsInfo = user.chatsInfo.map(chat => {
+            if (chat.chatId.toString() === chatId.toString()) {
+                return {
+                    ...chat,
+                    read: true
+                };
+            }
+            return chat;
+        });
+
+        user.chatsInfo = updatedChatsInfo;
+
+        await user.save();
+        return true;
+    } catch (error) {
+        console.error("Error reading chat:", error);
+        return false;
+    }
 }
 export default new UserController;

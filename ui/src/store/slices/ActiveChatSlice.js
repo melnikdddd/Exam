@@ -11,7 +11,9 @@ const ActiveChatSlice = createSlice({
     initialState,
     reducers: {
         clearChat: (state, action) => {
-            state = initialState;
+            state.messages = [];
+            state.chatId = null;
+            state.user = null;
         },
         clearMessage: (state, action) => {
             state.messages = [];
@@ -22,9 +24,14 @@ const ActiveChatSlice = createSlice({
         addMessage: (state, action) => {
             const {user, message, chatId} = action.payload.data;
 
+            if (!state.user){
+                return;
+            }
 
             if (state.user._id === user._id){
+                console.log("push");
                 state.messages.push(message);
+
                 if (state.chatId === null){
                     state.chatId = chatId;
                 }
