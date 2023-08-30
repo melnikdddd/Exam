@@ -1,8 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {decodeBase64Image} from "../../components/Images/utils";
-import {fetchUsersInChat} from "../../utils/Axios/axiosFunctions";
-import {extractProperties} from "../../utils/ArrayFunctions";
-import Socket from "../../utils/Socket/socket";
+
 
 const initialState = {
     data: {
@@ -63,12 +61,12 @@ const UserDataSlice = createSlice({
             const {chatId, user, message} = action.payload.data;
             const chatsInfo = [...state.data.chatsInfo];
 
-
-
             const chatInfo = {
                 chatId: chatId,
                 user: user,
+                read : user._id === state.data._id,
                 lastMessage: {text: message.text, timestamp: message.timestamp}
+
             };
             console.log(chatInfo);
 

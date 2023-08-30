@@ -9,14 +9,14 @@ function ChatListItem(props) {
 
     const lastMessageText = chatInfo.lastMessage.text;
 
-    const text = lastMessageText.length > 120 ? lastMessageText.substring(0, 120 - 3) + '...' : lastMessageText;
+    const text = lastMessageText.length > 100 ? lastMessageText.substring(0, 97) + '...' : lastMessageText;
 
     return (
         <div
-            className={`flex justify-between items-start border-b py-2 px-3 cursor-pointer border-slate-400 w-full transition-colors ${isSelected && 'bg-slate-200'}`}
+            className={`flex justify-between items-start border-b py-2 px-3 cursor-pointer border-slate-400 w-full transition-colors ${isSelected ? 'bg-slate-200' : "hover:bg-gray-200"}`}
             onClick={props.onClick}>
             <div className={"flex"}>
-                <UserAvatar image={user.userAvatar} className={"w-20 h-20"} isImageNeedDecoding={true}/>
+                <UserAvatar image={user.userAvatar} className={"w-20 h-20 min-w-[80px]"} isImageNeedDecoding={true}/>
                 <div className={"flex flex-col ml-3"}>
                     <div>
                         <span className={"text-lg text-slate-700"}>{user.firstname + " " + user.lastname}</span>

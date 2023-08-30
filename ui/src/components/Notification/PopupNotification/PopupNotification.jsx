@@ -4,6 +4,7 @@ import { selectPopupNotifications} from "../../../store/slices/NotificationSlice
 import styles from "./PopupNiotification.module.scss"
 
 import NotificationItem from "../NotificationItem/NotificationItem";
+import notificationItem from "../NotificationItem/NotificationItem";
 
 function PopupNotification(props) {
     const popupNotifications = useSelector(selectPopupNotifications);
@@ -19,6 +20,8 @@ function PopupNotification(props) {
                             notificationType={notification.notificationType}
                             text={notification.text}
                             title={notification.title}
+                            message={notification.message}
+                            user={notification.user}
                             type={notification.type}
                             isPopup={true}
                         />

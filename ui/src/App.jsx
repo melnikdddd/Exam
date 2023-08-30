@@ -13,6 +13,7 @@ import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
 import UserProfile from "./modules/Users/UserProfile/UserProfile";
 import UserSetting from "./modules/Users/UserSetting/UserSetting";
 import ChatPage from "./modules/Chat/ChatPage";
+import Users from "./pages/Users/Users";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -36,6 +37,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
             <Route path={":id/new"}/>
         </Route>
         <Route path={"/users"}>
+            <Route index path={""} element={<Users/>}/>
             <Route path={":id"} element={<UserProfile/>} />
             <Route path={':id/setting'} element={
                 <PrivateRoute isAuthNeed={true}>

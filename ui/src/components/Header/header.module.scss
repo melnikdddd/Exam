@@ -1,6 +1,6 @@
 .header{
   @apply bg-gray-50 w-full m-0;
-  height: 70px;
+  height: 80px;
 
 }
 .nav{
@@ -8,14 +8,18 @@
 }
 .navItems{
     @apply flex justify-between;
+}
 
-  .navItem{
-    @apply p-2 ml-5 text-lg rounded-lg hover:bg-teal-600 hover:text-white transition-colors
-  }
+.marketButton{
+  @apply p-2 ml-5 text-lg rounded-lg hover:bg-teal-600 hover:text-white transition-colors;
 }
 
 .logo{
   @apply bg-black text-white font-bold  text-2xl rounded-lg p-2 hover:bg-teal-600 hover:text-white transition-colors;
+
+  @media (max-width: 700px) {
+    @apply hidden;
+  }
 }
 
 
@@ -25,13 +29,42 @@
 
 }
 
+.dropDownMenuButton{
+  @apply h-6 cursor-pointer border border-gray-300 hidden mr-5 p-2 transition-colors rounded-lg hover:bg-gray-100 hover:text-blue-400;
+  @media (max-width: 700px) {
+    @apply block;
+  }
+  &.activeButton{
+    @apply bg-gray-200 text-blue-500 ;
+  }
+}
 
+.hideIcon{
+  @media (max-width: 700px) {
+    @apply hidden;
+  }
+}
+
+.dropDownMenuItem{
+  @apply transition-colors p-3 rounded-lg hover:bg-gray-500 flex items-center justify-center text-center w-full h-full;
+}
 
 .navigationIcon {
   @apply h-6 mx-0.5 p-2 rounded-lg cursor-pointer;
   &:not(.active):hover{
     @apply text-white transition-colors bg-blue-500;
   }
+}
+
+.dropDownMenu{
+  @apply absolute w-full h-full -mt-1 bg-black bg-opacity-90 p-10;
+  @media (min-width: 700px) {
+    @apply hidden;
+  }
+}
+
+.dropDownIcon {
+  @apply h-6 p-2 rounded-lg cursor-pointer text-slate-100 ;
 }
 .active{
   @apply bg-gray-300;

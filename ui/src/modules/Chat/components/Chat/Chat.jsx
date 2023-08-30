@@ -127,7 +127,7 @@ function Chat(props) {
 
     if (!user) {
         return <div
-            className={`bg-opacity-40 bg-white rounded-lg min-h-[300px] shadow-md w-full h-full ${props.className}`}>
+            className={`h-full bg-opacity-40 bg-white rounded-lg max-h-[678px] shadow-md w-full  ${props.className}`}>
             <CenterWrapper>
                 <div className={"bg-white rounded-lg shadow-md p-10"}>
                     <h1 className={"text-xl2"}>
@@ -140,9 +140,9 @@ function Chat(props) {
     }
 
     return (
-        <div className={"h-full flex-1 max-h-[678px] overflow-auto "} id={"chatWrap"}>
+        <div className={"h-full flex-1 flex  flex-col justify-between max-h-[678px] overflow-auto "} id={"chatWrap"}>
             <div
-                className={`h-20 p-5  rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
+                className={`h-20 p-5 max-h-[100px] rounded-lg rounded-b-none border-b border-slate-400 w-full flex items-center py-12 bg-slate-100 ${props.className} justify-between`}>
                 {!isShowBoth &&
                     <FontAwesomeIcon icon={faList}
                                      onClick={() => props.setIsChatSelected(false)}
@@ -173,7 +173,7 @@ function Chat(props) {
                     </CenterWrapper>
                 </div>
             }
-            <div className={`${styles.inputBlock} ${props.className}`}>
+            <div className={` ${styles.inputBlock} ${props.className}`}>
 
                 {owner.blockedUsers.includes(user._id)
                     ?

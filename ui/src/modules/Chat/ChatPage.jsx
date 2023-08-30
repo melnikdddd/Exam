@@ -91,7 +91,7 @@ function ChatPage(props) {
     return (
         <BackGround background={"linear-gradient(111deg, rgba(27,102,122,1) 39%, rgba(112,201,119,1) 91%)"}>
             <Container className={"pt-6"}>
-                <div className={`w-full flex `}>
+                <div className={`w-full flex h-[85vh]`}>
                     <ChatsList
                         setIsChatSelected={setIsChatSelected} chatsInfo={owner.chatsInfo}
                         className={isShowBoth ? `${styles.showBoth} rounded-r-none border-r border-r-slate-400` :

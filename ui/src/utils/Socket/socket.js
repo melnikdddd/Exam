@@ -1,9 +1,12 @@
 import io from "socket.io-client";
-import {addMessage} from "../../store/slices/ActiveChatSlice";
+import {addMessage, selectChatId} from "../../store/slices/ActiveChatSlice";
 import {updateChatsInfo} from "../../store/slices/UserDataSlice";
+import {pushNotification} from "../../store/slices/NotificationSlice";
+import moment from "moment";
 
 
 const Socket = class {
+
     createConnect = (user, dispatch) => {
         if (user) {
             this.socket = io.connect("http://localhost:8000");
@@ -28,6 +31,7 @@ const Socket = class {
                 nickname
             }
 
+
             this.socket.emit("userLoggedIn", extractedUser);
 
             window.addEventListener("beforeunload", () => {
@@ -35,9 +39,20 @@ const Socket = class {
             });
 
             this.socket.on("newMessage", data => {
-                console.log(data);
                 dispatch(updateChatsInfo({data: data}));
                 dispatch(addMessage({data: data}));
+                console.log(data);
+                if (data.message.sender !== _id) {
+
+                    dispatch(pushNotification({
+                        value: {
+                            type: "message",
+                            message: data.message,
+                            user: data.user,
+                        },
+                        field: "usersNotifications"
+                    }))
+                }
             })
         }
     }

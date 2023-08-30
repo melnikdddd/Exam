@@ -7,9 +7,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faBell} from "@fortawesome/free-solid-svg-icons/faBell";
 import {selectUserData} from "../../store/slices/UserDataSlice";
-import {faBagShopping, faComments} from "@fortawesome/free-solid-svg-icons";
+import {faBagShopping, faBars, faComments, faHouse, faShop, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {selectIsShowedNotifications, setIsShowedNotification} from "../../store/slices/NotificationSlice";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 
 function Header(props) {
 
@@ -21,10 +21,17 @@ function Header(props) {
     const dispatch = useDispatch();
     const isShowedNotifications = useSelector(selectIsShowedNotifications);
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 
     useEffect(() => {
         dispatch(setIsShowedNotification({set: false}));
+        setIsMenuOpen(false);
     }, [location]);
+
+    useEffect(()=>{
+        setIsMenuOpen(false);
+    },[isShowedNotifications])
 
 
     return (
@@ -32,10 +39,19 @@ function Header(props) {
             <Container>
                 <div className={styles.nav}>
                     <div className="flex justify-between items-center ">
-                        <NavLink to={"/home"} className={styles.logo}>iMarketPlace</NavLink>
-                        <div className={styles.navItems}>
-                            <NavLink to={"/market"} className={styles.navItem}>Market</NavLink>
-                        </div>
+                        <FontAwesomeIcon icon={faBars}
+                                         className={`${styles.dropDownMenuButton} ${isMenuOpen && styles.activeButton}`}
+                                         onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        />
+                        <NavLink to={"/home"} className={styles.logo}>
+                            iMarketPlace
+                        </NavLink>
+                        <NavLink to={"/market"} className={`${styles.marketButton} ${styles.hideIcon}`}>
+                            Market
+                        </NavLink>
+                        <NavLink to={"/users"} className={`${styles.marketButton} ${styles.hideIcon}`}>
+                            Users
+                        </NavLink>
                     </div>
                     {
                         isAuth === true ?
@@ -43,7 +59,8 @@ function Header(props) {
                                 {
                                     location.pathname !== `/users/${userData._id}` &&
                                     (
-                                        <Link to={`users/${userData._id}`} state={{isProfile: true}}>
+                                        <Link to={`users/${userData._id}`} state={{isProfile: true}}
+                                              className={styles.hideIcon}>
                                             <FontAwesomeIcon icon={faUser} className={styles.navigationIcon}/>
                                         </Link>
                                     )
@@ -57,7 +74,8 @@ function Header(props) {
                                         </Link>
                                     )
                                 }
-                                <Link to={`users/${userData._id}`} state={{isProfile: false}}>
+                                <Link to={`users/${userData._id}`} state={{isProfile: false}}
+                                      className={styles.hideIcon}>
                                     <FontAwesomeIcon icon={faBagShopping}
                                                      className={styles.navigationIcon}/>
                                 </Link>
@@ -69,9 +87,60 @@ function Header(props) {
                             </div>
                             : <Link to={"/auth/login"} className={styles.login}>Login</Link>
                     }
-
                 </div>
             </Container>
+            {
+                isMenuOpen &&
+                <div className={styles.dropDownMenu}>
+                    <ul className={"flex flex-col items-center"}>
+                        <li>
+                            <Link to={'/home'} className={`${styles.dropDownMenuItem} mt-3`}>
+                                <span className={"text-2xl text-slate-100"}>Home</span>
+                                <FontAwesomeIcon icon={faHouse}
+                                                 className={styles.dropDownIcon}
+                                />
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={'/products'} className={`${styles.dropDownMenuItem} mt-3`}>
+                                <span className={"text-2xl text-slate-100"}>Market</span>
+                                <FontAwesomeIcon icon={faShop}
+                                                 className={styles.dropDownIcon}
+                                />
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={'/users'} className={`${styles.dropDownMenuItem} mt-3`}>
+                                <span className={"text-2xl text-slate-100"}>Users</span>
+                                <FontAwesomeIcon icon={faUsers}
+                                                 className={styles.dropDownIcon}
+                                />
+                            </Link>
+                        </li>
+
+                        {isAuth &&
+                            <>
+                                <li>
+                                    <Link to={``} className={`${styles.dropDownMenuItem} mt-3`}>
+                                        <span className={"text-2xl text-slate-100"}>My products</span>
+                                        <FontAwesomeIcon icon={faBagShopping}
+                                                         className={styles.dropDownIcon}
+                                        />
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={`users/${userData._id}`} className={`${styles.dropDownMenuItem}`}>
+                                        <span className={"text-2xl text-slate-100"}>Profile</span>
+                                        <FontAwesomeIcon icon={faUser}
+                                                         className={styles.dropDownIcon}
+                                        />
+                                    </Link>
+                                </li>
+                            </>
+                        }
+                    </ul>
+                </div>
+            }
         </header>
     );
 }

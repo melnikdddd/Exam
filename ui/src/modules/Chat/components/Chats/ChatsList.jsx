@@ -16,10 +16,10 @@ function ChatsList(props) {
 
 
     return (
-        <div className={`bg-slate-100 rounded-lg  w-full ${props.className} overflow-hidden`}>
+        <div className={` h-full bg-slate-100 rounded-lg w-full ${props.className}  max-h-[678px]`}>
             {
                 chatsInfo.length > 0 ?
-                    <div className={"flex flex-col "}>
+                    <div className={"flex flex-col overflow-scroll  max-h-[678px]"}>
                         {
                             [...chatsInfo].sort((a,b)=>{
                                 const timestampA = new Date(a.lastMessage.timestamp).getTime();
@@ -42,7 +42,7 @@ function ChatsList(props) {
                     </div>
                     :
                     <CenterWrapper>
-                        <h1 className={"w-full text-2xl text-center p-5 text-gray-500 bg-slate-100"}>
+                        <h1 className={"w-full h-full max-h-[678px] text-2xl text-center p-5 text-gray-500 bg-slate-100"}>
                             No chats.
                         </h1>
                     </CenterWrapper>

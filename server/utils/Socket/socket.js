@@ -70,7 +70,7 @@ const updateBoth = async (currentUserId, data) => {
     const {chatId, user, message} = data;
     const userId = user._id;
 
-    await updateChatsInfo(currentUserId, {chatId, userId, message});
+    await updateChatsInfo(currentUserId, {chatId, userId, message, read: true});
     await updateChatsInfo(userId, {chatId, userId: currentUserId, message});
 
 }

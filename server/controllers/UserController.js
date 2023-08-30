@@ -133,8 +133,7 @@ class UserController {
 
 export const updateChatsInfo = async (ownId, data) => {
     const {chatId, userId, message} = data;
-
-    console.log(data);
+    const read = data?.read || false;
 
     const user = await UserModel.findOne({_id: ownId});
     if (!user) {
@@ -144,7 +143,7 @@ export const updateChatsInfo = async (ownId, data) => {
     const chatInfo = {
         chatId: chatId,
         userId: userId,
-        read: false,
+        read: read,
         lastMessage: message
     }
 

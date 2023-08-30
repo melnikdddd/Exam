@@ -54,6 +54,8 @@ export const {
 
 export const selectMessages = state => state.activeChat.messages;
 export const selectChatId = state => state.activeChat.chatId;
+
+
 export const selectChatUser = state => state.activeChat.user;
 
 export default ActiveChatSlice.reducer;

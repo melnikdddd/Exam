@@ -26,11 +26,11 @@ function ChatWindow(props) {
 
 
     return (
-        <div className={"bg-slate-100 bg-opacity-40 min-h-[50vh] max-h-[50vh] w-full overflow-auto"}
+        <div className={"bg-slate-100 bg-opacity-40 w-full h-full overflow-auto min-h-[350px]"}
              ref={windowChatRef}>
             {
                 messages.length > 0 &&
-                <div className={"flex flex-col flex-wrap w-full h-full px-2 pt-0 pb-3"}>
+                <div className={"flex flex-col flex-wrap w-full  px-2 pt-0 pb-3"}>
                     {
                         [...messages].map((message, index) => {
                             const isOwnerMessage = message.sender === ownerId;

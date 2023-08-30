@@ -59,7 +59,7 @@ function Notification(props) {
                                     <NotificationItem
                                         key={index}
                                         createdAt={notification.createdAt}
-                                        notifications={notification.notificationType}
+                                        notificationType={notification.notificationType}
                                         index={index}
                                         text={notification.text}
                                         title={notification.title}
@@ -77,10 +77,10 @@ function Notification(props) {
                                     <NotificationItem
                                         key={index}
                                         index={index}
-                                        createdAt={notification.createdAt}
-                                        notifications={notifications}
+                                        notificationType={notification.notificationType}
+                                        message={notification.message}
                                         text={notification.text}
-                                        title={notification.title}
+                                        user={notification.user}
                                         type={notification.type}
                                     />
                                 ))

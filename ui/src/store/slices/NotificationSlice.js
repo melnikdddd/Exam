@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import {selectChatId} from "./ActiveChatSlice";
 
 const initialState = {
     appNotifications: [],
@@ -9,17 +10,18 @@ const initialState = {
 
 const localStorage = window.localStorage;
 
+
 const NotificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
         pushNotification: (state, action) => {
             const { field, value } = action.payload;
+
             value.notificationType = field;
-
             state[field].push(value);
-            state.popupNotifications.push(value);
 
+            state.popupNotifications.push(value);
             localStorage.setItem(field, JSON.stringify(state[field]));
         },
         removeNotification: (state, action) => {
