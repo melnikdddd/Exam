@@ -8,18 +8,18 @@ const ProductRouter = express.Router();
 const upload = multer();
 
 ProductRouter.route('/')
-    .post( _checkAuth, ProductValidator, upload.array('photos'), ProductController.createProduct)
+    .post(_checkAuth, ProductValidator, upload.array('photos'), ProductController.createProduct)
     .get(ProductController.getThirty);
 
+ProductRouter.route('/types').get(ProductController.getProductTypes);
 
-ProductRouter.get('/:filters',ProductController.getThirty);
+ProductRouter.get('/:filters', ProductController.getThirty);
 
 
 ProductRouter.route('/:id')
     .patch(_checkAuth, ProductValidator, upload.array('photos'), ProductController.editProduct)
     .delete(_checkAuth, ProductController.removeProduct);
 ProductRouter.get('/:id', ProductController.getProduct);
-
 
 
 export default ProductRouter;

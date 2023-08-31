@@ -4,6 +4,7 @@ import ProductModel from "../models/ProductModel.js";
 const modelsWorker = new ModelsWorker(ProductModel);
 
 
+export const types = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
 
 
 
@@ -112,6 +113,10 @@ class ProductController {
             console.log(error)
             return res.status(500).json({message: 'Something goes wrong with db'})
         }
+    }
+
+    getProductTypes = async (req, res) => {
+        return res.status(200).json({types: types});
     }
 
     //дописать когда буду работать с фронтом

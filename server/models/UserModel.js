@@ -60,6 +60,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        productsType: {
+            type: Array,
+            default: []
+        },
         rating: {
             likes: {
                 type: [mongoose.Schema.Types.ObjectId],

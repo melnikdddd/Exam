@@ -1,7 +1,6 @@
 import {body} from "express-validator";
 
 const conditions = ['Used', 'New', 'Other'];
-const currencies = ['UAH', 'USD', 'EUR', 'PLN'];
 
 const checkObjLength = (obj, maxLength) => {
     return Object.keys(obj).length < maxLength;
@@ -26,12 +25,11 @@ const productValidator = [
             throw new Error('Invalid price number')
         }
     }),
-    body("currency", "Invalid currency").isString().custom(cur=>{
-        if (!currencies.includes(cur)){
-            throw new Error("Invalid currency");
+    body("currency", "Invalid type").isString().custom(type=>{
+        if (!types.includes(type)){
+            throw new Error("Invalid type");
         }
     }),
-    body('tags', 'Invalid Tags').isArray().optional(),
     body('characteristics').isObject().custom(obj=>{
         if (!checkObjLength){
             throw new Error('So many characteristics')

@@ -12,23 +12,18 @@ const ProductSchema = new mongoose.Schema(
             required: true,
             default: "",
         },
+        type: {
+            type: String,
+            required: true,
+            default: "",
+        },
         viewsCount: {
             type: Number,
             default: 0,
         },
-        tags: {
-            type: Array,
-            default: [],
-            required: false,
-        },
-
         price: {
             type: Number,
             default: 0
-        },
-        currency: {
-            type: String,
-            default: "UAH",
         },
         condition: {
             type: String,
@@ -37,15 +32,6 @@ const ProductSchema = new mongoose.Schema(
         characteristics:{
             type: Object,
             default: {"":""},
-            required: false,
-        },
-        status: {
-          type: String,
-          default: "sale"
-        },
-        city: {
-            type: String,
-            default: "",
             required: false,
         },
         rating: {
