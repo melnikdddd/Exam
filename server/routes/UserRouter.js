@@ -10,6 +10,7 @@ import {_updateUser} from "../utils/middleware/userMiddleware.js";
 const upload = multer()
 const UserRouter = express.Router();
 
+UserRouter.get("/", UserController.getUsers)
 
 UserRouter.get("/getUserByToken", checkAuth ,UserController.getUserByToken)
 

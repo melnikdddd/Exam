@@ -3,7 +3,7 @@
 }
 
 .filters {
-  @apply absolute flex flex-col bg-black bg-opacity-20 rounded-b-lg;
+  @apply absolute flex flex-col bg-black bg-opacity-70 rounded-b-lg;
   margin-top: 52px;
 }
 
@@ -30,8 +30,11 @@
 
 .familiarUsersButtons {
   @apply p-2 text-slate-600 text-lg transition-colors cursor-pointer rounded-lg bg-slate-50;
-  &:not(.active) {
+  &:not(.selected) {
     @apply hover:bg-slate-100;
+  }
+  &.selected{
+    @apply bg-slate-200 text-blue-500;
   }
 
   border: 1px solid gray;

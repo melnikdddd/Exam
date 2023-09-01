@@ -117,6 +117,14 @@ class UserController {
         }
     }
 
+    getUsers = async (req, res) => {
+        const nickname = req.params.nickname;
+        const users = UserModel.find({nickname: nickname});
+        if (!users) return res.status(200).json({users: [], success: true});
+
+        return res.status(200).json({users: users, success: true});
+    }
+
     #service = {
         getImagesOptions(file, imageOperation) {
             return {

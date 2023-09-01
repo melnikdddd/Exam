@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react';
 import BackGround from "../../components/Wrapper/BackGround/BackGround";
 import Container from "../../components/Wrapper/Container/Container";
 import {useForm} from "react-hook-form";
-import {useParams} from "react-router";
 
 import styles from "./Users.module.scss"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBan, faBookmark, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import {faBan, faBookmark} from "@fortawesome/free-solid-svg-icons";
 import {fetchGet} from "../../utils/Axios/axiosFunctions";
 import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper";
 import LoadingBlock from "../../components/Loading/LoadingBlock/LoadingBlock";
+import {useSearchParams} from "react-router-dom";
 
 
 function Users(props) {
@@ -18,29 +18,66 @@ function Users(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFiltersSelected, setIsFiltersSelected] = useState(false);
 
+    const [isFavoritesUsersSelect, setIsFavoritesUsersSelect] = useState(false);
+    const [isBlockedUsersSelect, setIsBlockedUsersSelect] = useState(false);
+    const [selectedProductType, setSelectedProductType] = useState(null);
+
+
     const [users, setUsers] = useState([]);
 
-    const params = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const {
 
         watch,
         register,
         handleSubmit,
-    } = useForm({mode: "onChange"});
+    } = useForm({
+        mode: "onChange"
+    });
 
     useEffect(() => {
         const getProductsTypes = async () => {
             const types = await fetchGet("/products/types")
             setProductsType(types.data.types);
+
+            if (productsType.length > 0) {
+                setSelectedProductType(productsType[0])
+            }
+
             setIsLoading(true);
         }
         getProductsTypes();
     }, [])
 
-    const onSubmit = async () => {
+    const onSubmit = async (data) => {
+    }
+
+    const handleFavoritesUsersSelect = () => {
+        setIsFavoritesUsersSelect(!isFavoritesUsersSelect);
+        setIsBlockedUsersSelect(false);
+    }
+    const handleBlockedUsersSelect = () => {
+        setIsBlockedUsersSelect(!isBlockedUsersSelect);
+        setIsFavoritesUsersSelect(false);
+    }
+
+    const handleFindChange = async (event) => {
+        const nickname = event.target.value;
+
+        if (nickname.length > 0){
+            if (!nickname.startsWith("@")){
+                event.target.value = ("nickname", "@" + nickname);
+            }
+        }
+        if (nickname.length > 16
+        ){
+            setSearchParams({nickname: nickname.slice(1)});
+        }
+        // const users = await fetchGet("/users/");
 
     }
+
 
     if (!isLoading) {
         return (
@@ -73,11 +110,15 @@ function Users(props) {
                                         className={"border border-gray-400 px-2 py-4 rounded-lg flex flex-col bg-white"}>
                                         <h3 className={"text-lg text-center font-bold"}>Familiar users</h3>
                                         <div className={"flex justify-around my-3"}>
-                                            <button className={styles.familiarUsersButtons}>
+                                            <button
+                                                className={`${styles.familiarUsersButtons} ${isFavoritesUsersSelect && styles.selected}`}
+                                                onClick={handleFavoritesUsersSelect}>
                                                 <span>Favorites</span>
                                                 <FontAwesomeIcon icon={faBookmark} className={"ml-1"}/>
                                             </button>
-                                            <button className={styles.familiarUsersButtons}>
+                                            <button
+                                                className={`${styles.familiarUsersButtons} ${isBlockedUsersSelect && styles.selected}`}
+                                                onClick={handleBlockedUsersSelect}>
                                                 <span>Blocked</span>
                                                 <FontAwesomeIcon icon={faBan} className={"ml-1"}/>
                                             </button>
@@ -108,23 +149,27 @@ function Users(props) {
                                         <div className={"flex flex-col w-full"}>
                                             <div className={"flex flex-col items-center justify-center mt-2"}>
                                                 <div className={"flex justify-center w-full items-center"}>
-                                                    <label className={"mx-1 cursor-pointer transition-colors hover:text-blue-600"}>
+                                                    <label
+                                                        className={"mx-1 cursor-pointer transition-colors hover:text-blue-600"}>
                                                         <input type="radio" className={"mr-1"} name={"filterCheck"}
                                                                value={"radioFilterLiked"}
                                                                {...register("filterCheck")}/>
 
                                                         <span>Most liked</span>
                                                     </label>
-                                                    <label className={"ml-1 cursor-pointer transition-colors hover:text-blue-600"}>
-                                                        <input type="radio" name={"filterCheck"} value={"radioFilterOld"}
+                                                    <label
+                                                        className={"ml-1 cursor-pointer transition-colors hover:text-blue-600"}>
+                                                        <input type="radio" name={"filterCheck"}
+                                                               value={"radioFilterOld"}
                                                                className={"mr-1"} {...register("filterCheck")}/>
 
                                                         Most old account
                                                     </label>
                                                 </div>
                                                 <div className={"flex justify-center w-full items-center mt-1"}>
-                                                    <label className={"ml-2 cursor-pointer transition-colors hover:text-blue-600"}>
-                                                        <input type="radio"  className={"mr-1"} name={"filterCheck"}
+                                                    <label
+                                                        className={"ml-2 cursor-pointer transition-colors hover:text-blue-600"}>
+                                                        <input type="radio" className={"mr-1"} name={"filterCheck"}
                                                                value={"radioFilterSales"} {...register("filterCheck")}
                                                                defaultChecked/>
 
@@ -162,7 +207,7 @@ function Users(props) {
                                 </div>
                             </div>
                         </div>
-                        <input type="text" className={styles.searchInput} placeholder={"@Nickname..."}/>
+                        <input type="text" className={styles.searchInput} placeholder={"@Nickname..."} onChange={handleFindChange}/>
                     </form>
                     <div className={"w-full flex flex-wrap p-10"}>
                         {users.length > 0
