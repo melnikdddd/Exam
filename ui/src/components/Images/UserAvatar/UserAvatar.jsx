@@ -1,9 +1,9 @@
 import {useSelector} from "react-redux";
-import {selectUserImage} from "../../store/slices/UserDataSlice";
-import {selectIsAuth} from "../../store/slices/AuthSlice";
+import {selectUserImage} from "../../../store/slices/UserDataSlice";
+import {selectIsAuth} from "../../../store/slices/AuthSlice";
 import {useEffect, useState} from "react";
-import RemoveImageButton from "../Buttons/RemoveImageButton/RemoveImage";
-import {decodeBase64Image} from "./utils";
+import RemoveImageButton from "../../Buttons/RemoveImageButton/RemoveImage";
+import {decodeBase64Image} from "../utils";
 
 
 const UserAvatar = (props) => {

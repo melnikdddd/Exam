@@ -1,10 +1,11 @@
 import UserModel from "../models/UserModel.js";
 import {getUserProducts} from "./ProductController.js";
-import {userString} from "../utils/SomeUtils/strings.js";
+import {usersString, userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
-import {chat} from "googleapis/build/src/apis/chat/index.js";
+import {query} from "express-validator";
+import {sortByProperty} from "../utils/SomeUtils/someFunctions.js";
 
 const modelWorker = new ModelsWorker(UserModel);
 
@@ -110,7 +111,7 @@ class UserController {
 
             const users = await UserModel.find({_id: {$in: usersIds}}).select("firstname lastname userAvatar nickname")
             return users ? res.status(200).json({success: true, users: users}) :
-                res.status(404).json({success: false, message: "Users cannot find"});
+                res.status(404).json({success: false, message: "UserPage cannot find"});
 
         } catch (error) {
             return res.status(500).json({success: false, message: "Server error"})
@@ -118,11 +119,30 @@ class UserController {
     }
 
     getUsers = async (req, res) => {
-        const nickname = req.params.nickname;
-        const users = UserModel.find({nickname: nickname});
+        const params = req.query;
+
+        const filterParams = {
+            nickname: {$regex: new RegExp(params.nickname, 'i')},
+        };
+
+        if (params.country) {
+            filterParams.country = params.country;
+        }
+        if (params.city) {
+            filterParams.city = params.city;
+        }
+        if (params.productsType !== "All") {
+            filterParams.productsType = params.productsType;
+        }
+
+
+        const users = await UserModel.find(filterParams).select(usersString)
         if (!users) return res.status(200).json({users: [], success: true});
 
-        return res.status(200).json({users: users, success: true});
+        const sortUsers = sortByProperty(users, params.filter)
+
+
+        return res.status(200).json({users: sortUsers});
     }
 
     #service = {
@@ -176,11 +196,11 @@ export const setOffline = async (userId) => {
 }
 
 export const readChat = async (data) => {
-    const { userId, chatId } = data;
-    console.log(chatId,  userId)
+    const {userId, chatId} = data;
+    console.log(chatId, userId)
 
     try {
-        const user = await userModel.findOne({ _id: userId });
+        const user = await userModel.findOne({_id: userId});
 
         if (!user) {
             console.log("User not found");

@@ -14,7 +14,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {removeNotification, removePopupNotification} from "../../../store/slices/NotificationSlice";
 import LoadingBar from "../../Loading/LoadingBar/LoadingBar";
 import {useEffect, useState} from "react";
-import UserAvatar from "../../Images/UserAvatar";
+import UserAvatar from "../../Images/UserAvatar/UserAvatar";
 import {selectChatId} from "../../../store/slices/ActiveChatSlice";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {selectUserData} from "../../../store/slices/UserDataSlice";

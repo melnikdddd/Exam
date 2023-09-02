@@ -1,4 +1,4 @@
-import UserAvatar from "../../../../components/Images/UserAvatar";
+import UserAvatar from "../../../../components/Images/UserAvatar/UserAvatar";
 import UserProfileInput from "../../../../components/Inputs/UserPofileInputs/UserProfileInput";
 import styles from "./ProfileSetting.module.scss"
 import {useForm} from "react-hook-form";

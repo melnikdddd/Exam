@@ -1,4 +1,4 @@
-import UserAvatar from "../../../../components/Images/UserAvatar";
+import UserAvatar from "../../../../components/Images/UserAvatar/UserAvatar";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faEllipsisVertical, faGear, faLocationDot} from "@fortawesome/free-solid-svg-icons";
 import {Link, NavLink} from "react-router-dom";

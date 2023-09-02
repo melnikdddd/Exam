@@ -1,4 +1,4 @@
-import UserAvatar from "../../../../../components/Images/UserAvatar";
+import UserAvatar from "../../../../../components/Images/UserAvatar/UserAvatar";
 import {text} from "@fortawesome/fontawesome-svg-core";
 import chat from "../../Chat/Chat";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

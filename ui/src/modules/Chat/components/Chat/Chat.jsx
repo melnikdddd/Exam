@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {readMessage, selectUserData} from "../../../../store/slices/UserDataSlice";
-import UserAvatar from "../../../../components/Images/UserAvatar";
+import UserAvatar from "../../../../components/Images/UserAvatar/UserAvatar";
 import moment from "moment";
 import styles from "./Chat.module.scss"
 import EmojiPicker from "../../../../components/EmojiPicker/EmojiPicker";

@@ -10,10 +10,10 @@ import {useEffect, useState} from "react";
 import {firstEffectEntry} from "./utils/Auth/authFunctions";
 import LoadingBlock from "./components/Loading/LoadingBlock/LoadingBlock";
 import CenterWrapper from "./components/Wrapper/CenterWrapper/CenterWrapper";
-import UserProfile from "./modules/Users/UserProfile/UserProfile";
-import UserSetting from "./modules/Users/UserSetting/UserSetting";
+import UserProfile from "./modules/UserPage/UserProfile/UserProfile";
+import UserSetting from "./modules/UserPage/UserSetting/UserSetting";
 import ChatPage from "./modules/Chat/ChatPage";
-import Users from "./pages/Users/Users";
+import Users from "./modules/Users/Users";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
