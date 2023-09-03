@@ -4,8 +4,9 @@ import {usersString, userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
-import {query} from "express-validator";
-import {sortByProperty} from "../utils/SomeUtils/someFunctions.js";
+import pkg from "lodash";
+
+const {get} = pkg;
 
 const modelWorker = new ModelsWorker(UserModel);
 
@@ -119,30 +120,41 @@ class UserController {
     }
 
     getUsers = async (req, res) => {
-        const params = req.query;
+        try {
+            const params = req.query;
 
-        const filterParams = {
-            nickname: {$regex: new RegExp(params.nickname, 'i')},
-        };
+            console.log(params);
 
-        if (params.country) {
-            filterParams.country = params.country;
+            const filterParams = {
+                nickname: {$regex: new RegExp(params.nickname, 'i')},
+            };
+
+            if (params.country) {
+                filterParams.country = params.country;
+            }
+
+            if (params.city) {
+                filterParams.city = params.city;
+            }
+
+            if (params.users) {
+                filterParams._id = {$in: new Array(params.users)};
+            }
+
+            const users = await UserModel.find(filterParams).select(usersString)
+
+            const sortingUsers = this.#service.sortUsers(users, params.filter);
+
+
+            if (!users) return res.status(200).json({users: [], success: true});
+
+
+            return res.status(200).json({users: sortingUsers});
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({message: "Server error"});
         }
-        if (params.city) {
-            filterParams.city = params.city;
-        }
-        if (params.productsType !== "All") {
-            filterParams.productsType = params.productsType;
-        }
 
-
-        const users = await UserModel.find(filterParams).select(usersString)
-        if (!users) return res.status(200).json({users: [], success: true});
-
-        const sortUsers = sortByProperty(users, params.filter)
-
-
-        return res.status(200).json({users: sortUsers});
     }
 
     #service = {
@@ -154,7 +166,34 @@ class UserController {
                     imageFieldName: "userAvatar",
                 },
             }
-        }
+        },
+
+        sortUsers: (users, field) => {
+            const sortFields = {
+                mostSales: "deals.sales",
+                mostOld: "_createdAt",
+                mostLikes: "rating.likes.length",
+            }
+
+            const filterField = sortFields[field];
+
+            return users.sort((a, b) => {
+
+                const valueA = Number(get(a, filterField))
+                const valueB = Number(get(b, filterField));
+
+
+                if (valueA < valueB) {
+                    return 1;
+                } else if (valueA > valueB) {
+                    return -1;
+                }
+                return 0;
+
+            })
+
+        },
+
     }
 }
 

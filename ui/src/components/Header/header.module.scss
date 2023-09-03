@@ -10,8 +10,17 @@
     @apply flex justify-between;
 }
 
-.marketButton{
-  @apply p-2 ml-5 text-lg rounded-lg hover:bg-teal-600 hover:text-white transition-colors;
+.bigButton{
+  @apply p-2 ml-5 text-lg rounded-lg transition-colors;
+
+  &:not(.activeBigButton){
+   @apply hover:bg-slate-500 hover:text-slate-100;
+  }
+
+}
+
+.activeBigButton{
+  @apply bg-black text-slate-300 ;
 }
 
 .logo{
@@ -51,9 +60,12 @@
 
 .navigationIcon {
   @apply h-6 mx-0.5 p-2 rounded-lg cursor-pointer;
-  &:not(.active):hover{
-    @apply text-white transition-colors bg-blue-500;
+  &:not(.activeNavigationIcon):hover{
+    @apply  transition-colors bg-slate-500 text-slate-100;
   }
+}
+.activeNavigationIcon{
+  @apply bg-black text-slate-200 rounded-lg;
 }
 
 .dropDownMenu{
@@ -68,4 +80,13 @@
 }
 .active{
   @apply bg-gray-300;
+}
+.notificationsBlock{
+  @apply flex items-center relative;
+}
+.notificationsBlock:hover .messageCount{
+  @apply invisible;
+}
+.messageCount{
+  @apply  h-5 w-5 text-center rounded-full transition-all;
 }

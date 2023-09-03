@@ -11,9 +11,15 @@ import CenterWrapper from "../../components/Wrapper/CenterWrapper/CenterWrapper"
 import LoadingBlock from "../../components/Loading/LoadingBlock/LoadingBlock";
 import {useSearchParams} from "react-router-dom";
 import UserCard from "./UserCard/UserCard";
+import {useSelector} from "react-redux";
+import {selectUserData} from "../../store/slices/UserDataSlice";
+import {selectIsAuth} from "../../store/slices/AuthSlice";
 
 
 function Users(props) {
+
+    const {favoritesUsers, blockedUsers} = useSelector(selectUserData);
+    const isAuth = useSelector(selectIsAuth);
 
     const [productsType, setProductsType] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +36,6 @@ function Users(props) {
     const [users, setUsers] = useState([]);
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const [params, setParams] = useState([]);
 
     const {
 
@@ -39,9 +44,73 @@ function Users(props) {
         handleSubmit,
         setValue,
     } = useForm({
-        mode: "onChange"
+        mode: "onChange",
+        defaultValues: {
+            nickname: searchParams.has("nickname") ?  "@" + searchParams.get("nickname") : ""
+        }
     });
     const nickname = watch("nickname");
+
+
+    const onSubmit = async (data) => {
+        data.productsType = selectedProductType;
+
+        if (data.nickname.startsWith("@")){
+            data.nickname = data.nickname.slice(1);
+        }
+
+        Object.keys(data).forEach((key) => {
+            if (!data[key]) {
+                searchParams.delete(key);
+                setSearchParams(searchParams);
+                return;
+            }
+            searchParams.has(key) ? searchParams.set(key, data[key]) : searchParams.append(key, data[key]);
+            setSearchParams(searchParams);
+        })
+
+        await find();
+
+    }
+
+    const handleFavoritesUsersSelect = () => {
+        setIsFavoritesUsersSelect(!isFavoritesUsersSelect);
+        setIsBlockedUsersSelect(false);
+
+        toggleFamiliarUsersToSearchParams(isFavoritesUsersSelect, favoritesUsers);
+    }
+    const handleBlockedUsersSelect = () => {
+        setIsBlockedUsersSelect(!isBlockedUsersSelect);
+        setIsFavoritesUsersSelect(false);
+
+        toggleFamiliarUsersToSearchParams(isBlockedUsersSelect, blockedUsers);
+    }
+
+    const find = async () => {
+        setFindMessage("Not found.")
+        const searchParamsObject = Object.fromEntries(searchParams);
+
+        const response = await fetchGet(`/users?${new URLSearchParams(searchParamsObject)}`);
+        console.log(response);
+        if (response.data.users) {
+            setUsers(response.data.users);
+            return;
+        }
+        setUsers([]);
+
+    }
+    const toggleFamiliarUsersToSearchParams = (flag, familiarUsers) => {
+        if (flag){
+            searchParams.delete("users");
+            return;
+        }
+        if (searchParams.has("users")){
+            searchParams.set("users", familiarUsers);
+        } else {
+            searchParams.append("users", familiarUsers);
+        }
+        setSearchParams(searchParams);
+    }
 
     useEffect(() => {
         const getProductsTypes = async () => {
@@ -53,17 +122,33 @@ function Users(props) {
             }
 
             setIsLoading(true);
+
+            if (searchParams.has("users")) {
+                searchParams.delete("users");
+                setSearchParams(searchParams);
+            }
+
+            if (searchParams.size) {
+                await find()
+            }
         }
         getProductsTypes();
-    }, [])
+
+    }, []);
 
     useEffect(() => {
         if (firstEffect) {
             setFirstEffect(false);
             return;
         }
+        if (nickname.length > 0) {
+            if (!nickname.startsWith("@")) {
+                setValue("nickname", "@" + nickname);
+            }
+        }
         const findInputChange = async () => {
             const nicknameForSent = nickname.slice(1);
+
             if (nicknameForSent.length < 3) {
                 if (searchParams.has("nickname")) {
                     searchParams.delete("nickname");
@@ -84,60 +169,11 @@ function Users(props) {
             await find();
         }
 
-        if (nickname.length > 0) {
-            if (!nickname.startsWith("@")) {
-                setValue("nickname", "@" + nickname);
-            }
-        }
-
         findInputChange();
 
 
-    }, [nickname])
+    }, [nickname]);
 
-    const onSubmit = async (data) => {
-        data.productsType = selectedProductType;
-        data.familiarUsers = isFavoritesUsersSelect ? isFavoritesUsersSelect :
-            isBlockedUsersSelect ? isBlockedUsersSelect : null;
-
-        Object.keys(data).forEach((key) => {
-            if (!data[key]) {
-                searchParams.delete(key);
-                setSearchParams(searchParams);
-                return;
-            }
-            searchParams.has(key) ? searchParams.set(key, data[key]) : searchParams.append(key, data[key]);
-            setSearchParams(searchParams);
-        })
-
-        if (nickname.length >= 3) {
-            await find();
-        }
-    }
-
-    const handleFavoritesUsersSelect = () => {
-        setIsFavoritesUsersSelect(!isFavoritesUsersSelect);
-        setIsBlockedUsersSelect(false);
-    }
-    const handleBlockedUsersSelect = () => {
-        setIsBlockedUsersSelect(!isBlockedUsersSelect);
-        setIsFavoritesUsersSelect(false);
-    }
-
-
-    const find = async () => {
-        setFindMessage("Not found.")
-        const searchParamsObject = Object.fromEntries(searchParams);
-
-        const response = await fetchGet(`/users?${new URLSearchParams(searchParamsObject)}`);
-        console.log(response);
-        if (response.data.users) {
-            setUsers(response.data.users);
-            return;
-        }
-        setUsers([]);
-
-    }
 
 
     if (!isLoading) {
@@ -161,7 +197,7 @@ function Users(props) {
                           onSubmit={handleSubmit(onSubmit)}>
                         <div className={styles.filterBlock}>
                             <button type={"button"}
-                                    className={`${styles.filterButton} ${isFiltersSelected && styles.selected}`}
+                                    className={`${styles.filterButton} ${isFiltersSelected && styles.selected} bg-slate-100`}
                                     onClick={() => setIsFiltersSelected(!isFiltersSelected)}>
                                 <span>Filters</span>
                             </button>
@@ -171,13 +207,13 @@ function Users(props) {
                                         className={"border border-gray-400 px-2 py-4 rounded-lg flex flex-col bg-white"}>
                                         <h3 className={"text-lg text-center font-bold"}>Familiar users</h3>
                                         <div className={"flex justify-around my-3"}>
-                                            <button type={"button"}
+                                            <button type={"button"} disabled={!(isAuth && favoritesUsers.length)}
                                                     className={`${styles.familiarUsersButtons} ${isFavoritesUsersSelect && styles.selected}`}
                                                     onClick={handleFavoritesUsersSelect}>
                                                 <span>Favorites</span>
                                                 <FontAwesomeIcon icon={faBookmark} className={"ml-1"}/>
                                             </button>
-                                            <button type={"button"}
+                                            <button type={"button"} disabled={!(isAuth && isBlockedUsersSelect.length)}
                                                     className={`${styles.familiarUsersButtons} ${isBlockedUsersSelect && styles.selected}`}
                                                     onClick={handleBlockedUsersSelect}>
                                                 <span>Blocked</span>
@@ -213,7 +249,7 @@ function Users(props) {
                                                     <label
                                                         className={"mx-1 cursor-pointer transition-colors hover:text-blue-600"}>
                                                         <input type="radio" className={"mr-1"} name={"filter"}
-                                                               value={"rating.likes.length"}
+                                                               value={"mostLikes"}
                                                                {...register("filter")}/>
 
                                                         <span>Most liked</span>
@@ -221,7 +257,7 @@ function Users(props) {
                                                     <label
                                                         className={"ml-1 cursor-pointer transition-colors hover:text-blue-600"}>
                                                         <input type="radio" name={"filter"}
-                                                               value={"_createdAt"}
+                                                               value={"mostOld"}
                                                                className={"mr-1"} {...register("filter")}/>
 
                                                         Most old account
@@ -231,7 +267,7 @@ function Users(props) {
                                                     <label
                                                         className={"ml-2 cursor-pointer transition-colors hover:text-blue-600"}>
                                                         <input type="radio" className={"mr-1"} name={"filter"}
-                                                               value={"deals.sales"} {...register("filter")}
+                                                               value={"mostSales"} {...register("filter")}
                                                                defaultChecked/>
 
                                                         Most successful sales

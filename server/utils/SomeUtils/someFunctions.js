@@ -5,14 +5,3 @@ export const _genSixDigitCode = () => {
 
 }
 
-export const sortByProperty = (arr, property) => {
-    return arr.slice().sort((a, b) => {
-        if (a[property] < b[property]) {
-            return -1;
-        }
-        if (a[property] > b[property]) {
-            return 1;
-        }
-        return 0;
-    });
-}

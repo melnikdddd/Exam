@@ -9,7 +9,7 @@ import moment from "moment";
 function UserCard(props) {
     const {_id, firstname, lastname, nickname, createdAt, deals, userAvatar, rating} = props.user;
 
-    const since = moment(createdAt).format("DD-MM-YY");
+    const since = moment(createdAt).format("DD.MM.YY");
 
     return (
         <Link className={styles.card} to={`/users/${_id}`}>
@@ -25,17 +25,17 @@ function UserCard(props) {
                     <span>{nickname}</span>
                 </div>
             </div>
-            <div className={"px-5 flex justify-around w-full"}>
+            <div className={"px-5 flex justify-around w-full mt-3"}>
                 <div className={"flex items-center  "}>
-                        <FontAwesomeIcon icon={faThumbsUp} className={"h-5"}/>
-                        <span className={"text-xl ml-2"}>{rating.likes.length}</span>
+                    <FontAwesomeIcon icon={faThumbsUp} className={"h-5"}/>
+                    <span className={"text-xl ml-2"}>{rating.likes.length}</span>
                 </div>
                 <div className={"flex items-center "}>
-                  <FontAwesomeIcon icon={faThumbsDown} className={"h-5"}/>
+                    <FontAwesomeIcon icon={faThumbsDown} className={"h-5"}/>
                     <span className={"text-xl ml-3"}>{rating.dislikes.length}</span>
                 </div>
             </div>
-            <div className={"px-5 flex flex-col items-center mt-5 justify-between "}>
+            <div className={"px-5 flex flex-col items-center mt-3 justify-between "}>
                 <span className={"text-lg"}>
                     Success sales: {deals.sales}
                 </span>

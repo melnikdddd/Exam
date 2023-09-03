@@ -1,10 +1,9 @@
-import { getFileExtensionFromFilename} from "../SomeUtils/fsWorker.js";
+import {getFileExtensionFromFilename} from "../SomeUtils/fsWorker.js";
 import UserModel from "../../models/UserModel.js";
 import CommentModel from "../../models/CommentModel.js";
 import ProductModel from "../../models/ProductModel.js";
 
 import bcrypt from "../auth/bcrypt.js";
-import * as constants from "constants";
 import sharp from "sharp";
 
 
@@ -16,7 +15,7 @@ class ModelsWorker {
 
 
     setImageWorkerOptions = (operation, imageFieldName) => {
-        if(!operation){
+        if (!operation) {
             return false;
         }
 
@@ -25,53 +24,54 @@ class ModelsWorker {
         this.imageWorker.options.isCanWork = true;
     }
 
-    findAndUpdate = async (id ,data, image_s) => {
+    findAndUpdate = async (id, data, image_s) => {
         const document = await this.model.findById({_id: id});
 
-        if (!document){
+        if (!document) {
             return {success: false, message: "document cant find"}
         }
 
-        if (data.password){
-             data.hashPassword = await bcrypt.genPassword(data.password);
+        if (data.password) {
+            data.hashPassword = await bcrypt.genPassword(data.password);
             delete data.password;
         }
 
 
-
-
-
-        if (data.listType === "like" || data.listType === "dislike"){
-           const doc =  this.#updateRating(document, data.userId, data.listType, data.operation);
-            if (doc){
+        if (data.listType === "like" || data.listType === "dislike") {
+            const doc = this.#updateRating(document, data.userId, data.listType, data.operation);
+            if (doc) {
                 doc.save();
                 return doc.rating;
             }
             return false;
         }
 
-        if (data.listType === "favoritesUsers" || data.listType === "blockedUsers" || data.listType === "reports"){
-            const doc = this.#updateArray(document, {userId: data.userId, listType: data.listType, operation: data.operation});
+        if (data.listType === "favoritesUsers" || data.listType === "blockedUsers" || data.listType === "reports") {
+            const doc = this.#updateArray(document, {
+                userId: data.userId,
+                listType: data.listType,
+                operation: data.operation
+            });
 
             if (doc) {
                 doc.save();
                 return doc.listType;
             }
-            return  false;
+            return false;
         }
 
 
-        if (this.imageWorker && this.imageWorker.options.isCanWork){
+        if (this.imageWorker && this.imageWorker.options.isCanWork) {
             const result = await this.imageWorker.goWork(image_s);
 
-            if (result){
+            if (result) {
                 document[this.imageWorker.options.imageFieldName] = result;
                 this.imageWorker.clearOptions();
             }
 
-         }
+        }
 
-        for (const key in data){
+        for (const key in data) {
             document[key] = data[key];
         }
 
@@ -80,38 +80,38 @@ class ModelsWorker {
 
     }
 
-    findAndRemove = async (id) =>{
+    findAndRemove = async (id) => {
         const modelName = this.model.modelName + "Model";
 
-        if (modelName !== "CommentModel"){
-            if (!await this.#clearDependency[modelName](id)){
+        if (modelName !== "CommentModel") {
+            if (!await this.#clearDependency[modelName](id)) {
                 throw new Error("DEPENDENCY ERROR")
             }
         }
         return !!(await this.model.findOneAndDelete({_id: id}));
 
     }
-    #updateRating =  (document, userId, ratingType, ratingOperation) =>{
+    #updateRating = (document, userId, ratingType, ratingOperation) => {
 
-            const likesFilter = document.rating.likes.filter(rate => rate === userId);
-            if (ratingType === "like" && ratingOperation === "add"){
-                likesFilter.push(userId);
-            }
+        const likesFilter = document.rating.likes.filter(rate => rate !== userId);
+        if (ratingType === "like" && ratingOperation === "add") {
+            likesFilter.push(userId);
+        }
 
-            const dislikesFilter = document.rating.dislikes.filter(rate => rate === userId);
+        const dislikesFilter = document.rating.dislikes.filter(rate => rate !== userId);
 
-            if (ratingType === "dislike" && ratingOperation === "add"){
-                dislikesFilter.push(userId);
-            }
-            document.rating = {likes: likesFilter, dislikes: dislikesFilter}
+        if (ratingType === "dislike" && ratingOperation === "add") {
+            dislikesFilter.push(userId);
+        }
+        document.rating = {likes: likesFilter, dislikes: dislikesFilter}
 
 
-            return document;
+        return document;
     }
-    #updateArray = (document, {userId, listType, operation}) =>{
+    #updateArray = (document, {userId, listType, operation}) => {
         const filteredDocument = document[listType].filter(element => element === userId);
 
-        if (operation === "add"){
+        if (operation === "add") {
             filteredDocument.push(userId);
         }
 
@@ -123,26 +123,27 @@ class ModelsWorker {
         constructor(modelId, model) {
             super(modelId, model);
         }
+
         options = {
             isCanWork: false,
             operation: null,
             imageFieldName: null,
         }
-        goWork = async (image_s) =>{
-            const {operation,imageFieldName} =  this.options;
+        goWork = async (image_s) => {
+            const {operation, imageFieldName} = this.options;
 
             const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
                 this.singleImageOperations[operation];
 
             const operationResult = await goOperation(image_s);
 
-            if (!operationResult){
+            if (!operationResult) {
                 return false;
             }
             return operationResult;
         }
 
-        clearOptions = ()=>{
+        clearOptions = () => {
             this.options.isCanWork = false;
             this.options.operation = null;
             this.options.imageFieldName = null;
@@ -151,67 +152,65 @@ class ModelsWorker {
 
 
         singleImageOperations = {
-            replace : async (image) => {
+            replace: async (image) => {
                 const ext = getFileExtensionFromFilename(image.originalname);
                 const compressedImageBuffer = await this.#compressImage(image.buffer, ext);
-                if (!compressedImageBuffer){
+                if (!compressedImageBuffer) {
                     return false;
                 }
-               return {data:compressedImageBuffer, ext: ext}
+                return {data: compressedImageBuffer, ext: ext}
             },
 
-            remove : () => {
+            remove: () => {
                 return {data: '', ext: ''}
             },
         }
 
         arrayImageOperations = {
-            add: (array, images) =>{
+            add: (array, images) => {
                 const decodedImages = _decodingImagesFromArray(images);
-               return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
+                return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
             },
-            remove : (array, indexes) => {
-                return array.filter(index=> !indexes.includes(index));
+            remove: (array, indexes) => {
+                return array.filter(index => !indexes.includes(index));
             },
-            replace : (array, images, indexes) =>{
+            replace: (array, images, indexes) => {
                 const newArray = [...array];
-                return indexes.forEach((index, imagesIndex) =>{
+                return indexes.forEach((index, imagesIndex) => {
                     newArray[index] = images[imagesIndex]
                 })
             }
         }
 
-        async #compressImage (imageBuffer, ext) {
-            if (ext === "jpeg" || ext === "jpg"){
-               return await sharp(imageBuffer).resize(350,350).jpeg({quality : 90}).toBuffer()
-            }
-            else if (ext === "png"){
-                return await sharp(imageBuffer).resize(350,350).png({quality : 90}).toBuffer()
+        async #compressImage(imageBuffer, ext) {
+            if (ext === "jpeg" || ext === "jpg") {
+                return await sharp(imageBuffer).resize(350, 350).jpeg({quality: 90}).toBuffer()
+            } else if (ext === "png") {
+                return await sharp(imageBuffer).resize(350, 350).png({quality: 90}).toBuffer()
             }
             return false;
         }
     }
 
     #clearDependency = {
-        UserModel : async (userId) =>{
+        UserModel: async (userId) => {
             return !(!await ProductModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({user: userId}))
         },
-        ProductModel : async (productId) => {
+        ProductModel: async (productId) => {
             return !await CommentModel.deleteMany({product: productId})
         }
     }
 
 }
 
-export const  _checkDuplicate = async (valueType, value) =>{
+export const _checkDuplicate = async (valueType, value) => {
     // true -  exists
     //false - dont exists
     const user = await UserModel.findOne({[valueType]: value});
     return !!user;
 }
-
 
 
 export default ModelsWorker;

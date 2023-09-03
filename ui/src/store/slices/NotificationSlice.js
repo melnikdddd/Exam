@@ -19,6 +19,7 @@ const NotificationSlice = createSlice({
             const { field, value } = action.payload;
 
             value.notificationType = field;
+            console.log(field);
             state[field].push(value);
 
             state.popupNotifications.push(value);
@@ -48,7 +49,7 @@ const NotificationSlice = createSlice({
             localStorage.removeItem("usersNotifications");
         },
         setAppNotifications: (state, action) => {
-            state.appNotifications = action.payload.app;
+            state.appNotifications = action.payload.app || [];
         },
         setUsersNotifications: (state, action) => {
             state.usersNotifications = action.payload.users;
