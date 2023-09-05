@@ -7,6 +7,10 @@
   border: 0.1px solid black;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    @apply -mt-16
+  }
 }
 .profileCard{
   @media (max-width: 850px) {
@@ -30,7 +34,6 @@
   border: 0.1px solid black;
   display: flex;
   flex-direction: column;
-  margin-left: 390px;
 }
 
 .submit {

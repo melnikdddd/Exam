@@ -1,10 +1,21 @@
-footer{
-  width: 100%;
-  height: 280px;
-  background: black;
-border-top: 1px solid black;
+footer {
+  @apply w-full h-[180px] text-slate-300 bg-black;
 
-  @media (max-width: 1000px) {
-    display: none;
+
+}
+
+.wrap{
+  @apply flex justify-between;
+}
+.wrapRow{
+  @apply flex flex-col py-10 gap-3;
+}
+.wrapRow li span{
+  @apply hover:text-slate-50 transition-colors cursor-pointer;
+}
+
+.hiddenRow{
+  @media (max-width: 700px) {
+    @apply hidden
   }
 }

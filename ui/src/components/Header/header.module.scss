@@ -69,7 +69,7 @@
 }
 
 .dropDownMenu{
-  @apply absolute w-full h-full -mt-1 bg-black bg-opacity-90 p-10;
+  @apply absolute w-full h-screen -mt-1 bg-black bg-opacity-90 p-10;
   @media (min-width: 700px) {
     @apply hidden;
   }

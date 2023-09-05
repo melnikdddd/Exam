@@ -4,7 +4,7 @@ import ProductModel from "../models/ProductModel.js";
 const modelsWorker = new ModelsWorker(ProductModel);
 
 
-export const types = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
+export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
 
 
 
@@ -116,7 +116,7 @@ class ProductController {
     }
 
     getProductTypes = async (req, res) => {
-        return res.status(200).json({types: types});
+        return res.status(200).json({types: productTypes});
     }
 
     //дописать когда буду работать с фронтом

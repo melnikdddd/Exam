@@ -1,16 +1,19 @@
-import React from 'react';
-import {useLocation} from "react-router-dom";
-import {logout} from "../../utils/Auth/authFunctions";
-import {useDispatch} from "react-redux";
-import {clearToken} from "../../store/slices/AuthSlice";
-import {clearUserData} from "../../store/slices/UserDataSlice";
+import HomeCarouselBlock from "./HomeCarouselBlock/HomeCarouselBlock";
+import WhyUsBlock from "./WhyUsBlock/WhyUsBlock";
+import NeedaHelpBlock from "./NeedaHelpBlock/NeedaHelpBlock";
+import {useEffect, useState} from "react";
 
 function Home() {
+
+
     return (
-        <div>
-            <h1>Home</h1>
+        <div className={"flex flex-col"}>
+            <HomeCarouselBlock />
+            <WhyUsBlock/>
+            <NeedaHelpBlock/>
         </div>
     );
 }
+
 
 export default Home;

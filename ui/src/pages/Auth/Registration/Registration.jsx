@@ -36,6 +36,7 @@ import {useDispatch} from "react-redux";
 import {setToken} from "../../../store/slices/AuthSlice";
 import {setUserData} from "../../../store/slices/UserDataSlice";
 import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
+import useWindowDimensions from "../../../components/hooks/useWindowDimensions";
 
 function Registration(){
 
@@ -47,6 +48,8 @@ function Registration(){
     const [firstEffect, setFirstEffect] = useState(true);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const innerWidth = useWindowDimensions().width;
 
     const [isIdentityFocus, setIsIdentityFocus] = useState(false);
     const [isPasswordFocus, setIsPasswordFocus] = useState(false);
@@ -156,7 +159,7 @@ function Registration(){
                                            onFocus={() => setIsIdentityFocus(true)}
                                            placeholder={"Email or phone number"} />
                                 <FormErrorMessage errorField={errors?.identity}/>
-                                {isIdentityFocus && <HelperCard  height={"200px"}>
+                                {innerWidth > 1050 && isIdentityFocus && <HelperCard  height={"200px"} right={"400px"} >
                                     <div>
                                         <div className={"mb-3 flex flex-col"}>
                                             <label>Email</label>
@@ -263,7 +266,7 @@ function Registration(){
                                     <FormErrorMessage errorField={errors?.password}/>
 
                                     {isPasswordFocus &&
-                                        <HelperCard height={"250px"}>
+                                        <HelperCard height={"250px"} top={innerWidth < 1050 && "350px"} right={innerWidth > 1050 && "400px"}>
                                            <div className={"flex justify-between items-center text-lg"}>
                                                <span>Reliability:</span>
                                                <span className={"border border-black rounded-3xl h-7 w-7 " + passwordReliability}></span>

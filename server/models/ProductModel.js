@@ -25,10 +25,6 @@ const ProductSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
-        condition: {
-            type: String,
-            default: "",
-        },
         characteristics:{
             type: Object,
             default: {"":""},

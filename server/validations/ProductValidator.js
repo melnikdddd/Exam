@@ -1,7 +1,5 @@
 import {body} from "express-validator";
-
-const conditions = ['Used', 'New', 'Other'];
-
+import {productTypes} from "../controllers/ProductController.js";
 const checkObjLength = (obj, maxLength) => {
     return Object.keys(obj).length < maxLength;
 }
@@ -25,8 +23,8 @@ const productValidator = [
             throw new Error('Invalid price number')
         }
     }),
-    body("currency", "Invalid type").isString().custom(type=>{
-        if (!types.includes(type)){
+    body("type", "Invalid type").isString().custom(type=>{
+        if (!productTypes.includes(type)){
             throw new Error("Invalid type");
         }
     }),
@@ -38,15 +36,9 @@ const productValidator = [
             throw new Error('Invalid characteristic');
         }
     }).optional(),
-    body('condition', 'Invalid condition').custom(value => {
-        if (!conditions.includes(value)){
-            throw new Error('Invalid condition')
-        }
-        return true;
-    }).optional(),
     body().custom((value, {req})=>{
-        if (req.files.length > 3){
-            throw new Error('max 3')
+        if (req.files.length > 9){
+            throw new Error('max 9')
         }
     })
 ]

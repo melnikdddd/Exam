@@ -3,6 +3,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ProfileProducts.module.scss"
+import {Link} from "react-router-dom";
 
 function ProfileProducts(props) {
     const {products, isOwner, isBlocked} = props;
@@ -19,12 +20,12 @@ function ProfileProducts(props) {
         <div className={"p-6"}>
             {isOwner &&
                 <div>
-                    <div className={styles.addProduct}>
+                    <Link className={styles.addProduct} to={"/posts/add"}>
                         <h1 className={"text-xl"}>Add product</h1>
                         <div className={"rounded-full bg-slate-200 h-12 w-12 items-center flex justify-center ml-5 " + styles.circle}>
                             <FontAwesomeIcon icon={faPlus} className={"h-10 text-slate-500"}/>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             }
             {
