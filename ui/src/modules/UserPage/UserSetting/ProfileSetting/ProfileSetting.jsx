@@ -180,6 +180,7 @@ function ProfileSetting(props) {
             <div className={"flex flex-col items-center"}>
                 <div
                     className={"border rounded-lg flex flex-col p-6 pb-4 bg-white shadow-md items-center justify-center"}>
+
                     <UserAvatar image={image} className={"h-44 w-44 mb-3"} isOwner={true}
                                 isChanged={true} onClick={handleImageClick}
                                 setIsClicked={setIsImageRemoved} isClicked={isImageRemoved}/>

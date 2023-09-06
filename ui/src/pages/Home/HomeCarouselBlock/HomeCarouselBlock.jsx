@@ -50,7 +50,7 @@ function HomeCarouselBlock(props) {
                     </Container>
                 </div>
                 <div className="h-[70vh] flex items-center justify-center">
-                    <div className={"w-full h-full bg-friendlyPeople bg-bottom bg-no-repeat pt-20"}>
+                    <div className={"w-full h-full bg-friendlyPeople bg-bottom bg-no-repeat pt-8"}>
                         <Container>
                             <div className={"text-center"}>
                                 <h1 className={"text-6xl font-bold"}>Be friendly</h1>

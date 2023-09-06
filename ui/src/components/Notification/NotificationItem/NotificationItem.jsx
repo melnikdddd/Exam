@@ -138,27 +138,31 @@ function NotificationItem(props) {
                     <p className={"mt-3 text-center pb-3 break-words"}>{showedText}</p>
                 }
 
+                {type === "message" &&
+                    <>
+                        {type === "message" &&
+                            <div className={"flex w-full justify-center mb-2"}>
+                                <Link to={`/users/${ownerId}/chats`} className={"bg-blue-500 py-2 px-4 text-white text-center transition-colors hover:bg-blue-600 rounded-lg"}
+                                      state={{
+                                          isChatSelect: true,
+                                          user: user
+                                      }}>
+                                    Show
+                                </Link>
+                            </div>
+                        }
+                    </>
+                }
+
                 {currentDate && !isPopup &&
                     <span className={"w-full text-right text-gray-400"}>{currentDate}</span>
                 }
 
             </div>
             {isPopup &&
-                <>
-                    {type === "message" &&
-                        <div className={"flex w-full justify-center mb-2"}>
-                            <Link to={`/users/${ownerId}/chats`} className={"bg-blue-500 py-2 px-4 text-white text-center transition-colors hover:bg-blue-600 rounded-lg"}
-                                  state={{
-                                      isChatSelect: true,
-                                      user: user
-                                  }}>
-                                Show
-                            </Link>
-                        </div>
-                    }
-                    <LoadingBar progress={progress}/>
-                </>
+                <LoadingBar progress={progress}/>
             }
+
         </div>
     );
 }

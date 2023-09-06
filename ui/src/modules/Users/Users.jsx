@@ -14,6 +14,7 @@ import UserCard from "./UserCard/UserCard";
 import {useSelector} from "react-redux";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
+import Select from "../../components/Inputs/Select/Select";
 
 
 function Users(props) {
@@ -227,15 +228,13 @@ function Users(props) {
                                         className={"border border-gray-400 p-2 py-4 rounded-lg flex flex-col bg-white"}>
                                         <h3 className={"text-lg text-center font-bold"}>Product specialization</h3>
                                         <div className={"flex flex-col"}>
-                                            <select name="specialization" id="specialization"
-                                                    className={" mt-3 bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "}>
+                                            <Select name={"specialization"} id={"specialization"}>
                                                 {productsType.map((type, index) => (
                                                     <option key={index}>
                                                         {type}
                                                     </option>
                                                 ))}
-
-                                            </select>
+                                            </Select>
                                         </div>
                                     </div>
                                 </div>

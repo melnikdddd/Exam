@@ -26,9 +26,8 @@ const ProductSchema = new mongoose.Schema(
             default: 0
         },
         characteristics:{
-            type: Object,
-            default: {"":""},
-            required: false,
+            type: String,
+            default: "",
         },
         rating: {
             likes: {type: Number, default: 0},
@@ -39,17 +38,6 @@ const ProductSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
         },
-        images:{
-            type: Array,
-            default: [],
-        },
-        idOfUsersVotes: {
-            type: Array,
-            default : function (){
-                return [this.owner];
-            }
-        },
-
     },{
         timestamps: true,
         strictPopulate: false,

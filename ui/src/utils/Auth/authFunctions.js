@@ -2,7 +2,7 @@ import {clearToken, setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
 import {clearUserData, setUserData} from "../../store/slices/UserDataSlice";
 import {
-    clearAllNotifications, setAppNotifications,
+    clearAllNotifications, pushNotification, setAppNotifications,
     setUsersNotifications
 } from "../../store/slices/NotificationSlice";
 import Socket from "../Socket/socket";

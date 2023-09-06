@@ -14,7 +14,7 @@ import UserProfile from "./modules/UserPage/UserProfile/UserProfile";
 import UserSetting from "./modules/UserPage/UserSetting/UserSetting";
 import ChatPage from "./modules/Chat/ChatPage";
 import Users from "./modules/Users/Users";
-import CreatePost from "./pages/CreatePost/CreatePost";
+import CreateProduct from "./pages/CreateProduct/CreateProduct";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -35,7 +35,7 @@ const routes = createBrowserRouter(createRoutesFromElements(
         <Route path={'/market'}>
         </Route>
         <Route path={"posts"}>
-            <Route path={"add"} element={<CreatePost/>}/>
+            <Route path={"add"} element={<CreateProduct/>}/>
         </Route>
         <Route path={"/users"}>
             <Route index path={""} element={<Users/>}/>
