@@ -102,7 +102,6 @@ function ProfileSetting(props) {
     }, [values]);
 
     useEffect(() => {
-
         if (isImageRemoved) {
             setUploadedImage(null);
             document.querySelector("#fileInput").value = "";

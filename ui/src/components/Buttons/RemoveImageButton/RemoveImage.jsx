@@ -7,7 +7,6 @@ function RemoveImageButton(props) {
 
     const [isEnable, setIsEnable] = useState(true);
     const handleRemoveClick = () =>{
-
         if (isEnable){
             props.setIsClicked(true);
             setIsEnable(false);
@@ -22,7 +21,7 @@ function RemoveImageButton(props) {
 
 
     return (
-        <div className={`${styles.buttonWrap} ${isEnable ? 'cursor-pointer' : ''} group`} onClick={handleRemoveClick}>
+        <div className={`${styles.buttonWrap} ${isEnable ? 'cursor-pointer' : ''} group ${props.className}`} onClick={handleRemoveClick}>
             <FontAwesomeIcon icon={faTrash}
                              className={`${styles.button} ${!isEnable ? '@apply bg-gray-100 text-gray-600' : 
                                  'group-hover:bg-red-500 group-hover:text-black'}`} />

@@ -5,6 +5,7 @@ import ModelsWorker from "../utils/Model/modelsWorker.js";
 import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
 import pkg from "lodash";
+import {getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
 
 const {get} = pkg;
 
@@ -31,7 +32,6 @@ class UserController {
 
             const userId = req.params.id;
 
-
             const {imageOperation, ...body} = req.body;
 
 
@@ -44,7 +44,7 @@ class UserController {
             }
 
             //создаю объект настроек для дальнейшей работы с файлом
-            const imageData = this.#service.getImagesOptions(req.file, imageOperation);
+            const imageData = getImagesOptions(req.file, imageOperation, "userAvatar");
 
             //задаю эти настройки в ImageWorker
             modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
@@ -58,7 +58,6 @@ class UserController {
             res.status(500).send("Try later");
         }
     }
-
     getUser = async (req, res) => {
         try {
             const userId = req.params.id;
@@ -119,6 +118,7 @@ class UserController {
         }
     }
 
+
     getUsers = async (req, res) => {
         try {
             const params = req.query;
@@ -158,15 +158,7 @@ class UserController {
     }
 
     #service = {
-        getImagesOptions(file, imageOperation) {
-            return {
-                image: file || null,
-                options: {
-                    operation: imageOperation || null,
-                    imageFieldName: "userAvatar",
-                },
-            }
-        },
+
 
         sortUsers: (users, field) => {
             const sortFields = {
@@ -226,6 +218,41 @@ export const updateChatsInfo = async (ownId, data) => {
     return true;
 }
 
+export const addUserProductsType = async (userId, productType) => {
+    try {
+        const user = await userModel.findOne({_id: userId});
+        console.log("userFind");
+        const productsType = user.productsType;
+
+
+        if (!productsType.length) {
+            console.log("USER ADD productType solo");
+
+            productsType.push({typeName: productType, count: 1});
+            user.save();
+            return true;
+        }
+
+
+        const existingType = productsType.find(item => item.typeName === productType);
+
+        if (existingType) {
+            existingType.count++;
+            return true;
+        }
+
+        const newType = {productType, count: 1};
+        productsType.push(newType);
+
+
+        user.save();
+        return true;
+
+    } catch (e) {
+        return false;
+    }
+
+}
 export const setOnline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
 }

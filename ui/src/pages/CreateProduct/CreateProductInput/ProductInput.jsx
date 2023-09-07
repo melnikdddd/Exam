@@ -2,18 +2,24 @@ import styles from "./Product.module.scss"
 
 
 function ProductInput(props) {
-    const {register, className, placeholder, type, maxLength} = props;
+    const {className, placeholder, inputType} = props;
 
-    if (type === "textarea"){
+    if (inputType === "textarea") {
         return (
-            <textarea {...register} placeholder={placeholder}
-                   className={`${styles.input} ${styles.textarea} ${className}`} maxLength={maxLength} />
+            <textarea {...props.register}
+                      placeholder={placeholder}
+                      className={`${styles.input} ${styles.textarea} ${className}`}
+            />
         );
     }
 
     return (
-        <input {...register} placeholder={placeholder} type={type}
-               className={`${styles.input} ${className}`} maxLength={maxLength}/>
+        <input {...props.register}
+               placeholder={placeholder}
+               type={inputType}
+               className={`${styles.input} 
+               ${className}`}
+        />
     );
 }
 

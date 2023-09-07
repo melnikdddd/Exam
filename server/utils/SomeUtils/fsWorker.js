@@ -1,6 +1,7 @@
 import path from 'path';
 import {fileURLToPath} from "url"
 import fs from "fs"
+import sharp from "sharp";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.join(path.dirname(__filename), '..')
@@ -31,6 +32,15 @@ export const _decodingImageFromPath =  (path) =>{
         })
     })
 
+}
+
+export const compressImage = async (imageBuffer, ext) => {
+    if (ext === "jpeg" || ext === "jpg") {
+        return await sharp(imageBuffer).resize(350, 350).jpeg({quality: 90}).toBuffer()
+    } else if (ext === "png") {
+        return await sharp(imageBuffer).resize(350, 350).png({quality: 90}).toBuffer()
+    }
+    return false;
 }
 export const _decodingImagesFromArray = (images) =>{
     return images.map(image =>{

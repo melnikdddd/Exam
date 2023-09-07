@@ -1,4 +1,4 @@
-import {getFileExtensionFromFilename} from "../SomeUtils/fsWorker.js";
+import {compressImage, getFileExtensionFromFilename} from "../SomeUtils/fsWorker.js";
 import UserModel from "../../models/UserModel.js";
 import CommentModel from "../../models/CommentModel.js";
 import ProductModel from "../../models/ProductModel.js";
@@ -12,7 +12,6 @@ class ModelsWorker {
         this.model = model;
         this.imageWorker = null;
     }
-
 
     setImageWorkerOptions = (operation, imageFieldName) => {
         if (!operation) {
@@ -132,8 +131,9 @@ class ModelsWorker {
         goWork = async (image_s) => {
             const {operation, imageFieldName} = this.options;
 
-            const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
-                this.singleImageOperations[operation];
+            // const goOperation = imageFieldName === "images" ? this.arrayImageOperations[operation] :
+
+            const goOperation = this.singleImageOperations[operation];
 
             const operationResult = await goOperation(image_s);
 
@@ -154,7 +154,7 @@ class ModelsWorker {
         singleImageOperations = {
             replace: async (image) => {
                 const ext = getFileExtensionFromFilename(image.originalname);
-                const compressedImageBuffer = await this.#compressImage(image.buffer, ext);
+                const compressedImageBuffer = await compressImage(image.buffer, ext);
                 if (!compressedImageBuffer) {
                     return false;
                 }
@@ -166,30 +166,23 @@ class ModelsWorker {
             },
         }
 
-        arrayImageOperations = {
-            add: (array, images) => {
-                const decodedImages = _decodingImagesFromArray(images);
-                return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
-            },
-            remove: (array, indexes) => {
-                return array.filter(index => !indexes.includes(index));
-            },
-            replace: (array, images, indexes) => {
-                const newArray = [...array];
-                return indexes.forEach((index, imagesIndex) => {
-                    newArray[index] = images[imagesIndex]
-                })
-            }
-        }
+        // arrayImageOperations = {
+        //     add: (array, images) => {
+        //         const decodedImages = _decodingImagesFromArray(images);
+        //         return decodedImages.length + array.length > 10 ? false : array.push(decodedImages);
+        //     },
+        //     remove: (array, indexes) => {
+        //         return array.filter(index => !indexes.includes(index));
+        //     },
+        //     replace: (array, images, indexes) => {
+        //         const newArray = [...array];
+        //         return indexes.forEach((index, imagesIndex) => {
+        //             newArray[index] = images[imagesIndex]
+        //         })
+        //     }
+        // }
 
-        async #compressImage(imageBuffer, ext) {
-            if (ext === "jpeg" || ext === "jpg") {
-                return await sharp(imageBuffer).resize(350, 350).jpeg({quality: 90}).toBuffer()
-            } else if (ext === "png") {
-                return await sharp(imageBuffer).resize(350, 350).png({quality: 90}).toBuffer()
-            }
-            return false;
-        }
+
     }
 
     #clearDependency = {

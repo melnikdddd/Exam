@@ -1,7 +1,9 @@
-import {_decodingImagesFromArray} from "../utils/SomeUtils/fsWorker.js";
+import {_decodingImagesFromArray, compressImage, getFileExtensionFromFilename} from "../utils/SomeUtils/fsWorker.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import ProductModel from "../models/ProductModel.js";
-const modelsWorker = new ModelsWorker(ProductModel);
+import {getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
+import {addUserProductsType} from "./UserController.js";
+const modelWorker = new ModelsWorker(ProductModel);
 
 
 export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
@@ -11,22 +13,34 @@ export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods f
 class ProductController {
     createProduct = async (req, res) => {
         try {
-            const {rating, ...body} = req.body;
 
-            //userId берется из middleware функции checkAuth
-            const owner = req.userId;
+            const ownerId = req.userId;
+            const body = req.body;
 
-            const decodedImages = [];
-            if (req.body.files){
-                const files = req.body.files;
-               decodedImages.push(..._decodingImagesFromArray(files))
+            // const decodedImages = [];
+            // if (req.body.files){
+            //     const files = req.body.files;
+            //    decodedImages.push(..._decodingImagesFromArray(files))
+            // }
+
+            const file = req.file;
+
+
+            const productCover =
+                await compressImage(file.buffer,  getFileExtensionFromFilename(file.originalname))
+
+            console.log("compressed")
+
+
+            if (!await addUserProductsType(ownerId, body.productType)){
+                return res.status(500).json({success: false, message : "User cant find"});
             }
 
+            const doc = new ProductModel({...body, productCover: productCover, owner: ownerId});
 
-            const doc = new ProductModel({...body, images: decodedImages, owner});
 
             const product = await doc.save();
-            res.json(product);
+            res.status(200).json({success: true, product: product});
 
         } catch (err) {
             console.log(err);
@@ -78,7 +92,8 @@ class ProductController {
             }
 
             const {imageOptions, rating, ...body} = req.body;
-            const imageData = this.#service.getImagesOptions(req.files, imageOptions);
+            const imageData= getImagesOptions(req.file, imageOperation, "userAvatar");
+
 
 
 
@@ -144,40 +159,40 @@ class ProductController {
 
 
     #service = {
-        calculateRating: (rating, {rateNum, vote}) => {
-            return {
-                votes: rating.votes + vote,
-                ratingNumber: rating.ratingNumber + rateNum
-            }
-        },
-        getImagesOptions(files, bodyImageOptions){
-            return {
-                imagesParams: {
-                    images: files,
-                    indexes: bodyImageOptions?.indexes
-                },
-                options: {
-                    operation: bodyImageOptions?.operation,
-                    operationType:  "array"
-                },
-            }
-        },
-        parseQueryParams(filters){
-            const filterParams = filters.split('&');
-
-            // Создаем объект для хранения параметров фильтра
-            const filterObj = {};
-
-            // Обрабатываем каждый параметр фильтра
-            filterParams.forEach(param => {
-                const [key, value] = param.split('=');
-                // Удаляем лишние кавычки из значения
-                const processedValue = value.replace(/"/g, '');
-                filterObj[key] = processedValue;
-            });
-
-            return filterObj;
-        }
+        // calculateRating: (rating, {rateNum, vote}) => {
+        //     return {
+        //         votes: rating.votes + vote,
+        //         ratingNumber: rating.ratingNumber + rateNum
+        //     }
+        // },
+        // getImagesOptions(files, bodyImageOptions){
+        //     return {
+        //         imagesParams: {
+        //             images: files,
+        //             indexes: bodyImageOptions?.indexes
+        //         },
+        //         options: {
+        //             operation: bodyImageOptions?.operation,
+        //             operationType:  "array"
+        //         },
+        //     }
+        // },
+        // parseQueryParams(filters){
+        //     const filterParams = filters.split('&');
+        //
+        //     // Создаем объект для хранения параметров фильтра
+        //     const filterObj = {};
+        //
+        //     // Обрабатываем каждый параметр фильтра
+        //     filterParams.forEach(param => {
+        //         const [key, value] = param.split('=');
+        //         // Удаляем лишние кавычки из значения
+        //         const processedValue = value.replace(/"/g, '');
+        //         filterObj[key] = processedValue;
+        //     });
+        //
+        //     return filterObj;
+        // }
     }
 
 

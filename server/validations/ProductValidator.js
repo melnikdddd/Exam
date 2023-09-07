@@ -14,8 +14,8 @@ const checkObjPropertyLength = (obj) =>{
 
 const productValidator = [
     body('title','Title must been form 6 to 15 letters.').isLength({min: 6, max: 20}).optional(),
-    body('text', 'Min length is 3 letters.').isLength({min:40, max: 500}),
-    body("characteristics").isLength({max: 500}).optional(),
+    body('description', 'Min length is 3 letters.').isLength({min:40, max: 700}),
+    body("characteristics").isLength({min: 25, max: 700}).optional(),
     body('imageOptions',"ImageData error").isObject(),
     body('rating').not().exists(),
     body('price','Invalid price number').isNumeric().custom(price =>{
@@ -23,7 +23,7 @@ const productValidator = [
             throw new Error('Invalid price number')
         }
     }),
-    body("type", "Invalid type").isString().custom(type=>{
+    body("productType", "Invalid type").isString().custom(type=>{
         if (!productTypes.includes(type)){
             throw new Error("Invalid type");
         }

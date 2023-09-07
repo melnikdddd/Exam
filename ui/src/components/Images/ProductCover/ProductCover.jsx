@@ -1,16 +1,26 @@
 import React from 'react';
+import RemoveImageButton from "../../Buttons/RemoveImageButton/RemoveImage";
 
 function ProductCover(props) {
     const {className, image} = props;
-    const {setIsClicked, isChanged} = props;
 
+    const {isChanged} = props;
 
+    const {setIsClicked, isClicked} = props;
 
     return (
-        <div>
-            <div className={`${isChanged && "cursor-pointer hover:outline hover:outline-sky-500"} ${className}`}>
-                <img src={image} alt="defaultProductCover" className={"w-full h-full"}/>
-            </div>
+        <div className={`${isChanged && "bg-[#c0c0c0] flex justify-center"} ${className}`}>
+            {isChanged && !isClicked &&
+                <RemoveImageButton
+                    setIsClicked={setIsClicked}
+                    isClicked={isClicked}
+                    className={"ml-64 -mt-3"}
+                />}
+            <img src={image}
+                 alt="defaultProductCover"
+                 className={" cursor-pointer h-full w-auto"}
+                 onClick={props.onClick}
+            />
         </div>
     );
 }

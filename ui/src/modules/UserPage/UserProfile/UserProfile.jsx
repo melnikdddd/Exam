@@ -99,7 +99,6 @@ function UserProfile(props) {
     return <CenterWrapper>
         <LoadingBlock className={"h-40 mt-40"}/>
     </CenterWrapper>
-
 }
 
 

@@ -7,12 +7,12 @@ const ProductSchema = new mongoose.Schema(
             required: true,
             default: "",
         },
-        text: {
+        description: {
             type: String,
             required: true,
             default: "",
         },
-        type: {
+        productType: {
             type: String,
             required: true,
             default: "",
@@ -28,6 +28,7 @@ const ProductSchema = new mongoose.Schema(
         characteristics:{
             type: String,
             default: "",
+            required: true,
         },
         rating: {
             likes: {type: Number, default: 0},
@@ -37,6 +38,13 @@ const ProductSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true,
+        },
+        productCover: {
+            data: {
+                type: Buffer,
+                default: '',
+            },
+            ext: {type: String, default: ''}
         },
     },{
         timestamps: true,

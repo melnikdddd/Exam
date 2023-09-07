@@ -12,7 +12,7 @@
 }
 .imagesMediaWrap{
   @media (max-width: 700px) {
-    @apply flex-col
+    @apply flex-col;
   }
 }
 
@@ -29,5 +29,15 @@
   }
   @media (max-width:1000px ) {
     @apply px-1;
+  }
+}
+
+.submitButton{
+  @apply py-3 px-8 rounded-lg transition-colors;
+  &[disabled]{
+    @apply bg-gray-200;
+  }
+  &:not([disabled]){
+    @apply bg-teal-500 cursor-pointer  hover:bg-teal-600 hover:text-white;
   }
 }
