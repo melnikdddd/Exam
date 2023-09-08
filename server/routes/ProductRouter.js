@@ -7,19 +7,21 @@ import multer from "multer";
 const ProductRouter = express.Router();
 const upload = multer();
 
-ProductRouter.route('/')
-    .post(_checkAuth, ProductValidator, upload.single('productCover'), ProductController.createProduct)
-    .get(ProductController.getThirty);
 
 ProductRouter.route('/types').get(ProductController.getProductTypes);
 
-ProductRouter.get('/:filters', ProductController.getThirty);
-
+// ProductRouter.get('/:filters', ProductController.getThirty);
 
 ProductRouter.route('/:id')
+    .get(_checkAuth, ProductController.getProduct)
     .patch(_checkAuth, ProductValidator, upload.single('productCover'), ProductController.editProduct)
     .delete(_checkAuth, ProductController.removeProduct);
-ProductRouter.get('/:id', ProductController.getProduct);
+
+ProductRouter.route('/')
+    .post(_checkAuth, ProductValidator, upload.single('productCover'), ProductController.createProduct)
+//     .get(ProductController.getThirty);
+
+
 
 
 export default ProductRouter;

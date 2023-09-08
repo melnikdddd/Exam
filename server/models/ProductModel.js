@@ -31,12 +31,30 @@ const ProductSchema = new mongoose.Schema(
             required: true,
         },
         rating: {
-            likes: {type: Number, default: 0},
-            dislikes: {type: Number, default: 0},
+            likes: {
+                type: [mongoose.Schema.Types.ObjectId],
+                ref: 'UserProfile',
+                default: [],
+                set: function (users) {
+                    return Array.from(new Set(users));
+                }
+            },
+            dislikes: {
+                type: [mongoose.Schema.Types.ObjectId],
+                ref: 'UserProfile',
+                default: [],
+                set: function (users) {
+                    return Array.from(new Set(users));
+                }
+            },
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
+            required: true,
+        },
+        code: {
+            type: Number,
             required: true,
         },
         productCover: {

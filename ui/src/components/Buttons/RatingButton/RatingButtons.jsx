@@ -9,17 +9,18 @@ function RatingButtons(props) {
     const {rateObj, isAuth, isDisabled, ownerId, entity} = props;
     const navigate = useNavigate();
 
+
     useEffect(()=>{
-        setLikesLength(rateObj.rating.likes.length);
-        setDislikesLength(rateObj.rating.dislikes.length);
+        setLikesLength(rateObj.rating.likes.length || 0);
+        setDislikesLength(rateObj.rating.dislikes.length || 0);
         setIstLiked(rateObj.rating.likes.includes(ownerId));
         setIsDisliked(rateObj.rating.dislikes.includes(ownerId));
 
     },[rateObj, isAuth, isDisabled, ownerId, entity])
 
 
-    const [likesLength, setLikesLength] = useState(rateObj.rating.likes.length);
-    const [dislikesLength, setDislikesLength] = useState(rateObj.rating.dislikes.length);
+    const [likesLength, setLikesLength] = useState(rateObj.rating.likes.length || 0);
+    const [dislikesLength, setDislikesLength] = useState(rateObj.rating.dislikes.length || 0);
 
 
     const [isLiked, setIstLiked] = useState(rateObj.rating.likes.includes(ownerId));

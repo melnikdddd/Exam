@@ -106,7 +106,7 @@ function ProfileSetting(props) {
             setUploadedImage(null);
             document.querySelector("#fileInput").value = "";
             setValue("isImageRemoved", true, {shouldDirty: !isImageClear});
-            setImage(defaultImage().userImage);
+            setImage(defaultImage().decodedImage);
             return;
         }
 
@@ -163,7 +163,7 @@ function ProfileSetting(props) {
                 dispatch(updateValue({field: "isDefaultImage", value: false}))
 
             } else if (isImageRemoved) {
-                dispatch(updateValue({field: "userAvatar", value: defaultImage().userImage}));
+                dispatch(updateValue({field: "userAvatar", value: defaultImage().decodedImage}));
                 dispatch(updateValue({field: "isDefaultImage", value: true}));
             }
         }

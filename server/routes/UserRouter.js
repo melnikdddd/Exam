@@ -21,7 +21,6 @@ UserRouter.route('/:id')
     .patch(_checkAuth, userValidation, _updateUser, upload.single('userAvatar'), UserController.updateUser)
     .delete(_checkAuth ,UserController.removeUser);
 
-UserRouter.get('/:id/products', UserController.getUserProducts);
 
 UserRouter.post("/:id/chats", checkAuth, UserController.getUsersInChat)
 

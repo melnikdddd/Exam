@@ -14,7 +14,7 @@
   }
 }
 .leftCard{
-  @apply flex border rounded-lg flex-col px-6 py-2 bg-white shadow-md items-center justify-center;
+  @apply flex border rounded-lg flex-col px-6 py-2 bg-white shadow-md items-center justify-center max-h-[420px] ;
 
   @media (max-width: 850px) {
     @apply w-full flex-row px-16 pb-5 pt-2 justify-between;
@@ -50,7 +50,7 @@
 }
 
 .rightCard{
-  @apply bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-between;
+  @apply bg-white shadow-md ml-2 rounded-lg w-full flex flex-col justify-between max-w-[811px];
 
   @media(max-width: 850px){
     @apply ml-0 mt-3

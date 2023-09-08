@@ -72,11 +72,6 @@ function Header(props) {
                         <FontAwesomeIcon icon={faComments} className={`${styles.navigationIcon} 
                                     ${location.pathname === `/users/${userData._id}/chats` && styles.activeNavigationIcon}`}/>
                     </NavLink>
-                    <NavLink to={`users/${userData._id}`} state={{isProfile: false}}
-                             className={styles.hideIcon}>
-                        <FontAwesomeIcon icon={faBagShopping}
-                                         className={styles.navigationIcon}/>
-                    </NavLink>
                     <div className={styles.notificationsBlock}>
                         <div className={"flex w-[50px] justify-around absolute z-0 mb-6 -ml-1"}>
                             <span
@@ -124,14 +119,6 @@ function Header(props) {
                 </li>
 
                 {isAuth && <>
-                    <li>
-                        <NavLink to={``} className={`${styles.dropDownMenuItem} mt-3`}>
-                            <span className={"text-2xl text-slate-100"}>My products</span>
-                            <FontAwesomeIcon icon={faBagShopping}
-                                             className={styles.dropDownIcon}
-                            />
-                        </NavLink>
-                    </li>
                     <li>
                         <Link to={`users/${userData._id}`} className={`${styles.dropDownMenuItem}`}>
                             <span className={"text-2xl text-slate-100"}>Profile</span>

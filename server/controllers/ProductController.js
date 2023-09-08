@@ -1,13 +1,14 @@
 import {_decodingImagesFromArray, compressImage, getFileExtensionFromFilename} from "../utils/SomeUtils/fsWorker.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import ProductModel from "../models/ProductModel.js";
-import {getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
+import {generateUniqueCode, getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
 import {addUserProductsType} from "./UserController.js";
+import UserModel from "../models/UserModel.js";
+
 const modelWorker = new ModelsWorker(ProductModel);
 
 
 export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
-
 
 
 class ProductController {
@@ -25,18 +26,33 @@ class ProductController {
 
             const file = req.file;
 
+            const ext = getFileExtensionFromFilename(file.originalname);
 
-            const productCover =
-                await compressImage(file.buffer,  getFileExtensionFromFilename(file.originalname))
+            const productCoverBuffer =
+                await compressImage(file.buffer, ext)
 
-            console.log("compressed")
-
-
-            if (!await addUserProductsType(ownerId, body.productType)){
-                return res.status(500).json({success: false, message : "User cant find"});
+            if (!productCoverBuffer) {
+                return res.status(500).json({success: false, message: "Server error"});
             }
 
-            const doc = new ProductModel({...body, productCover: productCover, owner: ownerId});
+
+            const flag = await addUserProductsType(ownerId, body.productType);
+
+            if (!flag) {
+                return res.status(500).json({success: false, message: "User cant find"});
+            }
+
+            const code = generateUniqueCode();
+
+            const doc = new ProductModel({
+                ...body,
+                productCover: {
+                    data: productCoverBuffer,
+                    ext: ext,
+                },
+                code: code,
+                owner: ownerId,
+            });
 
 
             const product = await doc.save();
@@ -53,12 +69,24 @@ class ProductController {
     getProduct = async (req, res) => {
         try {
             const productId = req.params.id;
+            const userId = req.userId;
 
-            const doc = await ProductModel.findOneAndUpdate({_id: productId},
-                {$inc: {viewsCount: 1}},
-                {returnDocument: 'after'}).populate('Comment');
-            res.json(doc);
+            const product = await ProductModel.findById(productId);
 
+            if (!product) {
+                return res.status(404).json({success: false, message: "Cant find"});
+            }
+
+            if (product.owner.toString() !== userId) {
+                product.viewsCount++;
+                await product.save();
+            }
+
+            const owner = await UserModel
+                .findById(product.owner)
+                .select("_id firstname lastname rating userAvatar");
+
+            return res.status(200).json({product, owner});
         } catch (e) {
             console.log(e)
             res.status(500).json({
@@ -69,8 +97,8 @@ class ProductController {
     removeProduct = async (req, res) => {
         const productId = req.params.id;
         const userId = req.body.userId;
-        if (userId !== req.userId){
-            return res.status(450).json({message:'you cant do it'})
+        if (userId !== req.userId) {
+            return res.status(450).json({message: 'you cant do it'})
         }
 
         try {
@@ -87,71 +115,69 @@ class ProductController {
             const productId = req.params.id;
             const userId = req.body.userId;
 
-            if (req.userId !== userId){
+            if (req.userId !== userId) {
                 return res.status(450).json({message: "you cant do it"})
             }
 
             const {imageOptions, rating, ...body} = req.body;
-            const imageData= getImagesOptions(req.file, imageOperation, "userAvatar");
-
-
+            const imageData = getImagesOptions(req.file, imageOperation, "userAvatar");
 
 
             //задаю только те значение, которые можно поменять
 
             modelsWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
 
-           const result = await modelsWorker.findAndUpdate(productId, body, imageData.imagesParams);
+            const result = await modelsWorker.findAndUpdate(productId, body, imageData.imagesParams);
 
             return res.status(200).json(result);
-        }
-        catch (e){
+        } catch (e) {
             console.log(e);
             return res.status(400).json({success: false, message: e})
         }
     }
-    getThirty = async (req, res) => {
-        try {
-            const startIndex = req.body.startIndex;
-            const queryParams = req.params
-            const query = ProductModelf.find();
-            if (queryParams.filters){
-               const parsedFilters = this.#service.parseQueryParams(queryParams.filters)
-                console.log(parsedFilters)
-                query.where(parsedFilters);
-            }
 
-            const products = await query.skip(startIndex).limit(30).exec();
-            return res.json({...products});
-
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json({message: 'Something goes wrong with db'})
-        }
-    }
+    // getThirty = async (req, res) => {
+    //     try {
+    //         const startIndex = req.body.startIndex;
+    //         const queryParams = req.params
+    //         const query = ProductModel.find();
+    //         if (queryParams.filters) {
+    //             const parsedFilters = this.#service.parseQueryParams(queryParams.filters)
+    //             console.log(parsedFilters)
+    //             query.where(parsedFilters);
+    //         }
+    //
+    //         const products = await query.skip(startIndex).limit(30).exec();
+    //         return res.json({...products});
+    //
+    //     } catch (error) {
+    //         console.log(error)
+    //         return res.status(500).json({message: 'Something goes wrong with db'})
+    //     }
+    // }
 
     getProductTypes = async (req, res) => {
         return res.status(200).json({types: productTypes});
     }
 
     //дописать когда буду работать с фронтом
-    updateRating = async(req, res) =>{
+    updateRating = async (req, res) => {
         try {
             const userId = req.userId;
             const {productId, rateNum} = req.body.productId;
 
-           const flag =  await ProductModel.findOneAndUpdate({productId},(document)=>{
-                if(userId === document._id){
+            const flag = await ProductModel.findOneAndUpdate({productId}, (document) => {
+                if (userId === document._id) {
                     return false;
                 }
-               const vote = document.idOfUsersVotes.includes(userId) ? 0 : 1;
+                const vote = document.idOfUsersVotes.includes(userId) ? 0 : 1;
                 document.rating = this.#service.calculateRating(document.rating, {rateNum, vote});
                 return true;
             });
 
             return res.status(200).json({success: flag});
 
-        } catch (Error){
+        } catch (Error) {
 
         }
 
@@ -200,7 +226,7 @@ class ProductController {
 
 export const getUserProducts = async (ownerId) => {
     try {
-        return await ProductModel.find({owner: ownerId}).populate('UserProfile').exec();
+        return await ProductModel.find({owner: ownerId}).populate('User').exec();
     } catch (e) {
         return false;
     }

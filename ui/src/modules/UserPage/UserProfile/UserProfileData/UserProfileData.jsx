@@ -8,6 +8,7 @@ import styles from "./UserProfile.module.scss"
 import RatingButtons from "../../../../components/Buttons/RatingButton/RatingButtons";
 import {useEffect, useState} from "react";
 import ProfileOptions from "../ProfileOptions/ProfileOptions";
+import {convertObjectToString} from "../../../../utils/SomeFunctions";
 
 function UserProfileData(props) {
     const [showProfileOptions, setShowProfileOptions] = useState(false);
@@ -40,6 +41,9 @@ function UserProfileData(props) {
     const location = city || country ? city + country : "Not indicated.";
 
     const isOnline = isOwner ? true : !!data.user.isOnline;
+
+    const sells = Object.keys(data.user.productsType).length > 0 ?
+        convertObjectToString(data.user.productsType) : "None"
 
     moment.updateLocale('en', {
         calendar: {
@@ -74,7 +78,7 @@ function UserProfileData(props) {
                         {isOwner ?
                             <>
                                 <Link to={`/users/${user._id}/setting`}
-                                         className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
+                                      className={"bg-gray-300 p-2 rounded hover:bg-gray-400 transition-colors cursor-pointer"}>
                                     Setting
                                     <FontAwesomeIcon icon={faGear} className={"ml-1"}/>
                                 </Link>
@@ -87,10 +91,10 @@ function UserProfileData(props) {
                                           isChatSelect: true,
                                           user: data.user
                                       }}
-                                         className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 
+                                      className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 
                                          transition-colors cursor-pointer disabled:bg-gray-100 disabled:text-gray-600
                                           disabled:hover:none disabled:cursor-default`}
-                                         disabled={data.isBlocked}>
+                                      disabled={data.isBlocked}>
                                     Message
                                 </Link>
                                 <FontAwesomeIcon icon={faEllipsisVertical}
@@ -129,6 +133,14 @@ function UserProfileData(props) {
                     </div>
                     <div className={"w-full p-4"}>
                         <p className={"text-slate-500"}>
+                            Sells:
+                        </p>
+                        <span className={"text-lg "}>
+                        {sells}
+                        </span>
+                    </div>
+                    <div className={"w-full p-4"}>
+                        <p className={"text-slate-500"}>
                             Deals:
                         </p>
                         <span className={"text-lg "}>
@@ -148,7 +160,7 @@ function UserProfileData(props) {
                         <p className={"text-slate-500"}>
                             About me:
                         </p>
-                        <span className={"text-lg "}>
+                        <span className={"text-lg break-words"}>
                         {data.user.aboutUser ? data.user.aboutUser : 'Not indicated.'}
                     </span>
                     </div>

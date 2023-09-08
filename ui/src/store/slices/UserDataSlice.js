@@ -36,12 +36,13 @@ const UserDataSlice = createSlice({
         setUserData: (state, action) => {
             const {userAvatar, ...data} = action.payload;
 
+
             const imageData = action.payload.userAvatar?.data?.data || ''
             const image = imageData.length === 0 || !imageData ? '' : imageData;
             const ext = action.payload.userAvatar?.ext || '';
 
-            const {userImage, isDefaultImage} = decodeBase64Image(image, ext);
-            data.userAvatar = userImage;
+            const {decodedImage, isDefaultImage} = decodeBase64Image(image, ext);
+            data.userAvatar = decodedImage;
             data.isDefaultImage = isDefaultImage;
 
 
@@ -51,11 +52,17 @@ const UserDataSlice = createSlice({
             state.data = initialState.data;
             state.products = initialState.products;
         },
+        setOwnerProducts: (state, action) => {
+            state.products = action.payload.products;
+        },
         updateValue: (state, action) => {
             state.data[action.payload.field] = action.payload.value;
         },
         clearValue: (state, action) => {
             state.data[action.payload.field] = null;
+        },
+        pushProduct: (state, action) => {
+            state.products.push(action.payload.product);
         },
         updateChatsInfo: (state, action) => {
             const {chatId, user, message} = action.payload.data;
@@ -64,14 +71,14 @@ const UserDataSlice = createSlice({
             const chatInfo = {
                 chatId: chatId,
                 user: user,
-                read : user._id === state.data._id,
+                read: user._id === state.data._id,
                 lastMessage: {text: message.text, timestamp: message.timestamp}
 
             };
             console.log(chatInfo);
 
 
-            if (chatsInfo.length > 0){
+            if (chatsInfo.length > 0) {
                 const chatIndex = chatsInfo.findIndex(chat => chat.chatId === chatId);
 
                 if (chatIndex !== -1) {
@@ -87,8 +94,7 @@ const UserDataSlice = createSlice({
             console.log("newChat from empty chatList")
             state.data.chatsInfo.push(chatInfo);
         },
-
-        setUsersToChatInfo: (state, action)=> {
+        setUsersToChatInfo: (state, action) => {
             if (!state.data.isChatsUsersSet) {
                 const {users} = action.payload;
                 state.data.isChatsUsersSet = true;
@@ -98,7 +104,7 @@ const UserDataSlice = createSlice({
         },
         readMessage: (state, action) => {
             const {chatId} = action.payload;
-            if (!chatId){
+            if (!chatId) {
                 return;
             }
             const updatedChatInfo = state.data.chatsInfo.map(chat => {
@@ -144,16 +150,18 @@ export const selectUserData = state => state.userData.data;
 
 export const selectUserImage = state => state.userData.data.userAvatar;
 
-export const selectProducts = state => state.userData.products;
+export const selectUserProducts = state => state.userData.products;
 
 export const {
     setUserData,
     updateValue,
     clearValue,
+    pushProduct,
     clearUserData,
     updateChatsInfo,
     setUsersToChatInfo,
     readMessage,
+    setOwnerProducts,
 } = UserDataSlice.actions;
 
 

@@ -32,6 +32,7 @@ class UserController {
 
             const userId = req.params.id;
 
+
             const {imageOperation, ...body} = req.body;
 
 
@@ -93,16 +94,10 @@ class UserController {
             return res.status(404).json({success: false, message: 'UserProfile can`t find.'});
         }
 
-        user.products = await getUserProducts(userId)
+        const products = await getUserProducts(userId)
 
-        return res.status(200).json({success: true, userData: user});
-    }
 
-    getUserProducts = async (req, res) => {
-        const ownerId = req.body.userId;
-        const products = await getUserProducts(ownerId);
-
-        res.status(200).json(products);
+        return res.status(200).json({success: true, user: user, products : products});
     }
 
     getUsersInChat = async (req, res) => {
@@ -139,6 +134,9 @@ class UserController {
 
             if (params.users) {
                 filterParams._id = {$in: new Array(params.users)};
+            }
+            if (params.productsType && params.productsType !== 'All') {
+                filterParams[`productsType.${params.productsType}`] = {$exists: true};
             }
 
             const users = await UserModel.find(filterParams).select(usersString)
@@ -219,39 +217,19 @@ export const updateChatsInfo = async (ownId, data) => {
 }
 
 export const addUserProductsType = async (userId, productType) => {
+    const filter = {_id: userId};
+    const update = {$inc: {[`productsType.${productType}`]: 1}};
+    const options = {upsert: true, new: true}; // upsert: true создаст документ, если его нет
+
     try {
-        const user = await userModel.findOne({_id: userId});
-        console.log("userFind");
-        const productsType = user.productsType;
-
-
-        if (!productsType.length) {
-            console.log("USER ADD productType solo");
-
-            productsType.push({typeName: productType, count: 1});
-            user.save();
-            return true;
+        const user = await userModel.findOneAndUpdate(filter, update, options);
+        if (!user) {
+            return false; // Обработка случая, если документ не найден
         }
-
-
-        const existingType = productsType.find(item => item.typeName === productType);
-
-        if (existingType) {
-            existingType.count++;
-            return true;
-        }
-
-        const newType = {productType, count: 1};
-        productsType.push(newType);
-
-
-        user.save();
         return true;
-
     } catch (e) {
-        return false;
+        return false; // Обработка ошибок
     }
-
 }
 export const setOnline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})

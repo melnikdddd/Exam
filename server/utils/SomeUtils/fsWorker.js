@@ -35,6 +35,7 @@ export const _decodingImageFromPath =  (path) =>{
 }
 
 export const compressImage = async (imageBuffer, ext) => {
+    console.log(ext);
     if (ext === "jpeg" || ext === "jpg") {
         return await sharp(imageBuffer).resize(350, 350).jpeg({quality: 90}).toBuffer()
     } else if (ext === "png") {

@@ -9,55 +9,60 @@ export const fetchPost = async (path, data) => {
     } catch (error) {
         const status = error.response?.status || 500;
 
-        if (status === 500){
+        if (status === 500) {
             return {success: false, status}
         }
 
-        return {success: false, status: status, data: error.response.data }
+        return {success: false, status: status, data: error.response.data}
     }
 }
-export const fetchGet = async (path) =>{
+export const fetchGet = async (path) => {
     try {
         const response = await axios.get(path);
         return {success: true, data: response.data};
     } catch (error) {
         const status = error.response?.status || 500;
 
-        if (status === 500){
+        if (status === 500) {
             return {success: false, status: 500}
         }
         return {success: false, status: status}
     }
 }
-export const fetchUpdate = async (path, data) =>{
+export const fetchUpdate = async (path, data) => {
     try {
         const response = await axios.patch(path, data, {
             headers: {
                 'Content-Type': 'multipart/form-data',
-            },});
+            },
+        });
 
         return {success: true, data: response.data};
     } catch (error) {
         const status = error.response?.status || 500;
 
-        if (status === 500){
+        if (status === 500) {
             return {success: false, status: 500}
         }
         return {success: false, status: status, data: error.response.data};
     }
 }
-export const fetchUserByToken = async () =>{
+export const fetchUserByToken = async () => {
     try {
         const response = await axios.get(`users/getUserByToken`);
-        const userData = response.data?.userData
+        console.log(response)
+        const {user, products} = response.data
 
-        return  userData ? userData : false;
-    }
-    catch (error){
+        if (!user) {
+            return false;
+        }
+        return {user, products};
+
+    } catch (error) {
         return false;
     }
 }
-export const fetchRemove = async (path, data=null) =>{
+export const fetchRemove = async (path, data = null) => {
     try {
         const response = await axios.delete(path, {data});
         return {success: true, data: response.data};
@@ -67,7 +72,7 @@ export const fetchRemove = async (path, data=null) =>{
         return {success: false, status}
     }
 }
-export const fetchCheckPassword = async (password) =>{
+export const fetchCheckPassword = async (password) => {
     try {
         const response = await axios.post("auth/checkPassword", {password});
         return response.data.success === true;
@@ -79,9 +84,8 @@ export const fetchCheckPassword = async (password) =>{
 }
 
 export const fetchUsersInChat = async (ownerId, usersIds) => {
-   const response = await fetchPost(`users/${ownerId}/chats`, {usersIds:usersIds});
-   if (response.success){
+    const response = await fetchPost(`users/${ownerId}/chats`, {usersIds: usersIds});
+    if (response.success) {
         return response.data.users;
-   }
-   else return false;
+    } else return false;
 }

@@ -7,7 +7,6 @@ import {emailStrings, userLoginString} from "../utils/SomeUtils/strings.js";
 
 
 import dotenv from "dotenv"
-import {_genSixDigitCode} from "../utils/SomeUtils/someFunctions.js";
 import Jwt from "../utils/auth/jwt.js";
 import {checkPassword} from "../utils/auth/utils.js";
 

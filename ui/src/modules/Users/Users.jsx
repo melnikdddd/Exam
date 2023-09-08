@@ -47,7 +47,7 @@ function Users(props) {
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            nickname: searchParams.has("nickname") ?  "@" + searchParams.get("nickname") : ""
+            nickname: searchParams.has("nickname") ?  "@" + searchParams.get("nickname") : "",
         }
     });
     const nickname = watch("nickname");
@@ -87,16 +87,31 @@ function Users(props) {
         toggleFamiliarUsersToSearchParams(isBlockedUsersSelect, blockedUsers);
     }
 
+    const handleSelectChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedProductType(selectedValue);
+
+        if (searchParams.has("productsType")){
+            searchParams.set("productsType", selectedValue);
+        } else {
+            searchParams.append("productsType", selectedValue);
+        }
+        setSearchParams(searchParams);
+    }
+
     const find = async () => {
-        setFindMessage("Not found.")
         const searchParamsObject = Object.fromEntries(searchParams);
 
         const response = await fetchGet(`/users?${new URLSearchParams(searchParamsObject)}`);
         console.log(response);
+
         if (response.data.users) {
             setUsers(response.data.users);
+            setFindMessage("Not found.")
+
             return;
         }
+        setFindMessage("Not found.")
         setUsers([]);
 
     }
@@ -177,6 +192,8 @@ function Users(props) {
 
 
 
+
+
     if (!isLoading) {
         return (
             <BackGround background={"linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%)"}>
@@ -228,7 +245,10 @@ function Users(props) {
                                         className={"border border-gray-400 p-2 py-4 rounded-lg flex flex-col bg-white"}>
                                         <h3 className={"text-lg text-center font-bold"}>Product specialization</h3>
                                         <div className={"flex flex-col"}>
-                                            <Select name={"specialization"} id={"specialization"}>
+                                            <Select name={"productType"}
+                                                    id={"productType"}
+                                                    onChange={handleSelectChange}
+                                            >
                                                 {productsType.map((type, index) => (
                                                     <option key={index}>
                                                         {type}

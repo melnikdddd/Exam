@@ -16,7 +16,7 @@ const NotificationSlice = createSlice({
     initialState,
     reducers: {
         pushNotification: (state, action) => {
-            const { field, value } = action.payload;
+            const {field, value} = action.payload;
 
             value.notificationType = field;
             console.log(field);
@@ -26,25 +26,29 @@ const NotificationSlice = createSlice({
             localStorage.setItem(field, JSON.stringify(state[field]));
         },
         removeNotification: (state, action) => {
-            const { field, value } = action.payload;
+            const {field, value} = action.payload;
             state[field].splice(value, 1);
 
-            if (state[field].length){
+            if (state[field].length) {
                 localStorage.setItem(field, JSON.stringify(state[field]));
                 return;
             }
             localStorage.removeItem(field);
         },
-        removePopupNotification: (state, action)=>{
-            state.popupNotifications.splice(action.payload.value,1);
+        removePopupNotification: (state, action) => {
+            state.popupNotifications.splice(action.payload.value, 1);
         },
         clearNotifications: (state, action) => {
-            const {field} =  action.payload;
+            const {field} = action.payload;
             state[field] = [];
             localStorage.removeItem(field);
         },
         clearAllNotifications: (state, action) => {
-            state = initialState;
+            state.usersNotifications = [];
+            state.isShowedNotification = false;
+            state.popupNotifications = [];
+            state.appNotifications = [];
+
             localStorage.removeItem("appNotifications");
             localStorage.removeItem("usersNotifications");
         },
@@ -57,7 +61,7 @@ const NotificationSlice = createSlice({
         setIsShowedNotification: (state, action) => {
             state.isShowedNotification = action.payload.set;
 
-            if (state.isShowedNotification){
+            if (state.isShowedNotification) {
                 state.popupNotifications = [];
             }
         },
@@ -75,7 +79,7 @@ export const {
     pushNotification, removeNotification,
     clearNotifications, clearAllNotifications,
     setAppNotifications, setUsersNotifications,
-    setIsShowedNotification,removePopupNotification,
+    setIsShowedNotification, removePopupNotification,
     clearPopupNotification
 } = NotificationSlice.actions;
 

@@ -1,12 +1,30 @@
-import React from 'react';
 import RemoveImageButton from "../../Buttons/RemoveImageButton/RemoveImage";
+import {useEffect, useState} from "react";
+import {decodeBase64Image} from "../utils";
+
+const defaultImage = process.env.PUBLIC_URL + "/DefaultProductImage.png";
 
 function ProductCover(props) {
     const {className, image} = props;
 
+    const [thisImage, setThisImage] = useState(image);
+
+    const {isImageNeedDecoding} = props;
+
     const {isChanged} = props;
 
     const {setIsClicked, isClicked} = props;
+
+    useEffect(()=>{
+        setThisImage(image)
+    },[image])
+
+    useEffect(() => {
+        if (isImageNeedDecoding){
+            setThisImage(decodeBase64Image(image.data.data, image.ext, defaultImage).decodedImage);
+        }
+    }, [image]);
+
 
     return (
         <div className={`${isChanged && "bg-[#c0c0c0] flex justify-center"} ${className}`}>
@@ -16,9 +34,9 @@ function ProductCover(props) {
                     isClicked={isClicked}
                     className={"ml-64 -mt-3"}
                 />}
-            <img src={image}
+            <img src={thisImage}
                  alt="defaultProductCover"
-                 className={" cursor-pointer h-full w-auto"}
+                 className={`${isChanged && "cursor-pointer"} h-full w-auto ${props.imageClassName}`}
                  onClick={props.onClick}
             />
         </div>

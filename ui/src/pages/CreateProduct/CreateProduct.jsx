@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {pushNotification} from "../../store/slices/NotificationSlice";
 import moment from "moment/moment";
 import {useNavigate} from "react-router-dom";
-import {selectUserData} from "../../store/slices/UserDataSlice";
+import {pushProduct, selectUserData} from "../../store/slices/UserDataSlice";
 
 
 function CreateProduct(props) {
@@ -195,6 +195,9 @@ function CreateProduct(props) {
         }
 
         const response = await fetchPost("/products/", formData);
+        console.log(response);
+
+        dispatch(pushProduct({product:response.data.product}));
 
         if (response.data.success){
             dispatch(pushNotification({
@@ -204,7 +207,7 @@ function CreateProduct(props) {
                 },
 
             }))
-            navigate(`/${ownerId}/products`);
+            navigate(`/users/${ownerId}`, {state: {isProfile : false}});
         }
 
         setIsLoading(false);

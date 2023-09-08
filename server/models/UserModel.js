@@ -61,8 +61,8 @@ const UserSchema = new mongoose.Schema(
             required: true
         },
         productsType: {
-            type: Array,
-            default: []
+            type: Object,
+            default: {}
         },
         rating: {
             likes: {

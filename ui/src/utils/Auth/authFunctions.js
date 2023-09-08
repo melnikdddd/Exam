@@ -1,11 +1,12 @@
 import {clearToken, setToken} from "../../store/slices/AuthSlice";
 import {fetchUserByToken} from "../Axios/axiosFunctions";
-import {clearUserData, setUserData} from "../../store/slices/UserDataSlice";
+import {clearUserData, setOwnerProducts, setUserData} from "../../store/slices/UserDataSlice";
 import {
     clearAllNotifications, pushNotification, setAppNotifications,
     setUsersNotifications
 } from "../../store/slices/NotificationSlice";
 import Socket from "../Socket/socket";
+import {clearChat} from "../../store/slices/ActiveChatSlice";
 
 export function checkIdentityValue(value) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -80,6 +81,7 @@ export const logout = (dispatch) => {
 
     dispatch(clearToken());
     dispatch(clearUserData());
+    dispatch(clearChat());
     dispatch(clearAllNotifications());
 
     Socket.closeConnect();
@@ -202,8 +204,8 @@ export const firstEffectEntry = async (dispatch, setIsLoading) => {
             return;
         }
 
-        const userData = await fetchUserByToken();
-        if (!userData) {
+        const {user, products} = await fetchUserByToken();
+        if (!user) {
             localStorage.removeItem('token');
             setIsLoading(true);
             return;
@@ -217,9 +219,10 @@ export const firstEffectEntry = async (dispatch, setIsLoading) => {
         if (usersNotifications) {
             dispatch(setUsersNotifications({users: JSON.parse(usersNotifications)}));
         }
-        Socket.createConnect(userData, dispatch);
+        Socket.createConnect(user, dispatch);
 
-        dispatch(setUserData(userData))
+        dispatch(setUserData(user))
+        dispatch(setOwnerProducts({products: products}));
         dispatch(setToken(token));
         setIsLoading(true);
     }
