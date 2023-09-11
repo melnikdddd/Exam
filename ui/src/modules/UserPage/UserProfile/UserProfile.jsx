@@ -44,12 +44,15 @@ function UserProfile(props) {
         const getUserData = async (id) => {
             const {data} = await fetchGet(`users/${id}`);
 
+
             if (!data) {
                 navigate("/error");
                 return;
             }
 
-            const {userAvatar, products, ...uData} = data.user;
+            const {products, user} = data;
+
+            const userAvatar = user.userAvatar;
 
 
             const imageData = userAvatar?.data?.data || '';
@@ -57,10 +60,10 @@ function UserProfile(props) {
             const ext = data.userAvatar?.ext || '';
 
             const {decodedImage} = decodeBase64Image(image, ext);
-            uData.userAvatar = decodedImage;
+            user.userAvatar = decodedImage;
 
             setIsOwner(false);
-            setUser(uData);
+            setUser(user);
             setProducts(products);
 
             setIsBlocked(isAuth ? owner.blockedUsers.includes(id) : false);

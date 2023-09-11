@@ -42,8 +42,10 @@ function UserProfileData(props) {
 
     const isOnline = isOwner ? true : !!data.user.isOnline;
 
-    const sells = Object.keys(data.user.productsType).length > 0 ?
-        convertObjectToString(data.user.productsType) : "None"
+    const productsType = data?.user?.productsType || {};
+
+    const sells = Object.keys(productsType).length > 0 ?
+        convertObjectToString(productsType) : "None"
 
     moment.updateLocale('en', {
         calendar: {
@@ -176,6 +178,7 @@ function UserProfileData(props) {
                                        isDisabled={data.isOwner}
                                        ownerId={data.owner._id}
                                        entity={`users`}/>
+
                         <div className={styles.sinceWrap}>
                             <p className={"text-slate-600 text-lg"}>Since:</p>
                             <span className="text-slate-900 text-lg">

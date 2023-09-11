@@ -13,7 +13,7 @@ ProductRouter.route('/types').get(ProductController.getProductTypes);
 // ProductRouter.get('/:filters', ProductController.getThirty);
 
 ProductRouter.route('/:id')
-    .get(_checkAuth, ProductController.getProduct)
+    .get(ProductController.getProduct)
     .patch(_checkAuth, ProductValidator, upload.single('productCover'), ProductController.editProduct)
     .delete(_checkAuth, ProductController.removeProduct);
 

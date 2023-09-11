@@ -29,16 +29,12 @@ class UserController {
     }
     updateUser = async (req, res) => {
         try {
-
             const userId = req.params.id;
-
 
             const {imageOperation, ...body} = req.body;
 
-
             const errorsFields =
                 await _checkFieldsOnDuplicate(["nickname", "email", "phoneNumber"], body);
-
 
             if (errorsFields.length > 0) {
                 return res.status(409).json({success: false, errorsFields: errorsFields});
@@ -97,7 +93,7 @@ class UserController {
         const products = await getUserProducts(userId)
 
 
-        return res.status(200).json({success: true, user: user, products : products});
+        return res.status(200).json({success: true, user: user, products: products});
     }
 
     getUsersInChat = async (req, res) => {

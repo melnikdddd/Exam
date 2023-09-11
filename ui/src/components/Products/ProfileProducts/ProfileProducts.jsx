@@ -31,11 +31,11 @@ function ProfileProducts(props) {
                 </div>
             }
             {
-                products.length > 0 ?
+                products && products?.length > 0 ?
                     <div className={"flex gap-3 flex-wrap justify-center"}>
                         {
                             products.map((product) => (
-                                <ProductCard product={product} key={product._id}/>
+                                <ProductCard product={product} key={product._id} isOwner={isOwner}/>
                             ))
                         }
                     </div>

@@ -39,6 +39,17 @@ const Socket = class {
             });
 
             this.socket.on("newMessage", data => {
+                if (data.success === false) {
+                    window.location.pathname = "/home";
+                    dispatch(pushNotification(
+                        {
+                            field: "appNotifications",
+                            value: {
+                                title: "Error", type: "error", text: "Error message", createdAt: moment()
+                            },
+                        }
+                    ));
+                }
                 dispatch(updateChatsInfo({data: data}));
                 dispatch(addMessage({data: data}));
                 console.log(data);

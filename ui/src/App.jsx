@@ -14,8 +14,9 @@ import UserProfile from "./modules/UserPage/UserProfile/UserProfile";
 import UserSetting from "./modules/UserPage/UserSetting/UserSetting";
 import ChatPage from "./modules/Chat/ChatPage";
 import Users from "./modules/Users/Users";
-import CreateProduct from "./pages/CreateProduct/CreateProduct";
-import ProductPage from "./pages/ProductPage/ProductPage";
+import CreateProduct from "./modules/Product/CreateProduct/CreateProduct";
+import ProductPage from "./modules/Product/ProductPage/ProductPage";
+import EditProduct from "./modules/Product/EditProduct/EditProduct";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -41,6 +42,11 @@ const routes = createBrowserRouter(createRoutesFromElements(
                     <ProductPage/>
                 </PrivateRoute>
             } />
+            <Route path={":id/edit"} element={
+                <PrivateRoute isAuthNeed={true}>
+                    <EditProduct/>
+                </PrivateRoute>
+            }/>
 
             <Route path={"add"} element={
                 <PrivateRoute isAuthNeed={true}>

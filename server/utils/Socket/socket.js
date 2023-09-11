@@ -37,7 +37,11 @@ const socket = (server) => {
             const {chatId, user, message} = data;
             const ownId = socket.currentUser._id;
 
-            console.log(user);
+            if (ownId === user._id){
+                socket.emit("newMessage", {success: false});
+                return;
+            }
+
 
             //обновляем базу данных сообщений
             const chat = chatId ?
@@ -48,12 +52,15 @@ const socket = (server) => {
 
             await updateBoth(ownId, data);
             //отправялем сообщение второму пользователю
-            console.log(onlineUsers);
-            const userSocket = onlineUsers.get(user._id);
 
-            socket.emit("newMessage", data)
+            socket.emit("newMessage", data);
+
+            const userSocket = onlineUsers.get(user._id);
+            console.log("ownId: " +  ownId, +", anyUserId: " + user._id);
+
 
             if (userSocket) {
+                console.log("any user get message");
                 data.user = socket.currentUser;
                 io.to(userSocket).emit("newMessage", data);
             }

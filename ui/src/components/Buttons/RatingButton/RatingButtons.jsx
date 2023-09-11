@@ -61,7 +61,7 @@ function RatingButtons(props) {
 
 
     return (
-        <div className={styles.wrap}>
+        <div className={`${styles.wrap} ${props.className}`}>
             <button className={`${styles.ratingButton} ${styles.left} ${isLiked ? styles.clicked : ''}`}
                     disabled={isDisabled}
             onClick={handleLikeClick}>

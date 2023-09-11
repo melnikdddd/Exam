@@ -9,5 +9,5 @@
 
 
 .textarea{
-  @apply  resize-none h-auto;
+  @apply overflow-auto resize-none h-auto;
 }

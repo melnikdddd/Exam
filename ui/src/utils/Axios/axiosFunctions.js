@@ -16,6 +16,27 @@ export const fetchPost = async (path, data) => {
         return {success: false, status: status, data: error.response.data}
     }
 }
+
+export const getProduct = async (productId, ownerId) => {
+
+    let patch = `products/${productId}`;
+    if (ownerId) {
+        patch += `?userId=${ownerId}`;
+    }
+
+    const response = await fetchGet(patch)
+
+    if (response.success) {
+        const data = response.data;
+        console.log(data);
+
+        return {PRODUCT: data.product, USER: data.owner}
+    } else {
+        return  false;
+    }
+
+}
+
 export const fetchGet = async (path) => {
     try {
         const response = await axios.get(path);

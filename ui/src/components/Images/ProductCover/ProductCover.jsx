@@ -11,7 +11,7 @@ function ProductCover(props) {
 
     const {isImageNeedDecoding} = props;
 
-    const {isChanged} = props;
+    const {isChanged, isRemoveButtonHidden} = props;
 
     const {setIsClicked, isClicked} = props;
 
@@ -28,7 +28,7 @@ function ProductCover(props) {
 
     return (
         <div className={`${isChanged && "bg-[#c0c0c0] flex justify-center"} ${className}`}>
-            {isChanged && !isClicked &&
+            {isChanged && !isClicked && !isRemoveButtonHidden &&
                 <RemoveImageButton
                     setIsClicked={setIsClicked}
                     isClicked={isClicked}

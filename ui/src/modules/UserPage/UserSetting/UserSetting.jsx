@@ -6,10 +6,22 @@ import ProfileSetting from "./ProfileSetting/ProfileSetting";
 import SecuritySetting from "./SecuritySetting/SecuritySetting";
 import ProfileCard from "../../../components/Card/ProfileCard/ProfileCard";
 import PasswordCard from "../../../components/Card/PasswordCard/PasswordCard";
+import {Navigate, useNavigate} from "react-router-dom";
+import {useParams} from "react-router";
+import {useSelector} from "react-redux";
+import {selectUserData} from "../../../store/slices/UserDataSlice";
 
 function UserSetting() {
     const [isProfile, setIsProfile] = useState(true);
     const [isUserPassword, setIsUserPassword] = useState(false);
+
+    const {id} = useParams();
+
+    const ownId = useSelector(selectUserData)._id;
+
+    if (ownId !== id){
+        return <Navigate to={"/error"}/>
+    }
 
     return (
         <BackGround background={"linear-gradient(111deg, rgba(27,102,122,1) 0%, rgba(148,198,233,1) 79%)"}>

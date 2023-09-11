@@ -11,6 +11,7 @@ function Select(props) {
                 selectColor &&
                 `focus:ring-${selectColor}-500 focus:border-${selectColor}-500`
             }`}
+            value={props.value}
         >
             {props.children}
         </select>

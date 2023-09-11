@@ -91,10 +91,10 @@ function Login() {
             console.log(errors)
             return;
         }
-        const {token, userData} = getAuthResponseValues(responseData);
+        const {token, userData, products} = getAuthResponseValues(responseData);
 
         setIsLoading(false);
-        login(dispatch, token, userData);
+        login(dispatch, token, userData, products);
         navigate(fromPage);
 
     }

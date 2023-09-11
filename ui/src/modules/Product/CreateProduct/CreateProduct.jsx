@@ -1,25 +1,23 @@
 import {useEffect, useRef, useState} from 'react';
-import BackGround from "../../components/Wrapper/BackGround/BackGround";
-import Container from "../../components/Wrapper/Container/Container";
+import BackGround from "../../../components/Wrapper/BackGround/BackGround";
+import Container from "../../../components/Wrapper/Container/Container";
 import {useForm} from "react-hook-form";
-import ProductInput from "./CreateProductInput/ProductInput";
-import {fetchGet, fetchPost} from "../../utils/Axios/axiosFunctions";
-import Select from "../../components/Inputs/Select/Select";
-import ProductCover from "../../components/Images/ProductCover/ProductCover";
-import ProductImage from "../../components/Images/ProductImage/ProductImage";
+import ProductInput from "../ProductInput/ProductInput";
+import {fetchGet, fetchPost} from "../../../utils/Axios/axiosFunctions";
+import Select from "../../../components/Inputs/Select/Select";
+import ProductCover from "../../../components/Images/ProductCover/ProductCover";
+import ProductImage from "../../../components/Images/ProductImage/ProductImage";
 
 import styles from "./CreateProduct.module.scss"
-import FormErrorMessage from "../../components/Message/FormErrorMessage";
+import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
-import {type} from "@testing-library/user-event/dist/type";
-import LoadingButton from "../../components/Buttons/LoadingButton/LoadingButton";
-import AuthButton from "../../components/Buttons/AuthButton/AuthButton";
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 import {useDispatch, useSelector} from "react-redux";
-import {pushNotification} from "../../store/slices/NotificationSlice";
+import {pushNotification} from "../../../store/slices/NotificationSlice";
 import moment from "moment/moment";
 import {useNavigate} from "react-router-dom";
-import {pushProduct, selectUserData} from "../../store/slices/UserDataSlice";
+import {pushProduct, selectUserData} from "../../../store/slices/UserDataSlice";
 
 
 function CreateProduct(props) {

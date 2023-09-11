@@ -39,7 +39,7 @@ class ModelsWorker {
         if (data.listType === "like" || data.listType === "dislike") {
             const doc = this.#updateRating(document, data.userId, data.listType, data.operation);
             if (doc) {
-                doc.save();
+                await doc.save();
                 return doc.rating;
             }
             return false;
@@ -92,18 +92,21 @@ class ModelsWorker {
     }
     #updateRating = (document, userId, ratingType, ratingOperation) => {
 
-        const likesFilter = document.rating.likes.filter(rate => rate !== userId);
+        const likesFilter = document.rating.likes.filter(rate =>  rate.toString() !== userId.toString());
+        console.log(likesFilter);
         if (ratingType === "like" && ratingOperation === "add") {
             likesFilter.push(userId);
         }
 
-        const dislikesFilter = document.rating.dislikes.filter(rate => rate !== userId);
+        const dislikesFilter = document.rating.dislikes.filter(rate => rate.toString() !== userId.toString());
 
         if (ratingType === "dislike" && ratingOperation === "add") {
             dislikesFilter.push(userId);
         }
+
         document.rating = {likes: likesFilter, dislikes: dislikesFilter}
 
+        console.log(document.rating);
 
         return document;
     }

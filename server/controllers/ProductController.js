@@ -14,7 +14,6 @@ export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods f
 class ProductController {
     createProduct = async (req, res) => {
         try {
-
             const ownerId = req.userId;
             const body = req.body;
 
@@ -69,7 +68,10 @@ class ProductController {
     getProduct = async (req, res) => {
         try {
             const productId = req.params.id;
-            const userId = req.userId;
+            const userId = req.query.userId;
+
+            console.log(userId);
+
 
             const product = await ProductModel.findById(productId);
 
@@ -77,7 +79,7 @@ class ProductController {
                 return res.status(404).json({success: false, message: "Cant find"});
             }
 
-            if (product.owner.toString() !== userId) {
+            if (userId && product.owner.toString() !== userId) {
                 product.viewsCount++;
                 await product.save();
             }
@@ -113,21 +115,19 @@ class ProductController {
     editProduct = async (req, res) => {
         try {
             const productId = req.params.id;
-            const userId = req.body.userId;
 
-            if (req.userId !== userId) {
-                return res.status(450).json({message: "you cant do it"})
-            }
+            console.log(req.body);
 
-            const {imageOptions, rating, ...body} = req.body;
-            const imageData = getImagesOptions(req.file, imageOperation, "userAvatar");
+            const {imageOperation, rating, ...body} = req.body;
+
+            const imageData = getImagesOptions(req.file, imageOperation, "productCover");
 
 
             //задаю только те значение, которые можно поменять
 
-            modelsWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
+            modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
 
-            const result = await modelsWorker.findAndUpdate(productId, body, imageData.imagesParams);
+            const result = await modelWorker.findAndUpdate(productId, body, imageData.image);
 
             return res.status(200).json(result);
         } catch (e) {

@@ -16,7 +16,7 @@ function Layout(){
         <div className={styles.wrapper}>
             <Header/>
             <main className={styles.main}>
-                <Container className={"flex justify-end  p-0"}>
+                <Container className={"flex justify-end  p-0 z-50"}>
                 {isShowedNotifications ?
                     <Notification/>
                     :

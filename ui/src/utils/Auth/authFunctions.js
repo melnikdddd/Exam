@@ -68,9 +68,12 @@ export const passwordRegex = {
     },
 }
 
-export const login = (dispatch, token, userData) => {
+export const login = (dispatch, token, userData, products) => {
+    console.log(userData);
     dispatch(setToken(token));
+    dispatch(setOwnerProducts({products: products}));
     dispatch(setUserData(userData));
+
     Socket.createConnect(userData, dispatch);
 
     //setUserDataInLocalStorage(userData);
@@ -178,7 +181,7 @@ export const errorHandler = (errorsType, status, setError, identityType, errorsF
 }
 
 export const getAuthResponseValues = (response) => {
-    return {token: response.data.token, userData: response.data.user}
+    return {token: response.data.token, userData: response.data.user , products: response.data.products};
 }
 
 export const validateRepeatPassword = (repeatPassword, password) => {

@@ -9,6 +9,7 @@ import {emailStrings, userLoginString} from "../utils/SomeUtils/strings.js";
 import dotenv from "dotenv"
 import Jwt from "../utils/auth/jwt.js";
 import {checkPassword} from "../utils/auth/utils.js";
+import {getUserProducts} from "./ProductController.js";
 
 dotenv.config();
 
@@ -76,11 +77,13 @@ class AuthController {
 
             const user = await UserModel.findOne({[identityType]: identity}).select(userLoginString);
 
+
             if (!user) {
                 return res.status(404).json({
                     success: "UserProfile cant find",
                 })
             }
+
 
             const isValidPass = await bcrypt.readHashPassword(password, user.hashPassword);
 
@@ -92,6 +95,9 @@ class AuthController {
             }
 
             const userId = user._id;
+
+            const products = await getUserProducts(userId);
+
             const token = Jwt.sign(userId);
 
             const {hashPassword, ...returnedUser} = {...user._doc}
@@ -100,6 +106,7 @@ class AuthController {
             res.json({
                 success: true,
                 user: returnedUser,
+                products: products,
                 token: token
             })
 
