@@ -174,7 +174,6 @@ function ProfileSetting(props) {
         }
     }
 
-
     return (
         <form className={"flex w-full h-full"} onSubmit={handleSubmit(onSubmit)}>
             <div className={"flex flex-col items-center"}>

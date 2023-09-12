@@ -57,7 +57,6 @@ export const fetchUpdate = async (path, data) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
         return {success: true, data: response.data};
     } catch (error) {
         const status = error.response?.status || 500;

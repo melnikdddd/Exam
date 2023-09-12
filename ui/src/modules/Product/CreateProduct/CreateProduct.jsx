@@ -18,6 +18,7 @@ import {pushNotification} from "../../../store/slices/NotificationSlice";
 import moment from "moment/moment";
 import {useNavigate} from "react-router-dom";
 import {pushProduct, selectUserData} from "../../../store/slices/UserDataSlice";
+import {decodeBase64Image} from "../../../components/Images/utils";
 
 
 function CreateProduct(props) {
@@ -184,6 +185,7 @@ function CreateProduct(props) {
 
         const formData = new FormData();
 
+
         formData.append("productCover", uploadedProductCoverImage);
 
         for (const [key, value] of Object.entries(dataForSend)) {
@@ -195,7 +197,18 @@ function CreateProduct(props) {
         const response = await fetchPost("/products/", formData);
         console.log(response);
 
-        dispatch(pushProduct({product:response.data.product}));
+        const product = response.data.product;
+
+        const imageData = product.data?.data || ''
+        const image = imageData.length === 0 || !imageData ? '' : imageData;
+        const ext = product.productCover?.ext || '';
+
+        const {decodedImage} = decodeBase64Image(image, ext, productCover);
+
+        product.productCover = decodedImage;
+
+
+        dispatch(pushProduct({product: product}));
 
         if (response.data.success){
             dispatch(pushNotification({

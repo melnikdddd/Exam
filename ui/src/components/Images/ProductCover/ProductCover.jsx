@@ -21,9 +21,10 @@ function ProductCover(props) {
 
     useEffect(() => {
         if (isImageNeedDecoding){
-            setThisImage(decodeBase64Image(image.data.data, image.ext, defaultImage).decodedImage);
+            setThisImage(decodeBase64Image(image.data, image.ext, defaultImage).decodedImage);
         }
     }, [image]);
+
 
 
     return (

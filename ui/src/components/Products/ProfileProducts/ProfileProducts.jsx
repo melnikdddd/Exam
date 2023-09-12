@@ -7,7 +7,6 @@ import ProductCard from "../../Card/ProductCatd/ProductCard";
 function ProfileProducts(props) {
     const {products, isOwner, isBlocked} = props;
 
-    console.log(products);
 
     if (isBlocked) {
         return (
@@ -32,7 +31,7 @@ function ProfileProducts(props) {
             }
             {
                 products && products?.length > 0 ?
-                    <div className={"flex gap-3 flex-wrap justify-center"}>
+                    <div className={"flex gap-3 flex-wrap justify-center gap-y-5"}>
                         {
                             products.map((product) => (
                                 <ProductCard product={product} key={product._id} isOwner={isOwner}/>

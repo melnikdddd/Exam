@@ -69,7 +69,6 @@ export const passwordRegex = {
 }
 
 export const login = (dispatch, token, userData, products) => {
-    console.log(userData);
     dispatch(setToken(token));
     dispatch(setOwnerProducts({products: products}));
     dispatch(setUserData(userData));
@@ -196,7 +195,6 @@ export const validateRepeatPassword = (repeatPassword, password) => {
 let firstEffectFlag = true;
 export const firstEffectEntry = async (dispatch, setIsLoading) => {
     const firstEffect = async () => {
-        console.log("firstEffect")
         firstEffectFlag = false;
         const localStorage = window.localStorage;
         const token = localStorage.getItem('token');

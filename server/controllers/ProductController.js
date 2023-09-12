@@ -1,21 +1,24 @@
-import {_decodingImagesFromArray, compressImage, getFileExtensionFromFilename} from "../utils/SomeUtils/fsWorker.js";
-import ModelsWorker from "../utils/Model/modelsWorker.js";
+import ModelsWorker, {removeUserProductsType} from "../utils/Model/modelsWorker.js";
+import {compressImage, getFileExtensionFromFilename} from "../utils/SomeUtils/fsWorker.js";
 import ProductModel from "../models/ProductModel.js";
 import {generateUniqueCode, getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
-import {addUserProductsType} from "./UserController.js";
 import UserModel from "../models/UserModel.js";
 
-const modelWorker = new ModelsWorker(ProductModel);
+import {addUserProductsType} from "../utils/Model/modelsWorker.js";
 
 
 export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
 
+
+
+const modelWorker = new ModelsWorker(ProductModel);
 
 class ProductController {
     createProduct = async (req, res) => {
         try {
             const ownerId = req.userId;
             const body = req.body;
+
 
             // const decodedImages = [];
             // if (req.body.files){
@@ -24,6 +27,7 @@ class ProductController {
             // }
 
             const file = req.file;
+
 
             const ext = getFileExtensionFromFilename(file.originalname);
 
@@ -79,10 +83,12 @@ class ProductController {
                 return res.status(404).json({success: false, message: "Cant find"});
             }
 
+
             if (userId && product.owner.toString() !== userId) {
                 product.viewsCount++;
                 await product.save();
             }
+
 
             const owner = await UserModel
                 .findById(product.owner)
@@ -98,37 +104,42 @@ class ProductController {
     }
     removeProduct = async (req, res) => {
         const productId = req.params.id;
-        const userId = req.body.userId;
-        if (userId !== req.userId) {
-            return res.status(450).json({message: 'you cant do it'})
-        }
+        const userId = req.userId;
+
+        console.log(req.body.productType);
 
         try {
             await ProductModel.findOneAndRemove({
                 _id: productId
             })
-            res.json({success: 'true'})
+
+            console.log(userId);
+
+            await removeUserProductsType(userId, req.body.productType);
+
+            return  res.status(200).json({success: 'true'})
         } catch (e) {
-            res.json({success: 'false', message: e})
+            console.log(e);
+            return res.json({success: 'false', message: e})
         }
     }
     editProduct = async (req, res) => {
         try {
             const productId = req.params.id;
 
-            console.log(req.body);
 
-            const {imageOperation, rating, ...body} = req.body;
 
-            const imageData = getImagesOptions(req.file, imageOperation, "productCover");
+            const {imageOperation, ...body} = req.body;
 
+
+            const imageData
+                = getImagesOptions(req.file, imageOperation, "productCover");
 
             //задаю только те значение, которые можно поменять
 
-            modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.operationType);
+            modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
 
             const result = await modelWorker.findAndUpdate(productId, body, imageData.image);
-
             return res.status(200).json(result);
         } catch (e) {
             console.log(e);
@@ -160,28 +171,6 @@ class ProductController {
         return res.status(200).json({types: productTypes});
     }
 
-    //дописать когда буду работать с фронтом
-    updateRating = async (req, res) => {
-        try {
-            const userId = req.userId;
-            const {productId, rateNum} = req.body.productId;
-
-            const flag = await ProductModel.findOneAndUpdate({productId}, (document) => {
-                if (userId === document._id) {
-                    return false;
-                }
-                const vote = document.idOfUsersVotes.includes(userId) ? 0 : 1;
-                document.rating = this.#service.calculateRating(document.rating, {rateNum, vote});
-                return true;
-            });
-
-            return res.status(200).json({success: flag});
-
-        } catch (Error) {
-
-        }
-
-    }
 
 
     #service = {

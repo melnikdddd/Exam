@@ -1,6 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {decodeBase64Image} from "../../components/Images/utils";
 
+const productCover = process.env.PUBLIC_URL + "/DefaultProductImage.png";
+
 
 const initialState = {
     data: {
@@ -45,24 +47,17 @@ const UserDataSlice = createSlice({
             data.userAvatar = decodedImage;
             data.isDefaultImage = isDefaultImage;
 
-
             state.data = data;
         },
         clearUserData: (state, action) => {
             state.data = initialState.data;
-            state.products = initialState.products;
-        },
-        setOwnerProducts: (state, action) => {
-            state.products = action.payload.products;
+            state.products = [];
         },
         updateValue: (state, action) => {
             state.data[action.payload.field] = action.payload.value;
         },
         clearValue: (state, action) => {
             state.data[action.payload.field] = null;
-        },
-        pushProduct: (state, action) => {
-            state.products.push(action.payload.product);
         },
         updateChatsInfo: (state, action) => {
             const {chatId, user, message} = action.payload.data;
@@ -117,6 +112,45 @@ const UserDataSlice = createSlice({
                 return chat;
             });
             state.data.chatsInfo = updatedChatInfo;
+        },
+        pushProduct: (state, action) => {
+            state.products.push(action.payload.product);
+        },
+        setOwnerProducts: (state, action) => {
+            const products = action.payload.products;
+
+            if (products.length === 0){
+                return;
+            }
+
+            const updatedProducts = [];
+
+            products.forEach(product => {
+                const imageData = product?.productCover.data.data || ''
+                const image = imageData.length === 0 || !imageData ? '' : imageData;
+                const ext = product.productCover?.ext || '';
+
+
+                const {decodedImage} = decodeBase64Image(image, ext, productCover);
+                product.productCover = decodedImage;
+                updatedProducts.push(product)
+            });
+
+            state.products = updatedProducts;
+
+        },
+        updateProduct: (state, action) => {
+            const {product} = action.payload;
+
+            const productIndex = state.products.findIndex(prod => prod._id === product._id);
+
+            state.products[productIndex] = product;
+
+        },
+        removeProduct: (state,action)=>{
+            const productId = action.payload;
+
+            state.products.filter(product=> product._id !== productId);
         }
     }
 });
@@ -150,7 +184,6 @@ export const selectUserData = state => state.userData.data;
 export const selectUserImage = state => state.userData.data.userAvatar;
 
 
-
 export const selectUserProducts = state => state.userData.products;
 
 export const {
@@ -163,6 +196,8 @@ export const {
     setUsersToChatInfo,
     readMessage,
     setOwnerProducts,
+    updateProduct,
+    removeProduct,
 } = UserDataSlice.actions;
 
 

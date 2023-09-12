@@ -1,9 +1,9 @@
 import {useParams} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserData} from "../../../store/slices/UserDataSlice";
-import {Navigate} from "react-router-dom";
+import {removeProduct, selectUserData, updateProduct, updateValue} from "../../../store/slices/UserDataSlice";
+import {Navigate, useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import {fetchGet, getProduct} from "../../../utils/Axios/axiosFunctions";
+import {fetchGet, fetchRemove, fetchUpdate, getProduct} from "../../../utils/Axios/axiosFunctions";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import LoadingBlock from "../../../components/Loading/LoadingBlock/LoadingBlock";
@@ -19,9 +19,16 @@ import FormErrorMessage from "../../../components/Message/FormErrorMessage";
 import ProductInput from "../ProductInput/ProductInput";
 
 import styles from "./EditProduct.module.scss"
+import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
+import {decodeBase64Image} from "../../../components/Images/utils";
+import productCard from "../../../components/Card/ProductCatd/ProductCard";
+
+const defaultImage = process.env.PUBLIC_URL + "/DefaultProductImage.png";
+
 
 function EditProduct(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const fileInputRef = useRef(null);
 
@@ -31,8 +38,6 @@ function EditProduct(props) {
 
     const [image, setImage] = useState("");
     const [uploadedImage, setUploadedImage] = useState(null);
-    const [isDefaultImage, setIsDefaultImage] = useState(true);
-
 
     const [product, setProduct] = useState(null);
 
@@ -55,6 +60,7 @@ function EditProduct(props) {
             isValid,
             dirtyFields,
         },
+        handleSubmit,
         setValue,
         watch,
         reset,
@@ -67,6 +73,7 @@ function EditProduct(props) {
             title: product?.title || "",
             productType: product?.title || "",
             price: product?.price || "",
+            isCoverChange: false,
         }
     })
 
@@ -74,6 +81,7 @@ function EditProduct(props) {
     const description = watch("description");
     const characteristics = watch("characteristics");
     const productType = watch("productType");
+    const isCoverChange = watch("isCoverChange");
 
     const values = watch();
 
@@ -87,8 +95,32 @@ function EditProduct(props) {
         }
     }
 
+    const handleRemoveProduct = async () => {
+        const response = await fetchRemove(`products/${id}`, {productType: productType});
+
+        if (response.success === true){
+            dispatch(pushNotification({
+                value: {
+                    title: "Success", type: "inform", text: "Your profile has been removed.", createdAt: moment()
+                },
+                field: "appNotifications"
+            }))
+            dispatch(removeProduct({productId: product._id}));
+            navigate(`/users/${ownerId}`, {state: {isProfileSelected : false}})
+            return;
+        }
+
+        dispatch(pushNotification({
+            value: {
+                title: "Success", type: "error", text: "Try again later", createdAt: moment()
+            },
+            field: "appNotifications"
+        }))
+
+    }
+
     const handleFileChange = (event) => {
-        setIsDefaultImage(false);
+        setValue("isCoverChange", true, {shouldDirty: true});
         const file = event.target.files[0];
         setUploadedImage(file);
         if (file) {
@@ -100,13 +132,51 @@ function EditProduct(props) {
         }
     }
 
+    const onSubmit = async (data) => {
+        setIsFormSending(true)
+        const {isCoverChange, ...sendData} = data;
+
+        const formData = new FormData();
+        if (isCoverChange && uploadedImage) {
+            formData.append("productCover", uploadedImage);
+            formData.append("imageOperation", "replace");
+        }
+        formData.append("userId", product.owner);
+
+
+        for (const [key, value] of Object.entries(sendData)) {
+            if (dirtyFields[key]) {
+                if (value) formData.append(key, value);
+            }
+        }
+
+        const response = await fetchUpdate(`/products/${product._id}`, formData);
+        setIsFormSending(false);
+        if (response.success === true) {
+            sendData.productCover = image;
+            dispatch(updateProduct({product:sendData}));
+            resetForm(sendData);
+            return;
+        }
+        reset();
+    }
+
+    const resetForm = (newData) => {
+        dispatch(pushNotification({
+            field: "appNotifications",
+            value: {
+                title: "Success", type: "done", text: "Product has been updated.", createdAt: moment()
+            },
+        }));
+        reset({isCoverChange: false, ...newData});
+        setUploadedImage(null);
+    }
 
 
     useEffect(() => {
         Object.keys(dirtyFields).length > 0 ?
             setIsDirty(true) : setIsDirty(false);
     }, [values]);
-
 
     useEffect(() => {
         setDescriptionsLength(description.length);
@@ -124,13 +194,23 @@ function EditProduct(props) {
             setProductsType(types.data.types);
         }
         const setData = async () => {
-
             const {PRODUCT} = await getProduct(id, ownerId);
+
             if (!PRODUCT) {
                 return;
             }
 
+            const imageData = PRODUCT.productCover?.data.data || '';
+            const image = imageData.length === 0 || !imageData ? '' : imageData;
+            const ext = PRODUCT.productCover?.ext || '';
+
+            const {decodedImage} = decodeBase64Image(image, ext, defaultImage);
+
+            PRODUCT.productCover = decodedImage;
+
             setProduct(PRODUCT);
+
+            console.log(reset);
 
             await getProductsTypes();
             reset(PRODUCT);
@@ -163,19 +243,18 @@ function EditProduct(props) {
                 },
             }
         ));
-
         return <Navigate to={"/home"}/>
     }
 
     return (
         <BackGround background={"linear-gradient(160deg, #0093E9 0%, #80D0C7 100%)"}>
             <Container>
-                <form className={"my-6 bg-white p-10 rounded shadow-lg flex flex-col"}>
+                <form onSubmit={handleSubmit(onSubmit)}
+                      className={"my-6 bg-white p-10 rounded shadow-lg flex flex-col"}>
                     <h1 className={"text-3xl text-center mb-3"}>Edit product.</h1>
-                    <div className={"flex justify-center"}>
+                    <div className={`flex justify-center`}>
                         <ProductCover image={image}
-                                      isImageNeedDecoding={isDefaultImage}
-                                      className={"w-72 rounded-lg"}
+                                      className={"h-72 rounded-lg"}
                                       imageClassName={"rounded-lg"}
                                       isChanged={true}
                                       isRemoveButtonHidden={true}
@@ -186,10 +265,10 @@ function EditProduct(props) {
                                onInput={handleFileChange}
                                ref={fileInputRef}
                                accept={".jpg,.jpeg"}
-                               />
+                        />
                     </div>
-                    <div className="flex items-center justify-around mt-5">
-                        <div className={"flex flex-col"}>
+                    <div className={`flex items-start justify-around mt-5 ${styles.flexCol768}`}>
+                        <div className={"flex flex-col "}>
                             <label>Title</label>
                             <ProductInput placeholder={"Title"}
                                           className={"min-w-[310px]"}
@@ -215,7 +294,7 @@ function EditProduct(props) {
                         </div>
                         <div className={"flex flex-col"}>
                             <label>Product type</label>
-                            <Select className={"mt-0 min-w-[310px]"}
+                            <Select className={"mt-0 min-w-[310px] h-[46px]"}
                                     onChange={handleSelectChange}
                                     value={productType}
                             >
@@ -229,7 +308,7 @@ function EditProduct(props) {
                             </Select>
                         </div>
                     </div>
-                    <div className={"flex items center justify-around mt-5"}>
+                    <div className={`flex items center justify-around mt-5 ${styles.flexCol1100}`}>
                         <div className={"flex flex-col flex-1 items-center mt-3"}>
                             <label>
                                 Description.
@@ -342,11 +421,16 @@ function EditProduct(props) {
                         </div>
                     </div>
                     <div className={"flex justify-around mt-5"}>
-                        <button type={"submit"} disabled={!(isDirty && isValid)}
-                                className={styles.submit}>
-                            Submit
-                        </button>
-                        <button type={"button"}
+                        {isFormSending ?
+                           <LoadingButton className={"py-3 px-4"}/>
+                            :
+                            <button type={"submit"} disabled={!(isDirty && isValid)}
+                                    className={styles.submit}>
+                                Submit
+                            </button>
+                        }
+
+                        <button type={"button"} onClick={handleRemoveProduct}
                                 className={"bg-red-500 py-3 px-4 rounded-lg transition-colors hover:bg-red-600 cursor-pointer"}>
                             Remove
                         </button>

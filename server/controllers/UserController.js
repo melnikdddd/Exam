@@ -25,7 +25,6 @@ class UserController {
             return res.json({success: true,})
         }
         return res.json({success: false})
-
     }
     updateUser = async (req, res) => {
         try {
@@ -41,7 +40,8 @@ class UserController {
             }
 
             //создаю объект настроек для дальнейшей работы с файлом
-            const imageData = getImagesOptions(req.file, imageOperation, "userAvatar");
+            const imageData
+                = getImagesOptions(req.file, imageOperation, "userAvatar");
 
             //задаю эти настройки в ImageWorker
             modelWorker.setImageWorkerOptions(imageData.options.operation, imageData.options.imageFieldName);
@@ -95,7 +95,6 @@ class UserController {
 
         return res.status(200).json({success: true, user: user, products: products});
     }
-
     getUsersInChat = async (req, res) => {
         try {
             const {usersIds} = req.body;
@@ -108,8 +107,6 @@ class UserController {
             return res.status(500).json({success: false, message: "Server error"})
         }
     }
-
-
     getUsers = async (req, res) => {
         try {
             const params = req.query;
@@ -152,8 +149,6 @@ class UserController {
     }
 
     #service = {
-
-
         sortUsers: (users, field) => {
             const sortFields = {
                 mostSales: "deals.sales",
@@ -179,7 +174,6 @@ class UserController {
             })
 
         },
-
     }
 }
 
@@ -212,21 +206,6 @@ export const updateChatsInfo = async (ownId, data) => {
     return true;
 }
 
-export const addUserProductsType = async (userId, productType) => {
-    const filter = {_id: userId};
-    const update = {$inc: {[`productsType.${productType}`]: 1}};
-    const options = {upsert: true, new: true}; // upsert: true создаст документ, если его нет
-
-    try {
-        const user = await userModel.findOneAndUpdate(filter, update, options);
-        if (!user) {
-            return false; // Обработка случая, если документ не найден
-        }
-        return true;
-    } catch (e) {
-        return false; // Обработка ошибок
-    }
-}
 export const setOnline = async (userId) => {
     await UserModel.findOneAndUpdate({_id: userId}, {isOnline: true})
 }

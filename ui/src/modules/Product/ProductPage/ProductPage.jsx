@@ -17,6 +17,11 @@ import RatingButtons from "../../../components/Buttons/RatingButton/RatingButton
 import {selectIsAuth} from "../../../store/slices/AuthSlice";
 
 import  styles from "./ProductPage.module.scss"
+import {decodeBase64Image} from "../../../components/Images/utils";
+
+
+const defaultImage = process.env.PUBLIC_URL + "/DefaultProductImage.png";
+
 
 function ProductPage(props) {
     const ownerId = useSelector(selectUserData)._id;
@@ -32,10 +37,21 @@ function ProductPage(props) {
     const [isOwner, setIsOwner] = useState(null);
 
 
+
+
     useEffect(() => {
         const setData = async () => {
 
             const {PRODUCT, USER} = await getProduct(id, ownerId);
+
+            const imageData = PRODUCT.productCover.data.data || ''
+            const image = imageData.length === 0 || !imageData ? '' : imageData;
+            const ext = PRODUCT.productCover?.ext || '';
+
+            const {decodedImage} = decodeBase64Image(image, ext, defaultImage);
+
+
+            PRODUCT.productCover = decodedImage;
 
             setProduct(PRODUCT);
             setUser(USER);
@@ -49,7 +65,6 @@ function ProductPage(props) {
 
     useEffect(() => {
         if (user) {
-            console.log("set")
             setIsOwner(isAuth && user._id === ownerId)
         }
     }, [user]);
@@ -73,7 +88,6 @@ function ProductPage(props) {
                         <div className={styles.topInformation}>
                             <ProductCover
                                 image={product.productCover}
-                                isImageNeedDecoding={true}
                                 className={styles.cover}
                                 imageClassName={"rounded-lg"}
                             />

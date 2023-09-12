@@ -4,7 +4,7 @@ import CommentModel from "../../models/CommentModel.js";
 import ProductModel from "../../models/ProductModel.js";
 
 import bcrypt from "../auth/bcrypt.js";
-import sharp from "sharp";
+import userModel from "../../models/UserModel.js";
 
 
 class ModelsWorker {
@@ -35,6 +35,14 @@ class ModelsWorker {
             delete data.password;
         }
 
+        if (data.productType) {
+            const flag = await
+                replaceUserProductType(data.userId, document.productType, data.productType);
+            console.log(flag);
+            if (!flag) {
+                return {success: false, message: "User products type cant update"};
+            }
+        }
 
         if (data.listType === "like" || data.listType === "dislike") {
             const doc = this.#updateRating(document, data.userId, data.listType, data.operation);
@@ -92,7 +100,7 @@ class ModelsWorker {
     }
     #updateRating = (document, userId, ratingType, ratingOperation) => {
 
-        const likesFilter = document.rating.likes.filter(rate =>  rate.toString() !== userId.toString());
+        const likesFilter = document.rating.likes.filter(rate => rate.toString() !== userId.toString());
         console.log(likesFilter);
         if (ratingType === "like" && ratingOperation === "add") {
             likesFilter.push(userId);
@@ -206,6 +214,47 @@ export const _checkDuplicate = async (valueType, value) => {
     //false - dont exists
     const user = await UserModel.findOne({[valueType]: value});
     return !!user;
+}
+export const addUserProductsType = async (userId, productType) => {
+    const filter = {_id: userId};
+    const update = {$inc: {[`productsType.${productType}`]: 1}};
+    const options = {new: true}; // upsert: true создаст документ, если его нет
+
+    try {
+        const user = await userModel.findOneAndUpdate(filter, update, options);
+        return user;
+
+    } catch (e) {
+        return false; // Обработка ошибок
+    }
+}
+export const removeUserProductsType = async (userId, productType) => {
+    const filter = {_id: userId};
+    const update = {$unset: {[`productsType.${productType}`]: -1}};
+    const options = {new: true};
+
+    try {
+        const user = await userModel.findOneAndUpdate(filter, update, options);
+        if (user && user.productsType && user.productsType[productType] <= 0) {
+            delete user.productsType[productType];
+            await user.save();
+        }
+        return user;
+    } catch (e) {
+        return false;
+    }
+}
+export const replaceUserProductType = async (userId, oldType, newType) => {
+    let flag = await addUserProductsType(userId, newType);
+    if (!flag) {
+        await removeUserProductsType(userId, newType);
+        return flag;
+    }
+    flag = await removeUserProductsType(userId, oldType);
+    if (!flag) {
+        await addUserProductsType(userId, oldType)
+    }
+    return flag;
 }
 
 
