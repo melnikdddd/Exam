@@ -175,11 +175,9 @@ function ProfileSetting(props) {
     }
 
     return (
-        <form className={"flex w-full h-full"} onSubmit={handleSubmit(onSubmit)}>
-            <div className={"flex flex-col items-center"}>
-                <div
-                    className={"border rounded-lg flex flex-col p-6 pb-4 bg-white shadow-md items-center justify-center"}>
-
+        <form className={styles.wrap} onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.leftContent}>
+                <div className={styles.userCard}>
                     <UserAvatar image={image} className={"h-44 w-44 mb-3"} isOwner={true}
                                 isChanged={true} onClick={handleImageClick}
                                 setIsClicked={setIsImageRemoved} isClicked={isImageRemoved}/>
@@ -274,7 +272,7 @@ function ProfileSetting(props) {
 
                 </div>
             </div>
-            <div className={"flex flex-col justify-between w-full ml-2"}>
+            <div className={styles.rightContent}>
                 <div className={"bg-white shadow-md  rounded-lg flex flex-col justify-around p-16 h-3/4 mb-5"}
                      style={{minHeight: "359px"}}>
                     <div className={"w-full flex flex-col"}>

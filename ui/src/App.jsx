@@ -17,6 +17,7 @@ import Users from "./modules/Users/Users";
 import CreateProduct from "./modules/Product/CreateProduct/CreateProduct";
 import ProductPage from "./modules/Product/ProductPage/ProductPage";
 import EditProduct from "./modules/Product/EditProduct/EditProduct";
+import Market from "./pages/Market/Market";
 
 
 const routes = createBrowserRouter(createRoutesFromElements(
@@ -34,8 +35,8 @@ const routes = createBrowserRouter(createRoutesFromElements(
                 </PrivateRoute>
             }/>
         </Route>
-        <Route path={'/market'}>
-        </Route>
+        <Route path={'/market'} element={<Market/>}/>
+
         <Route path={"/products"}>
             <Route path={":id"} exact element={
                 <PrivateRoute isAuthNeed={true}>

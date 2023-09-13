@@ -1,14 +1,19 @@
 .filterBlock {
   @apply flex flex-col w-full max-w-[291px] border-r border-gray-400 rounded-l-lg;
+
+  @media (max-width: 500px) {
+    @apply w-[250px];
+  }
 }
 
 .wrap{
- @apply min-h-[80vh]  rounded-lg flex flex-col mt-7 bg-white;
+ @apply min-h-[80vh] rounded-lg flex flex-col mt-7 bg-white;
 }
 
 .filters {
   @apply absolute flex flex-col bg-black bg-opacity-70 rounded-b-lg z-10;
   margin-top: 52px;
+
 }
 
 .filterButton {
@@ -16,6 +21,7 @@
   &:not(.selected) {
     @apply hover:bg-slate-200 hover:text-blue-400;
   }
+
 
   &.selected {
     @apply text-blue-500 bg-slate-300;

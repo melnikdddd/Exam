@@ -10,7 +10,6 @@ import {addUserProductsType} from "../utils/Model/modelsWorker.js";
 export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
 
 
-
 const modelWorker = new ModelsWorker(ProductModel);
 
 class ProductController {
@@ -117,7 +116,7 @@ class ProductController {
 
             await removeUserProductsType(userId, req.body.productType);
 
-            return  res.status(200).json({success: 'true'})
+            return res.status(200).json({success: 'true'})
         } catch (e) {
             console.log(e);
             return res.json({success: 'false', message: e})
@@ -126,7 +125,6 @@ class ProductController {
     editProduct = async (req, res) => {
         try {
             const productId = req.params.id;
-
 
 
             const {imageOperation, ...body} = req.body;
@@ -144,6 +142,49 @@ class ProductController {
         } catch (e) {
             console.log(e);
             return res.status(400).json({success: false, message: e})
+        }
+    }
+
+    getProductsTypesWithMaxPrice = async (req, res) => {
+        try {
+            const result = await ProductModel.aggregate([
+                {
+                    $group: {
+                        _id: '$productType',
+                        maxPrice: {$max: '$price'},
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        productType: '$_id',
+                        maxPrice: 1,
+                    },
+                },
+            ]);
+
+            const resultMap = [];
+
+            result.forEach((item) => {
+                resultMap.push({name: item.productType, price: item.maxPrice})
+            });
+
+
+            resultMap.unshift({
+                name: "All",
+                price: this.#service.findMaxPrice(resultMap)
+            })
+
+            return res.status(200).json({
+                success: true,
+                categoryWithPrice: resultMap
+            })
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({
+                success: false,
+                message: "Server error"
+            })
         }
     }
 
@@ -172,42 +213,16 @@ class ProductController {
     }
 
 
-
     #service = {
-        // calculateRating: (rating, {rateNum, vote}) => {
-        //     return {
-        //         votes: rating.votes + vote,
-        //         ratingNumber: rating.ratingNumber + rateNum
-        //     }
-        // },
-        // getImagesOptions(files, bodyImageOptions){
-        //     return {
-        //         imagesParams: {
-        //             images: files,
-        //             indexes: bodyImageOptions?.indexes
-        //         },
-        //         options: {
-        //             operation: bodyImageOptions?.operation,
-        //             operationType:  "array"
-        //         },
-        //     }
-        // },
-        // parseQueryParams(filters){
-        //     const filterParams = filters.split('&');
-        //
-        //     // Создаем объект для хранения параметров фильтра
-        //     const filterObj = {};
-        //
-        //     // Обрабатываем каждый параметр фильтра
-        //     filterParams.forEach(param => {
-        //         const [key, value] = param.split('=');
-        //         // Удаляем лишние кавычки из значения
-        //         const processedValue = value.replace(/"/g, '');
-        //         filterObj[key] = processedValue;
-        //     });
-        //
-        //     return filterObj;
-        // }
+        findMaxPrice: (productsTypes) => {
+            let maxPrice = 0;
+            productsTypes.forEach(item=>{
+                if (item.price > maxPrice) {
+                    maxPrice = item.price;
+                }
+            })
+            return maxPrice;
+        }
     }
 
 

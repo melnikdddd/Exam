@@ -12,3 +12,24 @@
 
 }
 
+.wrap{
+  @apply flex w-full h-full gap-2;
+    @media (max-width: 768px) {
+      @apply flex-col;
+    }
+}
+
+.leftContent{
+  @apply flex flex-col items-center;
+
+  .userCard{
+    @apply border rounded-lg flex flex-col p-6 pb-4 bg-white shadow-md items-center justify-center;
+    @media (max-width: 768px) {
+      @apply w-full rounded-t-none;
+    }
+  }
+}
+
+.rightContent{
+  @apply flex flex-col justify-between w-full;
+}

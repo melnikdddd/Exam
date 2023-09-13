@@ -9,8 +9,8 @@ const upload = multer();
 
 
 ProductRouter.route('/types').get(ProductController.getProductTypes);
+ProductRouter.route('/typesWithPrice').get(ProductController.getProductsTypesWithMaxPrice);
 
-// ProductRouter.get('/:filters', ProductController.getThirty);
 
 ProductRouter.route('/:id')
     .get(ProductController.getProduct)
@@ -19,8 +19,6 @@ ProductRouter.route('/:id')
 
 ProductRouter.route('/')
     .post(_checkAuth, ProductValidator, upload.single('productCover'), ProductController.createProduct)
-//     .get(ProductController.getThirty);
-
 
 
 

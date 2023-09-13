@@ -24,6 +24,7 @@ function Users(props) {
 
     const [productsType, setProductsType] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
     const [isFiltersSelected, setIsFiltersSelected] = useState(false);
 
     const [firstEffect, setFirstEffect] = useState(true);
@@ -47,7 +48,7 @@ function Users(props) {
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            nickname: searchParams.has("nickname") ?  "@" + searchParams.get("nickname") : "",
+            nickname: searchParams.has("nickname") ? "@" + searchParams.get("nickname") : "",
         }
     });
     const nickname = watch("nickname");
@@ -56,7 +57,7 @@ function Users(props) {
     const onSubmit = async (data) => {
         data.productsType = selectedProductType;
 
-        if (data.nickname.startsWith("@")){
+        if (data.nickname.startsWith("@")) {
             data.nickname = data.nickname.slice(1);
         }
 
@@ -91,7 +92,7 @@ function Users(props) {
         const selectedValue = event.target.value;
         setSelectedProductType(selectedValue);
 
-        if (searchParams.has("productsType")){
+        if (searchParams.has("productsType")) {
             searchParams.set("productsType", selectedValue);
         } else {
             searchParams.append("productsType", selectedValue);
@@ -116,11 +117,11 @@ function Users(props) {
 
     }
     const toggleFamiliarUsersToSearchParams = (flag, familiarUsers) => {
-        if (flag){
+        if (flag) {
             searchParams.delete("users");
             return;
         }
-        if (searchParams.has("users")){
+        if (searchParams.has("users")) {
             searchParams.set("users", familiarUsers);
         } else {
             searchParams.append("users", familiarUsers);
@@ -191,9 +192,6 @@ function Users(props) {
     }, [nickname]);
 
 
-
-
-
     if (!isLoading) {
         return (
             <BackGround background={"linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%)"}>
@@ -221,8 +219,7 @@ function Users(props) {
                             </button>
                             <div className={`${styles.filters} ${!isFiltersSelected && "hidden"}`}>
                                 <div className={"p-3"}>
-                                    <div
-                                        className={"border border-gray-400 px-2 py-4 rounded-lg flex flex-col bg-white"}>
+                                    <div className={"border border-gray-400 px-2 py-4 rounded-lg flex flex-col bg-white"}>
                                         <h3 className={"text-lg text-center font-bold"}>Familiar users</h3>
                                         <div className={"flex justify-around my-3"}>
                                             <button type={"button"} disabled={!(isAuth && favoritesUsers.length)}
@@ -326,9 +323,10 @@ function Users(props) {
                         <input type="text" className={styles.searchInput}
                                placeholder={"@Nickname..."}
                                {...register("nickname")}
+                               maxLength={16}
                         />
                     </form>
-                    <div className={"w-full flex flex-wrap p-10 gap-[30px] justify-center"}>
+                    <div className={"w-full flex flex-wrap p-10 gap-x-14 gap-y-5 justify-start"}>
                         {users.length > 0
                             ?
                             users.map(user => (

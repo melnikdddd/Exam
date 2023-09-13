@@ -119,7 +119,7 @@ const UserDataSlice = createSlice({
         setOwnerProducts: (state, action) => {
             const products = action.payload.products;
 
-            if (products.length === 0){
+            if (!products.length || products.length === 0){
                 return;
             }
 

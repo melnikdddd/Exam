@@ -245,8 +245,8 @@ function CreateProduct(props) {
                                                   message: "Minimum 5 characters.",
                                               },
                                               maxLength: {
-                                                  value: 20,
-                                                  message: "Maximum 20 characters.",
+                                                  value: 40,
+                                                  message: "Maximum 40 characters.",
                                               }
                                           })
                                       }}/>

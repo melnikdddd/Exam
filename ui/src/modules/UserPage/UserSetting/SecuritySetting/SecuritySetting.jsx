@@ -15,12 +15,15 @@ import {useNavigate} from "react-router-dom";
 import {pushNotification} from "../../../../store/slices/NotificationSlice";
 import moment from "moment/moment";
 import LoadingButton from "../../../../components/Buttons/LoadingButton/LoadingButton";
+import useWindowDimensions from "../../../../components/hooks/useWindowDimensions";
 
 function SecuritySetting(props) {
     const navigate = useNavigate()
     const owner = useSelector(selectUserData);
     const dispatch = useDispatch();
     const id = owner._id;
+
+    const innerWidth = useWindowDimensions().width;
 
     const [isPasswordFocus, setIsPasswordFocus] = useState(false);
     const [passwordReliability, setPasswordReliability] = useState("");
@@ -156,10 +159,9 @@ function SecuritySetting(props) {
     }
 
     return (
-        <form className={"flex flex-col w-full h-full"} onSubmit={handleSubmit(onSubmit)}>
-            <div className={"flex justify-between w-full h-full"}>
-                <div className={"border rounded-lg flex flex-col p-7 bg-white shadow-md items-center justify-start "}
-                     style={{maxWidth: "300px"}}>
+        <form className={"flex flex-col w-full h-full pb-4"} onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.wrap}>
+                <div className={`${styles.block} ${styles.first}`}>
                     <h1 className={"text-2xl"}>Change password</h1>
                     <hr className={"bg-slate-800 w-full my-3"}/>
                     <div className={"flex flex-col w-full mt-10"}>
@@ -185,8 +187,10 @@ function SecuritySetting(props) {
                                    onBlur={() => setIsPasswordFocus(false)}
                         />
 
-                        {isPasswordFocus &&
-                            <HelperCard height={"250px"} right={"710px"}>
+                        {isPasswordFocus && innerWidth > 1100 &&
+                            <HelperCard height={"250px"}
+                                        right={"250px"}
+                            >
                                 <div className={"flex justify-between items-center text-lg"}>
                                     <span>Reliability:</span>
                                     <span
@@ -223,9 +227,7 @@ function SecuritySetting(props) {
                     </div>
 
                 </div>
-                <div
-                    className={"border rounded-lg flex flex-col p-7 bg-white shadow-md items-center justify-start ml-2"}
-                    style={{minWidth: "280px"}}>
+                <div className={`${styles.block} `}>
                     <h1 className={"text-2xl"}>Change email</h1>
                     <hr className={"bg-slate-800 w-full my-3"}/>
                     <div className={"flex flex-col w-full my-3"}>
@@ -240,7 +242,7 @@ function SecuritySetting(props) {
                         }}/>
                         <FormErrorMessage errorField={errors?.email}/>
                     </div>
-                    <ul className={"list-disc text-gray-500"}>
+                    <ul className={`list-disc text-gray-500 ${styles.listNone}`}>
                         <li className={"mt-3"}>Data about your account activity will be sent to this email.</li>
                         <li className={"mt-3"}>Login details will be changed.</li>
                         {owner.email &&
@@ -248,9 +250,7 @@ function SecuritySetting(props) {
                         }
                     </ul>
                 </div>
-                <div
-                    className={"border rounded-lg flex flex-col p-7 bg-white shadow-md items-center justify-start ml-2"}
-                    style={{minWidth: "270px"}}>
+                <div className={`${styles.block} `}>
                     <h1 className={"text-2xl"}>Change phone number</h1>
                     <hr className={"bg-slate-800 w-full my-3"}/>
                     <div className={"flex flex-col w-full my-3"}>
@@ -265,7 +265,7 @@ function SecuritySetting(props) {
                         }}/>
                         <FormErrorMessage errorField={errors?.phoneNumber}/>
                     </div>
-                    <ul className={"list-disc text-gray-500"}>
+                    <ul className={`list-disc text-gray-500 ${styles.listNone}`}>
                         <li className={"mt-3"}>Data about your account activity will be sent to this phone number.</li>
                         <li className={"mt-3"}>Login details will be changed.</li>
                         {owner.phoneNumber &&
@@ -273,9 +273,7 @@ function SecuritySetting(props) {
                         }
                     </ul>
                 </div>
-                <div
-                    className={"border rounded-lg flex flex-col p-7 bg-white shadow-md items-center justify-start ml-2"}
-                    style={{maxWidth: "300px"}}>
+                <div className={`${styles.block} `}>
                     <h1 className={"text-2xl"}>Remove account</h1>
                     <hr className={"bg-slate-800 w-full my-3"}/>
                     <div className={"w-full flex flex-col"}>
@@ -295,7 +293,7 @@ function SecuritySetting(props) {
                             Remove account
                         </button>
                     </div>
-                    <ul className={"list-disc text-gray-500"}>
+                    <ul className={`list-disc text-gray-500 ${styles.listNone}`}>
                         <li className={"mt-3"}>All data associated with your account, except for the history of
                             transactions and messages, will be deleted.
                         </li>
@@ -304,7 +302,7 @@ function SecuritySetting(props) {
                 </div>
             </div>
             <div className={"w-full flex items-center justify-center mt-3"}>
-                <div className={"border rounded-lg flex p-3 bg-white shadow-md items-center justify-center ml-2 w-1/5"}>
+                <div className={styles.buttonBlock}>
                     {isLoading ?
                         <LoadingButton/>
                         :

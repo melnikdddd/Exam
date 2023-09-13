@@ -102,7 +102,7 @@ function Header(props) {
                     </Link>
                 </li>
                 <li>
-                    <Link to={'/products'} className={`${styles.dropDownMenuItem} mt-3`}>
+                    <Link to={'/market'} className={`${styles.dropDownMenuItem} mt-3`}>
                         <span className={"text-2xl text-slate-100"}>Market</span>
                         <FontAwesomeIcon icon={faShop}
                                          className={styles.dropDownIcon}
