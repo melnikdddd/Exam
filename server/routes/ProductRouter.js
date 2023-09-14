@@ -7,9 +7,10 @@ import multer from "multer";
 const ProductRouter = express.Router();
 const upload = multer();
 
+ProductRouter.route('/').get(ProductController.getProducts)
 
 ProductRouter.route('/types').get(ProductController.getProductTypes);
-ProductRouter.route('/typesWithPrice').get(ProductController.getProductsTypesWithMaxPrice);
+ProductRouter.route('/typesWithPrice').get(ProductController.getProductsTypesWithPrice);
 
 
 ProductRouter.route('/:id')

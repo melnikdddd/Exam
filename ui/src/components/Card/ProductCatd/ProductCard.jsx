@@ -6,12 +6,14 @@ import {Link} from "react-router-dom";
 function ProductCard(props) {
     const {product} = props;
     const {productCover, price, title, rating, viewsCount, _id} = product;
+    const {isImageNeedDecoding} = props;
 
 
     return (
         <Link to={`/products/${_id}`} className={"w-[310px] bg-white h-[480px] rounded-lg shadow-md flex flex-col cursor-pointer hover:bg-sky-200 transition-colors"}>
             <div className={"flex justify-center items-center"}>
                 <ProductCover image={productCover}
+                              isImageNeedDecoding={isImageNeedDecoding}
                               isChanged={false}
                               className={"h-[300px] rounded-t-lg"}
                               imageClassName={"rounded-t-lg"}

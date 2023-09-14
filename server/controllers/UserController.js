@@ -4,9 +4,9 @@ import {usersString, userString} from "../utils/SomeUtils/strings.js";
 import ModelsWorker from "../utils/Model/modelsWorker.js";
 import {_checkFieldsOnDuplicate, checkPassword} from "../utils/auth/utils.js";
 import userModel from "../models/UserModel.js";
-import pkg from "lodash";
 import {getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
 
+import pkg from "lodash";
 const {get} = pkg;
 
 const modelWorker = new ModelsWorker(UserModel);
@@ -111,8 +111,6 @@ class UserController {
         try {
             const params = req.query;
 
-            console.log(params);
-
             const filterParams = {
                 nickname: {$regex: new RegExp(params.nickname, 'i')},
             };
@@ -134,11 +132,9 @@ class UserController {
 
             const users = await UserModel.find(filterParams).select(usersString)
 
-            const sortingUsers = this.#service.sortUsers(users, params.filter);
-
-
             if (!users) return res.status(200).json({users: [], success: true});
 
+            const sortingUsers = this.#service.sortUsers(users, params.filter);
 
             return res.status(200).json({users: sortingUsers});
         } catch (error) {

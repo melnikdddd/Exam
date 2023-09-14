@@ -15,6 +15,7 @@ import {useSelector} from "react-redux";
 import {selectUserData} from "../../store/slices/UserDataSlice";
 import {selectIsAuth} from "../../store/slices/AuthSlice";
 import Select from "../../components/Inputs/Select/Select";
+import {setDataToSearchParams} from "../../utils/SearchPages";
 
 
 function Users(props) {
@@ -61,15 +62,7 @@ function Users(props) {
             data.nickname = data.nickname.slice(1);
         }
 
-        Object.keys(data).forEach((key) => {
-            if (!data[key]) {
-                searchParams.delete(key);
-                setSearchParams(searchParams);
-                return;
-            }
-            searchParams.has(key) ? searchParams.set(key, data[key]) : searchParams.append(key, data[key]);
-            setSearchParams(searchParams);
-        })
+        setDataToSearchParams(data, searchParams, setSearchParams);
 
         await find();
 
@@ -87,7 +80,6 @@ function Users(props) {
 
         toggleFamiliarUsersToSearchParams(isBlockedUsersSelect, blockedUsers);
     }
-
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedProductType(selectedValue);
@@ -121,12 +113,7 @@ function Users(props) {
             searchParams.delete("users");
             return;
         }
-        if (searchParams.has("users")) {
-            searchParams.set("users", familiarUsers);
-        } else {
-            searchParams.append("users", familiarUsers);
-        }
-        setSearchParams(searchParams);
+        setParams(familiarUsers, "users");
     }
 
     useEffect(() => {
@@ -175,13 +162,7 @@ function Users(props) {
                 return;
             }
 
-            if (!searchParams.has("nickname")) {
-                searchParams.append("nickname", nicknameForSent);
-            } else {
-                searchParams.set("nickname", nicknameForSent);
-            }
-
-            setSearchParams(searchParams);
+            setParams(nicknameForSent, "nickname");
 
             await find();
         }
@@ -190,6 +171,15 @@ function Users(props) {
 
 
     }, [nickname]);
+
+    const setParams = (value, field) => {
+        if (searchParams.has(field)) {
+            searchParams.set(field, value);
+        } else {
+            searchParams.append(field, value);
+        }
+        setSearchParams(searchParams);
+    }
 
 
     if (!isLoading) {
@@ -288,9 +278,6 @@ function Users(props) {
 
                                                         Most successful sales
                                                     </label>
-                                                </div>
-                                                <div className={"flex justify-center w-full items-center mt-1"}>
-
                                                 </div>
                                             </div>
                                             <hr className={"my-3 bg-gray-400 h-0.5"}/>

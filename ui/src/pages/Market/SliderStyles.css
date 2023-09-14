@@ -6,6 +6,7 @@
     @apply border-blue-500;
 }
 
+
 .customSlider .rc-slider-track {
     @apply bg-blue-500;
 }
@@ -26,11 +27,12 @@
 
 /* Изменение цвета для точек (dots) на синий */
 .rc-slider-dot {
-    @apply bg-blue-500;
-    @apply border-blue-500;
+    @apply bg-blue-300;
+    @apply border-blue-300;
 }
 
 /* Изменение цвета для активных точек (dots) на синий */
 .rc-slider-dot-active {
-    @apply bg-blue-500;
+    @apply bg-yellow-500;
+    @apply border-yellow-500;
 }

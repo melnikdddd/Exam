@@ -6,6 +6,9 @@ import UserModel from "../models/UserModel.js";
 
 import {addUserProductsType} from "../utils/Model/modelsWorker.js";
 
+import pkg from "lodash";
+const {get} = pkg;
+
 
 export const productTypes = ["All", "Clothes", "Cosmetics", "Medicine", "Goods for children", "Phones", "Appliances"];
 
@@ -145,35 +148,84 @@ class ProductController {
         }
     }
 
-    getProductsTypesWithMaxPrice = async (req, res) => {
+    getProducts = async (req, res) => {
+        try {
+            const params = req.query;
+            console.log(params);
+
+            const filterParams = {
+            };
+
+            if (params.title){
+                filterParams.title = { $regex: new RegExp(params.title, 'i') }
+            }
+            if (params.code){
+                filterParams.code = { $regex: new RegExp(params.code, 'i') }
+            }
+
+            if (params.priceFilter === "free") {
+                filterParams.price = 0;
+            } else {
+                const priceFilter = {
+                    $gte: +params.minPrice,
+                    $lte: +params.maxPrice,
+                };
+                filterParams.price = priceFilter;
+            }
+
+            if (params.productsType && params.productsType !== 'All') {
+                filterParams[`productType.${params.productsType}`] = { $exists: true };
+            }
+
+            const products = await ProductModel.find(filterParams);
+
+            if (!products) return res.status(200).json({products: []});
+
+            const sortingProducts = this.#service.sortProducts(products, params.filter, params.priceFilter);
+
+            return res.status(200).json({products: sortingProducts});
+
+        } catch (e){
+            return res.status(500).json({success: false, message: "ServerError"})
+        }
+
+    }
+
+    getProductsTypesWithPrice = async (req, res) => {
         try {
             const result = await ProductModel.aggregate([
                 {
                     $group: {
                         _id: '$productType',
-                        maxPrice: {$max: '$price'},
+                        maxPrice: { $max: '$price' },
+                        minPrice: { $min: '$price' },
+                        productType: { $first: '$productType' },
                     },
                 },
-                {
-                    $project: {
-                        _id: 0,
-                        productType: '$_id',
-                        maxPrice: 1,
-                    },
-                },
+
             ]);
 
             const resultMap = [];
 
+            let overallMinPrice = Number.MAX_VALUE;
+            let overallMaxPrice = Number.MIN_VALUE;
+
             result.forEach((item) => {
-                resultMap.push({name: item.productType, price: item.maxPrice})
+                resultMap.push({
+                    name: item.productType,
+                    minPrice: item.minPrice,
+                    maxPrice: item.maxPrice,
+                });
+
+                overallMinPrice = Math.min(overallMinPrice, item.minPrice);
+                overallMaxPrice = Math.max(overallMaxPrice, item.maxPrice);
             });
 
-
             resultMap.unshift({
-                name: "All",
-                price: this.#service.findMaxPrice(resultMap)
-            })
+                name: 'All',
+                minPrice: overallMinPrice,
+                maxPrice: overallMaxPrice,
+            });
 
             return res.status(200).json({
                 success: true,
@@ -188,43 +240,59 @@ class ProductController {
         }
     }
 
-    // getThirty = async (req, res) => {
-    //     try {
-    //         const startIndex = req.body.startIndex;
-    //         const queryParams = req.params
-    //         const query = ProductModel.find();
-    //         if (queryParams.filters) {
-    //             const parsedFilters = this.#service.parseQueryParams(queryParams.filters)
-    //             console.log(parsedFilters)
-    //             query.where(parsedFilters);
-    //         }
-    //
-    //         const products = await query.skip(startIndex).limit(30).exec();
-    //         return res.json({...products});
-    //
-    //     } catch (error) {
-    //         console.log(error)
-    //         return res.status(500).json({message: 'Something goes wrong with db'})
-    //     }
-    // }
-
     getProductTypes = async (req, res) => {
         return res.status(200).json({types: productTypes});
     }
 
 
     #service = {
-        findMaxPrice: (productsTypes) => {
-            let maxPrice = 0;
-            productsTypes.forEach(item=>{
-                if (item.price > maxPrice) {
-                    maxPrice = item.price;
-                }
-            })
-            return maxPrice;
-        }
-    }
+        sortProducts: (products, field, priceField) => {
+            const sortFields = {
+                mostOld: "_createdAt",
+                mostNew: "_createdAt",
+                mostLikes: "rating.likes.length",
+                mostViews: "viewsCount",
+            }
+            const sortPriceFields = {
+                mostExpensive: "price",
+                mostCheap: "price",
+            }
 
+            const filterField = sortFields[field];
+
+           let sortedProducts =  this.#service.sortArray(products, filterField);
+
+            if (field === "mostNew"){
+                sortedProducts = sortedProducts.reverse();
+            }
+
+            if (priceField === "free" || !priceField){
+                return sortedProducts;
+            }
+            const priceSortedProducts = this.#service.sortArray(sortedProducts, filterField);
+            if (priceField === "mostCheaper"){
+                return priceSortedProducts.reverse();
+            }
+            return priceSortedProducts;
+        },
+
+        sortArray(array, filter){
+            return array.sort((a,b)=>{
+
+                const valueA = Number(get(a, filter))
+                const valueB = Number(get(b, filter));
+
+
+                if (valueA < valueB) {
+                    return 1;
+                } else if (valueA > valueB) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+
+    }
 
 }
 
