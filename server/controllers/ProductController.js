@@ -174,7 +174,8 @@ class ProductController {
             }
 
             if (params.productsType && params.productsType !== 'All') {
-                filterParams[`productType.${params.productsType}`] = { $exists: true };
+                console.log(`productType.${params.productsType}`);
+                filterParams.productType = params.productsType;
             }
 
             const products = await ProductModel.find(filterParams);
@@ -186,6 +187,7 @@ class ProductController {
             return res.status(200).json({products: sortingProducts});
 
         } catch (e){
+            console.log(e);
             return res.status(500).json({success: false, message: "ServerError"})
         }
 
@@ -255,21 +257,25 @@ class ProductController {
             }
             const sortPriceFields = {
                 mostExpensive: "price",
-                mostCheap: "price",
+                mostCheaper: "price",
             }
 
             const filterField = sortFields[field];
 
            let sortedProducts =  this.#service.sortArray(products, filterField);
 
+
             if (field === "mostNew"){
-                sortedProducts = sortedProducts.reverse();
+                sortedProducts = [...sortedProducts].reverse();
             }
 
             if (priceField === "free" || !priceField){
                 return sortedProducts;
             }
-            const priceSortedProducts = this.#service.sortArray(sortedProducts, filterField);
+
+            const priceSortField = sortPriceFields[priceField];
+            const priceSortedProducts = this.#service.sortArray(sortedProducts, priceSortField);
+
             if (priceField === "mostCheaper"){
                 return priceSortedProducts.reverse();
             }

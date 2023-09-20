@@ -10,12 +10,13 @@ function ProductCard(props) {
 
 
     return (
-        <Link to={`/products/${_id}`} className={"w-[310px] bg-white h-[480px] rounded-lg shadow-md flex flex-col cursor-pointer hover:bg-sky-200 transition-colors"}>
+        <Link to={`/products/${_id}`} className={"w-[310px]  h-[480px] rounded-lg shadow-md flex flex-col cursor-pointer hover:bg-sky-200 transition-colors bg-slate-50"}>
             <div className={"flex justify-center items-center"}>
                 <ProductCover image={productCover}
                               isImageNeedDecoding={isImageNeedDecoding}
+                              isMarketImage={true}
                               isChanged={false}
-                              className={"h-[300px] rounded-t-lg"}
+                              className={"w-full rounded-t-lg"}
                               imageClassName={"rounded-t-lg"}
                 />
             </div>
@@ -34,7 +35,11 @@ function ProductCard(props) {
                     </div>
                 </div>
                 <div className={"text-center text-xl mt-3"}>
-                    {price}$
+                    {price === 0 ?
+                        <span className={"font-bold"}>Free</span>
+                        :
+                        <span>{price}$</span>
+                    }
                 </div>
                 <div className={"text-end"}>
                     <span><FontAwesomeIcon icon={faEye} /> {viewsCount}</span>

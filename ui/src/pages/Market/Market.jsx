@@ -22,8 +22,6 @@ import ProductCard from "../../components/Card/ProductCatd/ProductCard";
 import {setDataToSearchParams} from "../../utils/SearchPages";
 
 function Market(props) {
-
-    const [firstEffect, setFirstEffect] = useState(true);
     const innerWidth = useWindowDimensions().width;
     const [isLoading, setIsLoading] = useState(false);
 
@@ -61,14 +59,12 @@ function Market(props) {
     const code = watch("code");
 
     const onSubmit = async (data) => {
-        checkPrice();
         const {currentMinPrice, selectedType, currentMaxPrice, ...dataForSent} = data
-
         setDataToSearchParams(dataForSent, searchParams, setSearchParams);
-
         await find();
     }
     const find = async () => {
+
         checkPrice();
         const searchParamsObject = Object.fromEntries(searchParams);
 
@@ -83,8 +79,10 @@ function Market(props) {
         setFindMessage("Not found.")
         setProducts([]);
     }
-
     const checkPrice = () => {
+        if (!range?.min || !range?.max) {
+            return;
+        }
         if (currentMaxPrice > range.max) {
             setValue("currentMaxPrice", range.max);
         }
@@ -99,7 +97,6 @@ function Market(props) {
         setParams(currentMinPrice, "minPrice");
         setParams(currentMaxPrice, "maxPrice");
     }
-
     const setParams = (value, field) => {
         if (searchParams.has(field)) {
             searchParams.set(field, value);
@@ -137,33 +134,38 @@ function Market(props) {
             const categoryWithPrice = response.data.categoryWithPrice;
 
 
-            const allMinPrice = categoryWithPrice[0].minPrice;
-            const allMaxPrice = categoryWithPrice[0].maxPrice;
-
             setProductsTypesWithPrice(categoryWithPrice);
 
-            setIsFreeEnabled(allMinPrice !== 0);
+            const selectedType =  searchParams.has("productsType") ? searchParams.get("productsType") : "All"
+            const {minPrice, maxPrice} = categoryWithPrice.find(category => category.name === selectedType)
 
             reset({
-                selectedType: searchParams.has("productsType") ? searchParams.get("productsType") : "All",
-                currentMinPrice: searchParams.has("minPrice") ? searchParams.get("minPrice") : allMinPrice,
-                currentMaxPrice: searchParams.has("maxPrice") ? searchParams.get("maxPrice") : allMaxPrice,
+                selectedType: selectedType,
+                currentMinPrice: searchParams.has("minPrice") ? searchParams.get("minPrice") : minPrice,
+                currentMaxPrice: searchParams.has("maxPrice") ? searchParams.get("maxPrice") : maxPrice,
                 title: searchParams.has("title") ? searchParams.get("title") : "",
                 code: searchParams.has("code") ? searchParams.get("code") : "",
             })
 
-            const average = (allMinPrice + allMaxPrice) / 2;
+            setIsFreeEnabled(minPrice !== 0);
+
+
+            const average = (minPrice + maxPrice) / 2;
 
             setMarks({
-                [allMinPrice]: allMinPrice,
+                [minPrice]: minPrice,
                 [average]: average,
-                [allMaxPrice]: allMaxPrice,
+                [maxPrice]: maxPrice,
             })
 
             setRange({
-                min: allMinPrice,
-                max: allMaxPrice,
+                min: minPrice,
+                max: maxPrice,
             });
+
+            if (searchParams.size) {
+                await find()
+            }
 
             setIsLoading(true);
         }
@@ -200,7 +202,7 @@ function Market(props) {
     }, [selectedType]);
 
     useEffect(() => {
-        if (!currentMinPrice) return;
+        if (!currentMinPrice && currentMinPrice !== 0) return;
         setParams(currentMinPrice, "minPrice");
     }, [currentMinPrice]);
 
@@ -276,6 +278,7 @@ function Market(props) {
                                         <h3 className={"text-lg text-center font-bold"}>Category</h3>
                                         <Select
                                             onChange={handleSelectChange}
+                                            value={selectedType}
                                         >
                                             {productsTypesWithPrice.map((product, index) => (
                                                 <option key={index}>
@@ -339,7 +342,7 @@ function Market(props) {
                                         <div className={"flex items-center justify-center w-full mt-1"}>
                                             <label>
                                                 <input type="radio" className={"cursor-pointer disabled:cursor-default"}
-                                                       value={"Free"} disabled={isFreeEnabled}
+                                                       value={"free"} disabled={isFreeEnabled}
                                                        {...register("priceFilter")}
                                                 />
                                                 <span className={"ml-2 "}>
@@ -411,7 +414,7 @@ function Market(props) {
                                {...register("code")}
                         />
                     </form>
-                    <div className={"w-full flex flex-wrap p-10 gap-x-14 gap-y-5 justify-start"}>
+                    <div className={styles.productWrap}>
                         {products.length > 0
                             ?
                             products.map(product => (

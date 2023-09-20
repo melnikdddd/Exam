@@ -87,6 +87,10 @@ function NotificationItem(props) {
 
 
     const icons = {
+        startMessage: {
+            icon: faMessage,
+            bg: "text-blue-500",
+        },
         warning: {
             icon: faTriangleExclamation,
             bg: "text-yellow-500"

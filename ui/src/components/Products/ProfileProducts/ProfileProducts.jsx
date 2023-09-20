@@ -31,10 +31,14 @@ function ProfileProducts(props) {
             }
             {
                 products && products?.length > 0 ?
-                    <div className={"flex gap-x-14 gap-y-5 flex-wrap justify-start"}>
+                    <div className={styles.productsWrap}>
                         {
                             products.map((product) => (
-                                <ProductCard product={product} key={product._id} isOwner={isOwner}/>
+                                <ProductCard product={product}
+                                             key={product._id}
+                                             isOwner={isOwner}
+                                             isImageNeedDecoding={!isOwner}
+                                />
                             ))
                         }
                     </div>

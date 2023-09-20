@@ -22,6 +22,10 @@ const UserAvatar = (props) => {
 
     useEffect(()=>{
         if (isImageNeedDecoding){
+            if (image.data.data){
+                setThisImage(decodeBase64Image(image.data.data, image.ext).decodedImage)
+                return;
+            }
             setThisImage(decodeBase64Image(image.data, image.ext).decodedImage)
         }
     },[image])

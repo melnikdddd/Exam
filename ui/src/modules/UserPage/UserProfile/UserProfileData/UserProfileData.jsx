@@ -14,7 +14,6 @@ function UserProfileData(props) {
     const [showProfileOptions, setShowProfileOptions] = useState(false);
     const {user, owner, isOwner, isAuth, isBlocked, setIsBlocked} = props;
 
-
     const [data, setData] =
         useState({user, owner, isOwner, isAuth, isBlocked, setIsBlocked});
 
@@ -60,10 +59,15 @@ function UserProfileData(props) {
 
     const lastOnline = isOnline ? "Now" : moment(data.user.lastOnline).calendar();
 
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.leftCard}>
-                <UserAvatar image={data.user.userAvatar} className={styles.userAvatar} isOwner={data.isOwner}/>
+                <UserAvatar image={data.user.userAvatar}
+                            className={styles.userAvatar}
+                            isOwner={data.isOwner}
+                            isImageNeedDecoding={!data.isOwner}
+                />
                 <div className={`${styles.userText}`} style={{minWidth: "190px"}}>
                     <span className={"text-2xl flex-1 mr-0.5"}>{data.user.firstname} {data.user.lastname}</span>
                     <div>

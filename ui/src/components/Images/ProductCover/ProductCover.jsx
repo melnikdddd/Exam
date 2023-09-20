@@ -15,16 +15,22 @@ function ProductCover(props) {
 
     const {setIsClicked, isClicked} = props;
 
-    useEffect(()=>{
-        setThisImage(image)
-    },[image])
+
 
     useEffect(() => {
-        if (isImageNeedDecoding){
+        setThisImage(image)
+    }, [image])
+
+    useEffect(() => {
+        if (isImageNeedDecoding) {
+            if (image.data.data) {
+                setThisImage(decodeBase64Image(image.data.data, image.ext, defaultImage).decodedImage);
+                return;
+            }
             setThisImage(decodeBase64Image(image.data, image.ext, defaultImage).decodedImage);
+
         }
     }, [image]);
-
 
 
     return (

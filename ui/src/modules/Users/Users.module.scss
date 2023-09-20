@@ -16,6 +16,16 @@
 
 }
 
+.usersWrap{
+  @apply w-full flex flex-wrap p-10 gap-x-14 gap-y-5 justify-start;
+  @media (max-width: 800px) {
+    @apply gap-x-10 justify-center;
+  }
+  @media (max-width: 800px) {
+    @apply gap-x-2 justify-center;
+  }
+}
+
 .filterButton {
   @apply text-lg text-center w-full h-full py-3 transition-colors cursor-pointer rounded-tl-lg;
   &:not(.selected) {

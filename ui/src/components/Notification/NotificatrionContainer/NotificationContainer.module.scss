@@ -1,9 +1,11 @@
 .notifications {
-  @apply absolute  w-72 bg-gray-500 bg-opacity-60 overflow-hidden rounded-lg shadow-2xl p-8
+  @apply absolute w-72 bg-gray-500 bg-opacity-60 overflow-hidden rounded-lg shadow-2xl p-8 max-h-[600px]
   flex flex-col;
-
   backdrop-filter: blur(7px);
-  max-height: 900px;
+
+  @media (max-width: 600px) {
+    @apply w-full h-full;
+  }
 }
 
 .button {

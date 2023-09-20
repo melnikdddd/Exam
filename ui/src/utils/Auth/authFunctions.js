@@ -7,6 +7,7 @@ import {
 } from "../../store/slices/NotificationSlice";
 import Socket from "../Socket/socket";
 import {clearChat} from "../../store/slices/ActiveChatSlice";
+import moment from "moment";
 
 export function checkIdentityValue(value) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -72,6 +73,8 @@ export const login = (dispatch, token, userData, products) => {
     dispatch(setToken(token));
     dispatch(setOwnerProducts({products: products}));
     dispatch(setUserData(userData));
+    setMessageNotification(userData.chatsInfo, dispatch);
+
 
     Socket.createConnect(userData, dispatch);
 
@@ -85,6 +88,7 @@ export const logout = (dispatch) => {
     dispatch(clearUserData());
     dispatch(clearChat());
     dispatch(clearAllNotifications());
+
 
     Socket.closeConnect();
 }
@@ -225,6 +229,7 @@ export const firstEffectEntry = async (dispatch, setIsLoading) => {
         dispatch(setUserData(user))
         dispatch(setOwnerProducts({products: products}));
         dispatch(setToken(token));
+        setMessageNotification(user.chatsInfo, dispatch);
         setIsLoading(true);
     }
 
@@ -232,4 +237,25 @@ export const firstEffectEntry = async (dispatch, setIsLoading) => {
        await firstEffect()
     }
 
+}
+
+
+const setMessageNotification = (chatsInfo, dispatch) => {
+    const unreadMessageCount = chatsInfo.reduce((count, chat) => {
+        if (!chat.read) {
+            return count + 1;
+        }
+        return count;
+    }, 0);
+
+    if (unreadMessageCount === 0){
+        return;
+    }
+
+    dispatch(pushNotification({
+        field: "usersNotifications",
+        value: {
+            title: "Messages", type: "startMessage", text: `You have ${unreadMessageCount} unread messages`, createdAt: moment()
+        },
+    }))
 }

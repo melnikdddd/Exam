@@ -55,13 +55,6 @@ function UserProfile(props) {
             const userAvatar = user.userAvatar;
 
 
-            const imageData = userAvatar?.data?.data || '';
-            const image = imageData.length === 0 || !imageData ? '' : imageData;
-            const ext = data.userAvatar?.ext || '';
-
-            const {decodedImage} = decodeBase64Image(image, ext);
-            user.userAvatar = decodedImage;
-
             setIsOwner(false);
             setUser(user);
             setProducts(products);

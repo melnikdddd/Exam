@@ -127,6 +127,11 @@ function Users(props) {
 
             setIsLoading(true);
 
+            if (searchParams.has("productsType")){
+                const prdType = searchParams.get("productsType");
+                setSelectedProductType(prdType);
+            }
+
             if (searchParams.has("users")) {
                 searchParams.delete("users");
                 setSearchParams(searchParams);
@@ -234,6 +239,7 @@ function Users(props) {
                                         <div className={"flex flex-col"}>
                                             <Select name={"productType"}
                                                     id={"productType"}
+                                                    value={selectedProductType ? selectedProductType : "All"}
                                                     onChange={handleSelectChange}
                                             >
                                                 {productsType.map((type, index) => (
@@ -313,7 +319,7 @@ function Users(props) {
                                maxLength={16}
                         />
                     </form>
-                    <div className={"w-full flex flex-wrap p-10 gap-x-14 gap-y-5 justify-start"}>
+                    <div className={styles.usersWrap}>
                         {users.length > 0
                             ?
                             users.map(user => (
