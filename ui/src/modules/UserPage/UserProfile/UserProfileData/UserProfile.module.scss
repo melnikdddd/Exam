@@ -62,14 +62,30 @@
 .blocked {
   @apply flex justify-center items-center;
   @media(max-width: 850px){
-    @apply bg-transparent shadow-none mt-5;
+    @apply bg-transparent shadow-none p-10 bg-white;
   }
 
+}
+.profileOptions{
+  @apply mb-28;
+  @media (max-width: 846px) and (min-width: 710px) {
+   @apply right-10
+  }
+  @media (max-width: 500px) {
+    @apply mb-32;
+  }
 }
 .createdAtWrap{
   @media (max-width: 500px) {
     @apply ml-4;
   }
+}
+.messageLink{
+  @apply  bg-gray-200 text-gray-600 cursor-default p-2 rounded transition-colors;
+  &:not([disabled]){
+    @apply bg-blue-500 text-white hover:bg-blue-600 cursor-pointer;
+  }
+
 }
 
 .sinceWrap{

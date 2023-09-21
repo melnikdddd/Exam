@@ -2,6 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import {decodeBase64Image} from "../../components/Images/utils";
 
 const productCover = process.env.PUBLIC_URL + "/DefaultProductImage.png";
+const removedImage = process.env.PUBLIC_URL + "/removedUser.png";
 
 
 const initialState = {
@@ -70,18 +71,15 @@ const UserDataSlice = createSlice({
                 lastMessage: {text: message.text, timestamp: message.timestamp}
 
             };
-            console.log(chatInfo);
 
 
             if (chatsInfo.length > 0) {
                 const chatIndex = chatsInfo.findIndex(chat => chat.chatId === chatId);
 
                 if (chatIndex !== -1) {
-                    console.log("updateChat")
                     state.data.chatsInfo[chatIndex].lastMessage = chatInfo.lastMessage;
                     return;
                 }
-                console.log("newChat")
 
                 state.data.chatsInfo.push(chatInfo);
                 return;
@@ -118,10 +116,12 @@ const UserDataSlice = createSlice({
         },
         setOwnerProducts: (state, action) => {
             const products = action.payload.products;
+            const length = products?.length || null;
 
-            if (!products.length || products.length === 0){
+            if (length === null || length === 0){
                 return;
             }
+
 
             const updatedProducts = [];
 
@@ -147,10 +147,10 @@ const UserDataSlice = createSlice({
             state.products[productIndex] = product;
 
         },
-        removeProduct: (state,action)=>{
+        removeProduct: (state, action) => {
             const productId = action.payload;
 
-            state.products.filter(product=> product._id !== productId);
+            state.products = state.products.filter(product => product._id !== productId);
         }
     }
 });
@@ -164,14 +164,29 @@ export const getUserDataFromLocalStorage = () => {
 }
 
 const replaceUserIdToUser = (chatsInfo, users) => {
+    const removedUser = {
+        _id : null,
+        firstname: "Removed",
+        lastname: "Account",
+        nickname: "Removed",
+        userAvatar: removedImage,
+        isRemoved: true
+    }
     return chatsInfo.map(chatInfo => {
-
         if (chatInfo.hasOwnProperty("user")) {
             return chatInfo;
         }
 
-        const user = users.find(user => user._id === chatInfo.userId);
+        const user = users.find(user => {
+            if (!user) return null;
+            return user._id === chatInfo.userId;
+        });
         const {userId, ...restChatInfo} = chatInfo;
+
+        if (!user){
+            return {...restChatInfo,user: removedUser};
+        }
+
         return {
             ...restChatInfo,
             user: user

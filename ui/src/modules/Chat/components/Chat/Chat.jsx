@@ -56,7 +56,6 @@ function Chat(props) {
     const chatInput = document.querySelector("#chatInput");
 
 
-
     useEffect(() => {
         const getMessages = async () => {
             console.log(chatId)
@@ -66,7 +65,7 @@ function Chat(props) {
             }
         }
 
-        if (chatId){
+        if (chatId) {
             getMessages();
             Socket.readMessage(owner._id, chatId);
             dispatch(readMessage({chatId: chatId}));
@@ -150,16 +149,31 @@ function Chat(props) {
                     />
                 }
                 <div className={`flex items-center`}>
-                    <Link to={`/users/${user._id}`} className="col">
-                        <UserAvatar image={user.userAvatar} className={"h-20 w-20"} isImageNeedDecoding={true}/>
-                    </Link>
+                    {user._id === null
+                        ?
+                        <UserAvatar image={user.userAvatar}
+                                    className={"h-20 w-20"}
+                                    isImageNeedDecoding={false}
+                        />
+                        :
+                        <Link to={`/users/${user._id}`} className="col">
+                            <UserAvatar image={user.userAvatar}
+                                        className={"h-20 w-20"}
+                                        isImageNeedDecoding={true}/>
+                        </Link>
+                    }
+
                     <div className="col ml-3">
                         <p>{user.lastname} {user.firstname}</p>
-                        <span className={"text-slate-400"}>
+                        {
+                            user._id !== null &&
+                            <span className={"text-slate-400"}>
                                 {
                                     user.isOnline ? "Online" : moment(user.lastOnline).calendar()
                                 }
                             </span>
+                        }
+
                     </div>
                 </div>
 
@@ -177,12 +191,13 @@ function Chat(props) {
 
                 {owner.blockedUsers.includes(user._id)
                     ?
-                    <CenterWrapper>
-                        <h1>User is blocked</h1>
-                    </CenterWrapper>
+                    <h1 className={"text-center"}>User is blocked</h1>
                     :
-                    <form className={"flex items-end"} onSubmit={handleSubmit(onSubmit)}>
-                        <div className={`w-3/4 rounded-xl border border-gray-300 p-2 flex items-end rounded-b-xl`}>
+                    user._id === null ?
+                        <h1 className={"text-center"}>User is Removed</h1>
+                        :
+                        <form className={"flex items-end"} onSubmit={handleSubmit(onSubmit)}>
+                            <div className={`w-3/4 rounded-xl border border-gray-300 p-2 flex items-end rounded-b-xl`}>
                         <textarea placeholder={"Enter text..."}
                                   className={styles.chatInput}
                                   rows={1}
@@ -190,31 +205,31 @@ function Chat(props) {
                                   onInput={handleInputChange}
                                   {...register("input", {required: true})}
                         />
-                            <div className={"relative"}>
-                                <FontAwesomeIcon icon={faFaceSmile}
-                                                 className={`h-6 cursor-pointer ${isEmojiShow ? 'text-blue-500' : 'text-gray-400'}`}
-                                                 onClick={() => setIsEmojiShow(!isEmojiShow)}
-                                />
-                                {
-                                    isEmojiShow && <EmojiPicker
-                                        adaptiveWidth={adaptiveWidth}
-                                        top={"-450px"}
-                                        left={innerWidth > adaptiveWidth ? "-320px" : "-160px"}
-                                        handleEmojiSelect={handleEmojiSelect}
-                                        onMouseLeave={handleEmojiSmileLeave}/>
-                                }
+                                <div className={"relative"}>
+                                    <FontAwesomeIcon icon={faFaceSmile}
+                                                     className={`h-6 cursor-pointer ${isEmojiShow ? 'text-blue-500' : 'text-gray-400'}`}
+                                                     onClick={() => setIsEmojiShow(!isEmojiShow)}
+                                    />
+                                    {
+                                        isEmojiShow && <EmojiPicker
+                                            adaptiveWidth={adaptiveWidth}
+                                            top={"-450px"}
+                                            left={innerWidth > adaptiveWidth ? "-320px" : "-160px"}
+                                            handleEmojiSelect={handleEmojiSelect}
+                                            onMouseLeave={handleEmojiSmileLeave}/>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <div className={"w-1/4 flex items-center justify-center"}>
-                            <button className={styles.submitButton} disabled={!isValid}>
-                                {innerWidth > adaptiveWidth ?
-                                    <span>Message</span>
-                                    :
-                                    <FontAwesomeIcon icon={faPaperPlane}/>
-                                }
-                            </button>
-                        </div>
-                    </form>
+                            <div className={"w-1/4 flex items-center justify-center"}>
+                                <button className={styles.submitButton} disabled={!isValid}>
+                                    {innerWidth > adaptiveWidth ?
+                                        <span>Message</span>
+                                        :
+                                        <FontAwesomeIcon icon={faPaperPlane}/>
+                                    }
+                                </button>
+                            </div>
+                        </form>
                 }
             </div>
         </div>

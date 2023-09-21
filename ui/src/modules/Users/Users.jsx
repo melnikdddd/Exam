@@ -223,7 +223,7 @@ function Users(props) {
                                                 <span>Favorites</span>
                                                 <FontAwesomeIcon icon={faBookmark} className={"ml-1"}/>
                                             </button>
-                                            <button type={"button"} disabled={!(isAuth && isBlockedUsersSelect.length)}
+                                            <button type={"button"} disabled={!(isAuth && blockedUsers.length)}
                                                     className={`${styles.familiarUsersButtons} ${isBlockedUsersSelect && styles.selected}`}
                                                     onClick={handleBlockedUsersSelect}>
                                                 <span>Blocked</span>

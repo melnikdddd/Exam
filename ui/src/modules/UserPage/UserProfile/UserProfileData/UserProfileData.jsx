@@ -9,6 +9,7 @@ import RatingButtons from "../../../../components/Buttons/RatingButton/RatingBut
 import {useEffect, useState} from "react";
 import ProfileOptions from "../ProfileOptions/ProfileOptions";
 import {convertObjectToString} from "../../../../utils/SomeFunctions";
+import {isDisabled} from "@testing-library/user-event/dist/utils";
 
 function UserProfileData(props) {
     const [showProfileOptions, setShowProfileOptions] = useState(false);
@@ -92,17 +93,20 @@ function UserProfileData(props) {
                             </>
                             :
                             <>
-                                <Link to={`/users/${owner._id}/chats`}
-                                      state={{
-                                          isChatSelect: true,
-                                          user: data.user
-                                      }}
-                                      className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 
-                                         transition-colors cursor-pointer disabled:bg-gray-100 disabled:text-gray-600
-                                          disabled:hover:none disabled:cursor-default`}
-                                      disabled={data.isBlocked}>
-                                    Message
-                                </Link>
+                                {isBlocked ?
+                                    <span className={"bg-gray-200 text-gray-600 p-2 rounded-lg"}>Message</span>
+                                    :
+                                    <Link to={ `/users/${owner._id}/chats`}
+                                          state={{
+                                              isChatSelect: true,
+                                              user: data.user
+                                          }}
+                                          className={styles.messageLink}
+                                          disabled={isBlocked}>
+                                        Message
+                                    </Link>
+                                }
+
                                 <FontAwesomeIcon icon={faEllipsisVertical}
                                                  className={`h-6 hover:text-blue-600 transition-colors cursor-pointer ml-7 ${showProfileOptions ? "text-blue-600" : ''}`}
                                                  onClick={handleShowOptionsClick}
@@ -114,6 +118,7 @@ function UserProfileData(props) {
                                                     owner={data.owner}
                                                     isBlocked={data.isBlocked}
                                                     setIsBlocked={data.setIsBlocked}
+                                                    className={styles.profileOptions}
                                     />
                                 }
                             </>

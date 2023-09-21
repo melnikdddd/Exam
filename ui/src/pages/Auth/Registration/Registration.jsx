@@ -7,6 +7,8 @@ import zxcvbn from "zxcvbn"
 import textStyles from "../../../styles/textStyles.module.scss"
 import {validateRepeatPassword} from "../../../utils/Auth/authFunctions";
 
+import styles from "./Registration.module.scss"
+
 
 import AuthCard, {HelperCard} from "../../../components/Card/AuthCard/AuthCard";
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
@@ -33,8 +35,6 @@ import {
 
 import {useDispatch} from "react-redux";
 
-import {setToken} from "../../../store/slices/AuthSlice";
-import {setUserData} from "../../../store/slices/UserDataSlice";
 import LoadingButton from "../../../components/Buttons/LoadingButton/LoadingButton";
 import useWindowDimensions from "../../../components/hooks/useWindowDimensions";
 
@@ -314,11 +314,12 @@ function Registration(){
                             </div>
                         </form>
                     </AuthCard>
-                        <div className={"absolute"} style={{width: "580px"}}>
+                        <div className={styles.terms}>
                             {showTerms && <Terms>
                                 <FontAwesomeIcon icon={faXmark} className={"h-7 w-7 cursor-pointer bg-red-500 rounded hover:bg-red-400 transition-colors"}
                                 onClick={handleCloseClick}/>
-                            </Terms>}
+                            </Terms>
+                            }
                         </div>
                     </CenterWrapper>
             </Container>

@@ -1,7 +1,7 @@
 import BackGround from "../../../components/Wrapper/BackGround/BackGround";
 import Container from "../../../components/Wrapper/Container/Container";
 import {useParams} from "react-router";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {selectUserData} from "../../../store/slices/UserDataSlice";
 import {useEffect, useState} from "react";
 import CenterWrapper from "../../../components/Wrapper/CenterWrapper/CenterWrapper";
@@ -11,13 +11,14 @@ import ProductCover from "../../../components/Images/ProductCover/ProductCover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faMessage, faPenToSquare, faThumbsDown, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import UserAvatar from "../../../components/Images/UserAvatar/UserAvatar";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import moment from "moment";
 import RatingButtons from "../../../components/Buttons/RatingButton/RatingButtons";
 import {selectIsAuth} from "../../../store/slices/AuthSlice";
 
 import  styles from "./ProductPage.module.scss"
 import {decodeBase64Image} from "../../../components/Images/utils";
+import {pushNotification} from "../../../store/slices/NotificationSlice";
 
 
 const defaultImage = process.env.PUBLIC_URL + "/DefaultProductImage.png";
@@ -26,6 +27,9 @@ const defaultImage = process.env.PUBLIC_URL + "/DefaultProductImage.png";
 function ProductPage(props) {
     const ownerId = useSelector(selectUserData)._id;
     const {id} = useParams();
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const isAuth = useSelector(selectIsAuth);
 
@@ -43,6 +47,17 @@ function ProductPage(props) {
         const setData = async () => {
 
             const {PRODUCT, USER} = await getProduct(id, ownerId);
+
+            if (!PRODUCT || !USER){
+                dispatch(pushNotification({
+                    field: "appNotifications",
+                    value: {
+                        title: "Error", type: "error", text: "Product not exists.", createdAt: moment()
+                    }
+                }))
+                navigate("/market");
+                return;
+            }
 
             const imageData = PRODUCT.productCover.data.data || ''
             const image = imageData.length === 0 || !imageData ? '' : imageData;

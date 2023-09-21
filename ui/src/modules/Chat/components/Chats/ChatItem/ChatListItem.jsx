@@ -1,8 +1,7 @@
 import UserAvatar from "../../../../../components/Images/UserAvatar/UserAvatar";
-import {text} from "@fortawesome/fontawesome-svg-core";
-import chat from "../../Chat/Chat";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
+
 
 function ChatListItem(props) {
     const {user, chatInfo, isSelected} = props;
@@ -16,7 +15,17 @@ function ChatListItem(props) {
             className={`flex justify-between items-start border-b py-2 px-3 cursor-pointer border-slate-400 w-full transition-colors ${isSelected ? 'bg-slate-200' : "hover:bg-gray-200"}`}
             onClick={props.onClick}>
             <div className={"flex"}>
-                <UserAvatar image={user.userAvatar} className={"w-20 h-20 min-w-[80px]"} isImageNeedDecoding={true}/>
+                {user._id === null ?
+                    <UserAvatar image={user.userAvatar}
+                                className={"w-20 h-20 min-w-[80px]"}
+                    />
+                    :
+                    <UserAvatar image={user.userAvatar}
+                                className={"w-20 h-20 min-w-[80px]"}
+                                isImageNeedDecoding={true}
+                    />
+                }
+
                 <div className={"flex flex-col ml-3"}>
                     <div>
                         <span className={"text-lg text-slate-700"}>{user.firstname + " " + user.lastname}</span>

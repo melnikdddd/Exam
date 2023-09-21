@@ -91,8 +91,9 @@ class ModelsWorker {
         const modelName = this.model.modelName + "Model";
 
         if (modelName !== "CommentModel") {
-            if (!await this.#clearDependency[modelName](id)) {
-                throw new Error("DEPENDENCY ERROR")
+            const flag = !await this.#clearDependency[modelName](id)
+            if (!flag){
+                return  false;
             }
         }
         return !!(await this.model.findOneAndDelete({_id: id}));
@@ -201,6 +202,7 @@ class ModelsWorker {
             return !(!await ProductModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({owner: userId})
                 && !await CommentModel.deleteMany({user: userId}))
+                && ! await deleteUserAndUpdateRelatedUsers(userId)
         },
         ProductModel: async (productId) => {
             return !await CommentModel.deleteMany({product: productId})
@@ -208,6 +210,8 @@ class ModelsWorker {
     }
 
 }
+
+
 
 export const _checkDuplicate = async (valueType, value) => {
     // true -  exists
@@ -256,6 +260,46 @@ export const replaceUserProductType = async (userId, oldType, newType) => {
     }
     return flag;
 }
+
+
+const deleteUserAndUpdateRelatedUsers = async (userIdToDelete) => {
+    try {
+        const usersToUpdate = await UserModel.find({
+            $or: [
+                { favoritesUsers: userIdToDelete },
+                { blockedUsers: userIdToDelete },
+            ],
+        });
+
+        if (!usersToUpdate || usersToUpdate.length === 0) {
+            return true;
+        }
+
+        const updatedUsersPromises = usersToUpdate.map(async (user) => {
+            if (user.favoritesUsers.length !== 0) {
+                user.favoritesUsers = user.favoritesUsers.filter(
+                    (id) => id !== userIdToDelete
+                );
+            }
+            if (user.blockedUsers.length !== 0) {
+                user.blockedUsers = user.blockedUsers.filter(
+                    (id) => id !== userIdToDelete
+                );
+            }
+            await user.save();
+        });
+
+        await Promise.all(updatedUsersPromises);
+
+        await UserModel.findByIdAndDelete(userIdToDelete);
+
+        return true;
+    } catch (error) {
+        console.error(`${error.message}`);
+        return false;
+    }
+};
+
 
 
 export default ModelsWorker;

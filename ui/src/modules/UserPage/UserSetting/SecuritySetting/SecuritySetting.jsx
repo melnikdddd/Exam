@@ -59,7 +59,8 @@ function SecuritySetting(props) {
     const email = watch("email");
     const phoneNumber = watch("phoneNumber")
     const password = watch("password");
-    const handleRemoveAccountClick = async () => {
+    const handleRemoveAccountClick = async (event) => {
+        event.preventDefault();
         const currentPassword = document.querySelector("#currentPassword").value;
 
         const response = await fetchRemove(`users/${id}`, {password: currentPassword})

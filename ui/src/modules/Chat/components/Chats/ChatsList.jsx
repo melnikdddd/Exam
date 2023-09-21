@@ -6,8 +6,9 @@ import {selectChatId, setSelectedChat} from "../../../../store/slices/ActiveChat
 function ChatsList(props) {
     const selectedChatId = useSelector(selectChatId);
     const {chatsInfo} = props;
-    console.log(chatsInfo);
     const dispatch = useDispatch();
+
+    console.log(chatsInfo);
 
     const selectChat = (user, chatId)=>{
         props.setIsChatSelected(true);

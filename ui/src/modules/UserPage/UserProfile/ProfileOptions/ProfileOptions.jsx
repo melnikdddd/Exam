@@ -77,7 +77,7 @@ function ProfileOptions(props){
     }
 
     return (
-        <ul className={styles.options}  onMouseLeave={props.onMouseLeave}>
+        <ul className={`${styles.options} ${props.className}`}  onMouseLeave={props.onMouseLeave}>
             <li className={`${styles.optionItem} rounded-t-lg ${styles.favorite} ${isFavorites ? styles.clicked : ''}`} onClick={handleFavoriteClick}>
                 <span>To favorites</span>
                 <FontAwesomeIcon icon={faBookmark}/>

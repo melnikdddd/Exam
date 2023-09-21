@@ -1,11 +1,11 @@
 import React from 'react';
-
+import styles from "./terms.module.scss"
 function Terms(props) {
     return (
-        <div className={"flex p-10 flex-col bg-white rounded-2xl border border-black"}>
+        <div className={styles.termsWrap}>
             <div className={"flex justify-end"}>{props.children}</div>
             <h1 className={"text-xl text-center"}>User Agreement Terms.</h1>
-            <ul className={"list-decimal"}>
+            <ul className={"list-decimal break-words"}>
                 <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores ducimus expedita laboriosam nisi praesentium quam quo suscipit. Dolores, facilis, natus?</li>
                 <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad animi eos harum ipsum odit officia sapiente sint totam velit. Error illum laboriosam neque voluptas. Id laudantium nesciunt obcaecati voluptate?</li>
                 <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi deleniti dicta, dolorum eius eveniet impedit ipsam ipsum, libero magnam maiores numquam perspiciatis quam rerum sit!</li>

@@ -32,7 +32,7 @@ export const getProduct = async (productId, ownerId) => {
 
         return {PRODUCT: data.product, USER: data.owner}
     } else {
-        return  false;
+        return {PRODUCT: null, USER: null};
     }
 
 }

@@ -101,7 +101,7 @@ function EditProduct(props) {
         if (response.success === true){
             dispatch(pushNotification({
                 value: {
-                    title: "Success", type: "inform", text: "Your profile has been removed.", createdAt: moment()
+                    title: "Success", type: "inform", text: "Your product has been removed.", createdAt: moment()
                 },
                 field: "appNotifications"
             }))

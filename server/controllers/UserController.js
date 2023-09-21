@@ -7,6 +7,7 @@ import userModel from "../models/UserModel.js";
 import {getImagesOptions} from "../utils/SomeUtils/someFunctions.js";
 
 import pkg from "lodash";
+
 const {get} = pkg;
 
 const modelWorker = new ModelsWorker(UserModel);
@@ -97,16 +98,23 @@ class UserController {
     }
     getUsersInChat = async (req, res) => {
         try {
-            const {usersIds} = req.body;
+            const { usersIds } = req.body;
 
-            const users = await UserModel.find({_id: {$in: usersIds}}).select("firstname lastname userAvatar nickname")
-            return users ? res.status(200).json({success: true, users: users}) :
-                res.status(404).json({success: false, message: "UserPage cannot find"});
+            const users = await UserModel.find({ _id: { $in: usersIds } }).select(
+                "firstname lastname userAvatar nickname"
+            );
 
+            const usersWithNull = usersIds.map((userId) => {
+                const foundUser = users.find((user) => user._id.toString() === userId.toString());
+                return foundUser || null;
+            });
+
+
+            return res.status(200).json({ success: true, users: usersWithNull });
         } catch (error) {
-            return res.status(500).json({success: false, message: "Server error"})
+            return res.status(500).json({ success: false, message: "Server error" });
         }
-    }
+    };
     getUsers = async (req, res) => {
         try {
             const params = req.query;
