@@ -31,7 +31,6 @@ function NotificationItem(props) {
 
     const {user, message, chatId} = props;
 
-    console.log(message);
 
     if (type === "message") {
         if (location.pathname === `/users/${ownerId}/chats` || activeChatId === chatId) {

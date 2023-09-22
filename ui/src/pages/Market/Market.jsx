@@ -69,7 +69,6 @@ function Market(props) {
         const searchParamsObject = Object.fromEntries(searchParams);
 
         const response = await fetchGet(`/products?${new URLSearchParams(searchParamsObject)}`);
-        console.log(response);
 
         if (response.data.products) {
             setProducts(response.data.products);

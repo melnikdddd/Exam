@@ -52,7 +52,6 @@ const Socket = class {
                 }
                 dispatch(updateChatsInfo({data: data}));
                 dispatch(addMessage({data: data}));
-                console.log(data);
                 if (data.message.sender !== _id) {
 
                     dispatch(pushNotification({

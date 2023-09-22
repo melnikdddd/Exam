@@ -88,7 +88,6 @@ function Login() {
             setIsLoading(false);
             errorHandler(loginErrors, responseData.status, setError, identityType);
             // errorHandler(loginErrors, responseData.status, setError, );
-            console.log(errors)
             return;
         }
         const {token, userData, products} = getAuthResponseValues(responseData);

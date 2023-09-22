@@ -210,7 +210,7 @@ function EditProduct(props) {
 
             setProduct(PRODUCT);
 
-            console.log(reset);
+
 
             await getProductsTypes();
             reset(PRODUCT);
@@ -327,8 +327,8 @@ function EditProduct(props) {
                                                       message: "Minimum 40 characters."
                                                   },
                                                   maxLength: {
-                                                      value: 700,
-                                                      message: "Maximum 700 characters.",
+                                                      value: 1000,
+                                                      message: "Maximum 1000 characters.",
                                                   }
                                               })
                                           }}
@@ -364,8 +364,8 @@ function EditProduct(props) {
                                                       message: "Minimum 40 characters."
                                                   },
                                                   maxLength: {
-                                                      value: 700,
-                                                      message: "Maximum 700 characters.",
+                                                      value: 1000,
+                                                      message: "Maximum 1000 characters.",
                                                   }
                                               })
                                           }}

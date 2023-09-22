@@ -19,7 +19,6 @@ const NotificationSlice = createSlice({
             const {field, value} = action.payload;
 
             value.notificationType = field;
-            console.log(field);
             state[field].push(value);
 
             state.popupNotifications.push(value);

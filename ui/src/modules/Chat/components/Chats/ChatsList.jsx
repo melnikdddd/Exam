@@ -8,7 +8,6 @@ function ChatsList(props) {
     const {chatsInfo} = props;
     const dispatch = useDispatch();
 
-    console.log(chatsInfo);
 
     const selectChat = (user, chatId)=>{
         props.setIsChatSelected(true);

@@ -108,14 +108,12 @@ class ProductController {
         const productId = req.params.id;
         const userId = req.userId;
 
-        console.log(req.body.productType);
 
         try {
             await ProductModel.findOneAndRemove({
                 _id: productId
             })
 
-            console.log(userId);
 
             await removeUserProductsType(userId, req.body.productType);
 
@@ -151,7 +149,6 @@ class ProductController {
     getProducts = async (req, res) => {
         try {
             const params = req.query;
-            console.log(params);
 
             const filterParams = {
             };
@@ -174,7 +171,6 @@ class ProductController {
             }
 
             if (params.productsType && params.productsType !== 'All') {
-                console.log(`productType.${params.productsType}`);
                 filterParams.productType = params.productsType;
             }
 

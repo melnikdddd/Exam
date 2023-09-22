@@ -58,7 +58,6 @@ function Chat(props) {
 
     useEffect(() => {
         const getMessages = async () => {
-            console.log(chatId)
             const response = await fetchGet(`chats/${owner._id}/${chatId}`);
             if (response.success) {
                 dispatch(loadMessages({messages: response.data.messages.messages}))
@@ -119,7 +118,6 @@ function Chat(props) {
             text: data.input,
             timestamp: Date.now()
         };
-        console.log(message);
         Socket.sendMessage({chatId: chatId, user: user, message: message});
         resetInput();
     }

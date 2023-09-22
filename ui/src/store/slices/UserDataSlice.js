@@ -84,7 +84,6 @@ const UserDataSlice = createSlice({
                 state.data.chatsInfo.push(chatInfo);
                 return;
             }
-            console.log("newChat from empty chatList")
             state.data.chatsInfo.push(chatInfo);
         },
         setUsersToChatInfo: (state, action) => {

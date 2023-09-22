@@ -29,9 +29,7 @@ const ActiveChatSlice = createSlice({
             }
 
             if (state.user._id === user._id){
-                console.log("push");
                 state.messages.push(message);
-
                 if (state.chatId === null){
                     state.chatId = chatId;
                 }

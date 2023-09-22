@@ -96,8 +96,6 @@ function Users(props) {
         const searchParamsObject = Object.fromEntries(searchParams);
 
         const response = await fetchGet(`/users?${new URLSearchParams(searchParamsObject)}`);
-        console.log(response);
-
         if (response.data.users) {
             setUsers(response.data.users);
             setFindMessage("Not found.")

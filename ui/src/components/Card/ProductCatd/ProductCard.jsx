@@ -10,13 +10,13 @@ function ProductCard(props) {
 
 
     return (
-        <Link to={`/products/${_id}`} className={"w-[310px]  h-[480px] rounded-lg shadow-md flex flex-col cursor-pointer hover:bg-sky-200 transition-colors bg-slate-50"}>
+        <Link to={`/products/${_id}`} className={"w-[310px]  h-[490px] rounded-lg shadow-md flex flex-col justify-between cursor-pointer hover:bg-sky-200 transition-colors bg-slate-50"}>
             <div className={"flex justify-center items-center"}>
                 <ProductCover image={productCover}
                               isImageNeedDecoding={isImageNeedDecoding}
                               isMarketImage={true}
                               isChanged={false}
-                              className={"w-full rounded-t-lg"}
+                              className={"h-[310px] rounded-t-lg"}
                               imageClassName={"rounded-t-lg"}
                 />
             </div>

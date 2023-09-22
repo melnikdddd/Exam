@@ -73,7 +73,6 @@ function CreateProduct(props) {
     const productCover = watch("productCover");
 
     const handleProductCoverClick = (event) => {
-        console.log(productCoverFileInput.current); // null
         if (productCoverFileInput.current) {
             productCoverFileInput.current.click();
         }
@@ -195,7 +194,7 @@ function CreateProduct(props) {
         }
 
         const response = await fetchPost("/products/", formData);
-        console.log(response);
+
 
         const product = response.data.product;
 
@@ -350,8 +349,8 @@ function CreateProduct(props) {
                                                       message: "Minimum 40 characters."
                                                   },
                                                   maxLength: {
-                                                      value: 700,
-                                                      message: "Maximum 700 characters.",
+                                                      value: 1000,
+                                                      message: "Maximum 1000 characters.",
                                                   }
                                               })
                                           }}
@@ -386,8 +385,8 @@ function CreateProduct(props) {
                                                       message: "Minimum 25 characters."
                                                   },
                                                   maxLength: {
-                                                      value: 700,
-                                                      message: "Maximum 700 characters.",
+                                                      value: 1000,
+                                                      message: "Maximum 1000 characters.",
                                                   }
                                               })
                                           }}

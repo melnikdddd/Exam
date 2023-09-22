@@ -14,12 +14,12 @@ const checkObjPropertyLength = (obj) =>{
 
 const productValidator = [
     body('title','Title must been form 6 to 40 letters.').isLength({min: 5, max: 40}).optional(),
-    body('description', 'Min length is 3 letters.').isLength({min:40, max: 700}),
-    body("characteristics").isLength({min: 25, max: 700}).optional(),
+    body('description', 'Min length is 3 letters.').isLength({min:40, max: 1000}),
+    body("characteristics").isLength({min: 25, max: 1000}).optional(),
     body('imageOptions',"ImageData error").isObject(),
     body('rating').not().exists(),
     body('price','Invalid price number').isNumeric().custom(price =>{
-        if (price.numeric > 1000000 || price.numeric < 0){
+        if (price.numeric > 5000000 || price.numeric < 0){
             throw new Error('Invalid price number')
         }
     }),

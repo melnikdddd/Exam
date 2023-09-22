@@ -38,7 +38,6 @@ class ModelsWorker {
         if (data.productType) {
             const flag = await
                 replaceUserProductType(data.userId, document.productType, data.productType);
-            console.log(flag);
             if (!flag) {
                 return {success: false, message: "User products type cant update"};
             }

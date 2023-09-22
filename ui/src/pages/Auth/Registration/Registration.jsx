@@ -116,7 +116,7 @@ function Registration(){
         const responseData = await fetchPost("/auth/registration", dataForSending);
 
         if (responseData.success === false){
-            console.log(responseData);
+
             const errorFields = responseData.status === 409 ? responseData.data.errorFields : "";
 
             errorHandler(registrationErrors, responseData.status, setError, identityType, errorFields);

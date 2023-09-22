@@ -28,7 +28,7 @@ export const getProduct = async (productId, ownerId) => {
 
     if (response.success) {
         const data = response.data;
-        console.log(data);
+
 
         return {PRODUCT: data.product, USER: data.owner}
     } else {
@@ -70,7 +70,6 @@ export const fetchUpdate = async (path, data) => {
 export const fetchUserByToken = async () => {
     try {
         const response = await axios.get(`users/getUserByToken`);
-        console.log(response)
         const {user, products} = response.data
 
         if (!user) {

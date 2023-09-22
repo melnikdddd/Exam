@@ -63,7 +63,7 @@
 }
 
 .middleContent {
-  @apply flex justify-around mt-7 break-words;
+  @apply flex justify-around mt-7 break-words gap-x-5;
   @media (max-width: 852px) {
     @apply flex-col mt-0;
   }

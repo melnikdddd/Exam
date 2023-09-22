@@ -220,7 +220,6 @@ export const setOffline = async (userId) => {
 
 export const readChat = async (data) => {
     const {userId, chatId} = data;
-    console.log(chatId, userId)
 
     try {
         const user = await userModel.findOne({_id: userId});

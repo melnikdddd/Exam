@@ -18,7 +18,6 @@ function PasswordCard(props) {
 
     const onSubmit = async (data)=>{
         const flag = (await fetchCheckPassword(data.password));
-        console.log(flag);
         if (flag){
             props.setIsPasswordValid(true);
             return;
