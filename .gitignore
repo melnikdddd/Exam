@@ -1,3 +1,7 @@
+        /server/node_modules/
+        /ui/node_modules/
+        /server/.env
+        /ui/.env
 /server/node_modules/
 /ui/node_modules/
 /server/.env
